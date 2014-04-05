@@ -3,11 +3,12 @@ package peregin.tov
 import scala.swing._
 import java.awt.{Color, Point, Toolkit, Dimension}
 import javax.imageio.ImageIO
-import peregin.tov.gui.MigPanel
-import javax.swing.UIManager
+import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
+import javax.swing.{ImageIcon, Icon, JToolBar, UIManager}
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
-import org.jdesktop.swingx.{JXLabel, JXStatusBar, JXTitledPanel}
+import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.Logging
+import java.awt.event.{ActionEvent, ActionListener}
 
 
 object App extends SimpleSwingApplication with Logging {
@@ -17,21 +18,36 @@ object App extends SimpleSwingApplication with Logging {
   initLookAndFeel()
 
   val frame = new MainFrame {
+    // temporary - use this mock to have a proper layout
     class MockPanel(info: String) extends BoxPanel(Orientation.Vertical) {
       background = Color.blue
       contents += new Label(info) { foreground = Color.white }
     }
-    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
-      val projectPanel = new MockPanel("project setup: new, open, save, export")
-      add(projectPanel, "span 2, wrap")
 
-      val videoPanel = new MockPanel("video")
+    contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
+      val toolbar = new JToolBar
+      def createToolbarButton(image: String, tooltip: String, action: => Unit): JXButton = {
+        val btn = new JXButton(loadIcon(image))
+        btn.setToolTipText(tooltip)
+        btn.addActionListener(new ActionListener {
+          override def actionPerformed(e: ActionEvent) = action
+        })
+        btn
+      }
+      toolbar.add(createToolbarButton("images/new.png", "New", newProject))
+      toolbar.add(createToolbarButton("images/open.png", "Open", openProject))
+      toolbar.add(createToolbarButton("images/save.png", "Save", saveProject))
+      toolbar.addSeparator()
+      toolbar.add(createToolbarButton("images/play.png", "Export", exportProject))
+      add(Component.wrap(toolbar), "span 2, wrap")
+
+      val videoPanel = new VideoPanel
       add(titled("Video", videoPanel), "pushy, width 60%")
-      val telemetryPanel = new MockPanel("telemetry")
+      val telemetryPanel = new TelemetryPanel
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
-      val dashboardPanel = new MockPanel("widgets and templates")
-      add(dashboardPanel, "height 30%, span 2, wrap")
+      val dashboardPanel = new DashboardPanel
+      add(titled("Dashboard", dashboardPanel), "height 30%, span 2, wrap")
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
@@ -62,10 +78,16 @@ object App extends SimpleSwingApplication with Logging {
     w.location = new Point(x, y)
   }
 
-  def loadImage(path: String) = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
+  def loadImage(path: String): Image = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
+  def loadIcon(path: String): Icon = new ImageIcon(loadImage(path))
 
   def titled(title: String, c: Component): Component = {
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
   }
+  
+  def newProject() {log.info("new project")}
+  def openProject() {log.info("open project")}
+  def saveProject() {log.info("save project")}
+  def exportProject() {log.info("export project")}
 }
