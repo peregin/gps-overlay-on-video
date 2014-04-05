@@ -51,8 +51,9 @@ object App extends SimpleSwingApplication with Logging {
 
   frame.title = "Telemetry data on videos"
   frame.iconImage = loadImage("images/video.png")
-  frame.size = new Dimension(1024, 768)
-  center(frame)
+  //frame.size = new Dimension(1024, 768)
+  //center(frame)
+  frame.maximize()
 
   def top = frame
 
