@@ -6,6 +6,7 @@ import peregin.tov.App
 import peregin.tov.util.Logging
 import org.jdesktop.swingx.JXMapKit
 import scala.swing.event.ButtonClicked
+import org.jdesktop.swingx.mapviewer.GeoPosition
 
 
 class TelemetryPanel extends MigPanel("", "", "[fill]") with Logging {
@@ -18,6 +19,7 @@ class TelemetryPanel extends MigPanel("", "", "[fill]") with Logging {
 
   val mapKit = new JXMapKit
   mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
+  mapKit.setAddressLocation(new GeoPosition(47.366074, 8.541264)) // Buerkliplatz
   add(Component.wrap(mapKit), "span 2, growx, wrap")
 
 
