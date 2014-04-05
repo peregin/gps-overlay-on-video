@@ -55,6 +55,8 @@ public class App extends JFrame {
         JButton telemetryPanel = new JButton("telemetry");
         top.add(telemetryPanel, "pushy, wrap");
 
+        // add container for widgets and templates
+
         JButton statusPanel = new JButton("Ready");
         top.add(statusPanel, "span 2");
 
