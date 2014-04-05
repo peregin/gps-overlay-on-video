@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 import peregin.tov.gui.MigPanel
 
 
-object GuiApp extends SimpleSwingApplication {
+object App extends SimpleSwingApplication {
 
   val frame = new MainFrame {
     title = "Telemetry data overlay on videos"
