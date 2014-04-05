@@ -1,7 +1,7 @@
 package peregin.tov
 
 import scala.swing._
-import java.awt.{Color, Point, Toolkit, Dimension}
+import java.awt.{Point, Toolkit, Dimension}
 import javax.imageio.ImageIO
 import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
 import javax.swing.{ImageIcon, Icon, JToolBar, UIManager}
@@ -18,12 +18,6 @@ object App extends SimpleSwingApplication with Logging {
   initLookAndFeel()
 
   val frame = new MainFrame {
-    // temporary - use this mock to have a proper layout
-    class MockPanel(info: String) extends BoxPanel(Orientation.Vertical) {
-      background = Color.blue
-      contents += new Label(info) { foreground = Color.white }
-    }
-
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
       def createToolbarButton(image: String, tooltip: String, action: => Unit): JXButton = {
