@@ -5,7 +5,7 @@ import java.awt.{Color, Point, Toolkit, Dimension}
 import javax.imageio.ImageIO
 import peregin.tov.gui.MigPanel
 import javax.swing.UIManager
-import com.jgoodies.looks.plastic.Plastic3DLookAndFeel
+import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx.JXTitledPanel
 import peregin.tov.util.Logging
 
@@ -14,7 +14,7 @@ object App extends SimpleSwingApplication with Logging {
 
   log.info("initializing...")
 
-  UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
+  initLookAndFeel()
 
   val frame = new MainFrame {
     class MockPanel(info: String) extends BoxPanel(Orientation.Vertical) {
@@ -44,6 +44,14 @@ object App extends SimpleSwingApplication with Logging {
   center(frame)
 
   def top = frame
+
+  def initLookAndFeel() {
+    import PlasticLookAndFeel._
+    import collection.JavaConverters._
+    val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
+    theme.foreach(setPlasticTheme)
+    UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
+  }
 
   def center(w: Window) {
     val screen = Toolkit.getDefaultToolkit.getScreenSize
