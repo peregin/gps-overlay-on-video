@@ -20,9 +20,9 @@ object App extends SimpleSwingApplication {
       add(projectPanel, "span 2, wrap")
 
       val videoPanel = new MockPanel("video")
-      add(videoPanel, "pushy")
+      add(videoPanel, "pushy, width 60%")
       val telemetryPanel = new MockPanel("telemetry")
-      add(telemetryPanel, "pushy, wrap")
+      add(telemetryPanel, "pushy, width 40%, wrap")
 
       val dashboardPanel = new MockPanel("widgets and templates")
       add(dashboardPanel, "height 30%, span 2, wrap")
