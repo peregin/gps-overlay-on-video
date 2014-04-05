@@ -18,11 +18,15 @@ object App extends SimpleSwingApplication {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val projectPanel = new MockPanel("project setup: new, open, save, export")
       add(projectPanel, "span 2, wrap")
+
       val videoPanel = new MockPanel("video")
       add(videoPanel, "pushy")
       val telemetryPanel = new MockPanel("telemetry")
       add(telemetryPanel, "pushy, wrap")
-      // add container for widgets and templates
+
+      val dashboardPanel = new MockPanel("widgets and templates")
+      add(dashboardPanel, "height 30%, span 2, wrap")
+
       val statusPanel = new MockPanel("ready")
       add(statusPanel, "span 2")
     }
