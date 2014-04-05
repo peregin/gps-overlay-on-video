@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 import peregin.tov.gui.MigPanel
 import javax.swing.UIManager
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
-import org.jdesktop.swingx.JXTitledPanel
+import org.jdesktop.swingx.{JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.Logging
 
 
@@ -33,8 +33,9 @@ object App extends SimpleSwingApplication with Logging {
       val dashboardPanel = new MockPanel("widgets and templates")
       add(dashboardPanel, "height 30%, span 2, wrap")
 
-      val statusPanel = new MockPanel("ready")
-      add(statusPanel, "span 2")
+      val statusPanel = new JXStatusBar
+      statusPanel.add(new JXLabel("Ready"))
+      add(Component.wrap(statusPanel), "span 2")
     }
   }
 
