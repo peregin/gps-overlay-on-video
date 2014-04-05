@@ -4,13 +4,19 @@ import scala.swing._
 import java.awt.{Color, Point, Toolkit, Dimension}
 import javax.imageio.ImageIO
 import peregin.tov.gui.MigPanel
+import javax.swing.UIManager
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel
+import org.jdesktop.swingx.JXTitledPanel
+import peregin.tov.util.Logging
 
 
-object App extends SimpleSwingApplication {
+object App extends SimpleSwingApplication with Logging {
+
+  log.info("initializing...")
+
+  UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
 
   val frame = new MainFrame {
-    title = "Telemetry data overlay on videos"
-
     class MockPanel(info: String) extends BoxPanel(Orientation.Vertical) {
       background = Color.blue
       contents += new Label(info) { foreground = Color.white }
@@ -20,9 +26,9 @@ object App extends SimpleSwingApplication {
       add(projectPanel, "span 2, wrap")
 
       val videoPanel = new MockPanel("video")
-      add(videoPanel, "pushy, width 60%")
+      add(titled("Video", videoPanel), "pushy, width 60%")
       val telemetryPanel = new MockPanel("telemetry")
-      add(telemetryPanel, "pushy, width 40%, wrap")
+      add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
       val dashboardPanel = new MockPanel("widgets and templates")
       add(dashboardPanel, "height 30%, span 2, wrap")
@@ -30,10 +36,11 @@ object App extends SimpleSwingApplication {
       val statusPanel = new MockPanel("ready")
       add(statusPanel, "span 2")
     }
-
-    size = new Dimension(1024, 768)
-    iconImage = loadImage("images/video.png")
   }
+
+  frame.title = "Telemetry data on videos"
+  frame.iconImage = loadImage("images/video.png")
+  frame.size = new Dimension(1024, 768)
   center(frame)
 
   def top = frame
@@ -47,4 +54,9 @@ object App extends SimpleSwingApplication {
   }
 
   def loadImage(path: String) = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
+
+  def titled(title: String, c: Component): Component = {
+    val panel = new JXTitledPanel(title, c.peer)
+    Component.wrap(panel)
+  }
 }
