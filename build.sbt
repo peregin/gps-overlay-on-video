@@ -1,3 +1,5 @@
+import ScalaxbKeys._
+
 organization := "peregin.com"
 
 name := "telemetry-on-video"
@@ -8,11 +10,15 @@ scalaVersion := "2.10.3"
 
 scalacOptions ++= List("-target:jvm-1.7", "-feature", "-deprecation")
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
-
 resolvers ++= Seq(
   "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"
 )
+
+net.virtualvoid.sbt.graph.Plugin.graphSettings
+
+scalaxbSettings
+
+sourceGenerators in Compile <+= scalaxb in Compile
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.3"
 
