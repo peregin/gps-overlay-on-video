@@ -28,7 +28,7 @@ libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 
 libraryDependencies += "xuggle" % "xuggle-xuggler" % "5.4"
 
-libraryDependencies += "org.json4s" % "json4s-jackson_2.10" % "3.2.4"
+libraryDependencies += "org.json4s" % "json4s-jackson_2.10" % "3.2.8"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.0"
 
