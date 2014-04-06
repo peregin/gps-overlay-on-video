@@ -9,6 +9,7 @@ import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLo
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.Logging
 import java.awt.event.{ActionEvent, ActionListener}
+import peregin.tov.model.Setup
 
 
 object App extends SimpleSwingApplication with Logging {
@@ -16,6 +17,10 @@ object App extends SimpleSwingApplication with Logging {
   log.info("initializing...")
 
   initLookAndFeel()
+
+  val setup = Setup.empty
+  val videoPanel = new VideoPanel(setup)
+  val telemetryPanel = new TelemetryPanel(setup)
 
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
@@ -35,9 +40,7 @@ object App extends SimpleSwingApplication with Logging {
       toolbar.add(createToolbarButton("images/play.png", "Export", exportProject))
       add(Component.wrap(toolbar), "span 2, wrap")
 
-      val videoPanel = new VideoPanel
       add(titled("Video", videoPanel), "pushy, width 60%")
-      val telemetryPanel = new TelemetryPanel
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
       val dashboardPanel = new DashboardPanel
@@ -81,8 +84,32 @@ object App extends SimpleSwingApplication with Logging {
     Component.wrap(panel)
   }
   
-  def newProject() {log.info("new project")}
-  def openProject() {log.info("open project")}
-  def saveProject() {log.info("save project")}
-  def exportProject() {log.info("export project")}
+  def newProject() {
+    log.info("new project")
+    setup.reset()
+  }
+
+  def openProject() {
+    val chooser = new FileChooser()
+    if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
+      val file = chooser.selectedFile
+      log.debug(s"opening ${file.getAbsolutePath}")
+      setup.copyAs(Setup.loadFile(file.getAbsolutePath))
+      videoPanel.refreshFromSetup()
+      telemetryPanel.refreshFromSetup()
+    }
+  }
+
+  def saveProject() {
+    val chooser = new FileChooser()
+    if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
+      val file = chooser.selectedFile
+      log.debug(s"saving ${file.getAbsolutePath}")
+      setup.saveFile(file.getAbsolutePath)
+    }
+  }
+
+  def exportProject() {
+    log.info("export project")
+  }
 }

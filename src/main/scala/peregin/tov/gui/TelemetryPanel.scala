@@ -5,9 +5,10 @@ import peregin.tov.util.Logging
 import org.jdesktop.swingx.JXMapKit
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
+import peregin.tov.model.Setup
 
 
-class TelemetryPanel extends MigPanel("ins 2", "", "[fill]") with Logging {
+class TelemetryPanel(setup: Setup) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   val chooser = new FileChooserPanel("Load GPS data file:", openGpsData)
   add(chooser, "pushx, growx, wrap")
@@ -18,6 +19,10 @@ class TelemetryPanel extends MigPanel("ins 2", "", "[fill]") with Logging {
   add(Component.wrap(mapKit), "growx, wrap")
 
   def openGpsData(file: File) {
+    setup.telemetryPath = Some(file.getAbsolutePath)
+  }
 
+  def refreshFromSetup() {
+    chooser.fileInput.text = setup.telemetryPath.mkString
   }
 }
