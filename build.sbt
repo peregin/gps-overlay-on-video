@@ -6,7 +6,7 @@ version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.10.3"
 
-scalacOptions += "-target:jvm-1.7"
+scalacOptions ++= List("-target:jvm-1.7", "-feature", "-deprecation")
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
@@ -31,4 +31,6 @@ libraryDependencies += "xuggle" % "xuggle-xuggler" % "5.4"
 libraryDependencies += "org.json4s" % "json4s-jackson_2.10" % "3.2.8"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.0"
+
+libraryDependencies += "org.specs2" %% "specs2" % "2.3.10" % "test"
 
