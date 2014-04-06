@@ -7,9 +7,9 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
 
 
-class TelemetryPanel extends MigPanel("", "", "[fill]") with Logging {
+class TelemetryPanel extends MigPanel("ins 2", "", "[fill]") with Logging {
 
-  val chooser = new FileChooserPanel("GPS data file:", openGpsData)
+  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData)
   add(chooser, "pushx, growx, wrap")
 
   val mapKit = new JXMapKit

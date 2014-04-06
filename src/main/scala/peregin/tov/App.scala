@@ -4,7 +4,7 @@ import scala.swing._
 import java.awt.{Point, Toolkit, Dimension}
 import javax.imageio.ImageIO
 import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
-import javax.swing.{ImageIcon, Icon, JToolBar, UIManager}
+import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.Logging
