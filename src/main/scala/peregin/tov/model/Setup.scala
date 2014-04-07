@@ -38,6 +38,6 @@ case class Setup(var videoPath: Option[String],
 
   def copyAs(that: Setup) {
     this.videoPath = that.videoPath
-    this.telemetryPath = that.videoPath
+    this.telemetryPath = that.telemetryPath
   }
 }
