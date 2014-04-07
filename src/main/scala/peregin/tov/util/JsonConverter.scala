@@ -1,12 +1,13 @@
 package peregin.tov.util
 
-import org.json4s.{jackson, DefaultFormats}
+import org.json4s.{FieldSerializer, jackson, DefaultFormats}
+import peregin.tov.model.Setup
 
 
 object JsonConverter {
 
-  // enrich with custom formatters or FieldSerializer to ignore specific fields
-  implicit val formats = DefaultFormats
+  import FieldSerializer._
+  implicit val formats = DefaultFormats + FieldSerializer[Setup](ignore("telemetry"))
 
   def generate[T <: AnyRef](obj: T): String = {
     val ast = jackson.Json(formats)

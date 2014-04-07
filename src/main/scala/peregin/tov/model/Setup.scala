@@ -26,7 +26,8 @@ object Setup {
 }
 
 case class Setup(var videoPath: Option[String],
-                 var telemetryPath: Option[String]) {
+                 var telemetryPath: Option[String],
+                 var telemetry: Option[Telemetry] = None) {
 
   def save = Setup.save(this)
   def saveFile(path: String) = Setup.saveFile(path, this)
@@ -34,6 +35,7 @@ case class Setup(var videoPath: Option[String],
   def reset() {
     videoPath = None
     telemetryPath = None
+    telemetry = None
   }
 
   def copyAs(that: Setup) {
