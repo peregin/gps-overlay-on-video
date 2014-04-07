@@ -11,6 +11,14 @@ import java.nio.file.{Paths, Files}
 object Setup {
 
   implicit val formats = Serialization.formats(NoTypeHints)
+
+  def save(setup: Setup): String = write(setup)
+  def saveFile(file: String, setup: Setup) {
+    val fw = new FileWriter(file)
+    fw.write(save(setup))
+    fw.close()
+  }
+
   def load(json: String): Setup = read[Setup](json)
   def loadFile(file: String): Setup = read(new String(Files.readAllBytes(Paths.get(file))))
 
@@ -20,13 +28,8 @@ object Setup {
 case class Setup(var videoPath: Option[String],
                  var telemetryPath: Option[String]) {
 
-  implicit val formats = Serialization.formats(NoTypeHints)
-  def save: String = write(this)
-  def saveFile(file: String) {
-    val fw = new FileWriter(file)
-    fw.write(save)
-    fw.close()
-  }
+  def save = Setup.save(this)
+  def saveFile(path: String) = Setup.saveFile(path, this)
 
   def reset() {
     videoPath = None
