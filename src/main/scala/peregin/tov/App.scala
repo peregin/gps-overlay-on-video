@@ -88,6 +88,8 @@ object App extends SimpleSwingApplication with Logging with Timed {
   def newProject() {
     log.info("new project")
     setup.reset()
+    videoPanel.refreshFromSetup()
+    telemetryPanel.refreshFromSetup()
   }
 
   def openProject(): Unit = timed("open project") {

@@ -61,7 +61,7 @@ class TelemetryPanel(setup: Setup) extends MigPanel("ins 2", "", "[fill]") with 
     chooser.fileInput.text = setup.telemetryPath.mkString
     setup.telemetryPath match {
       case Some(path) => load(new File(path))
-      case  _ => // mapKit.repaint()
+      case  _ => mapKit.repaint()
     }
   }
 
