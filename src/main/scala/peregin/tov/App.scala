@@ -7,13 +7,13 @@ import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
-import peregin.tov.util.Logging
+import peregin.tov.util.{Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
 import peregin.tov.model.Setup
 import javax.swing.filechooser.FileNameExtensionFilter
 
 
-object App extends SimpleSwingApplication with Logging {
+object App extends SimpleSwingApplication with Logging with Timed {
 
   log.info("initializing...")
 
@@ -26,7 +26,7 @@ object App extends SimpleSwingApplication with Logging {
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
-      def createToolbarButton(image: String, tooltip: String, action: => Unit): JXButton = {
+      def createToolbarButton[T](image: String, tooltip: String, action: => T): JXButton = {
         val btn = new JXButton(loadIcon(image))
         btn.setToolTipText(tooltip)
         btn.addActionListener(new ActionListener {
@@ -90,7 +90,7 @@ object App extends SimpleSwingApplication with Logging {
     setup.reset()
   }
 
-  def openProject() {
+  def openProject(): Unit = timed("open project") {
     val chooser = new FileChooser()
     chooser.fileFilter = new FileNameExtensionFilter("project file (json)", "json")
     chooser.title = "Open project:"
