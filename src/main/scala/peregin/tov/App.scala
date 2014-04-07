@@ -10,6 +10,7 @@ import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.Logging
 import java.awt.event.{ActionEvent, ActionListener}
 import peregin.tov.model.Setup
+import javax.swing.filechooser.FileNameExtensionFilter
 
 
 object App extends SimpleSwingApplication with Logging {
@@ -91,6 +92,8 @@ object App extends SimpleSwingApplication with Logging {
 
   def openProject() {
     val chooser = new FileChooser()
+    chooser.fileFilter = new FileNameExtensionFilter("project file (json)", "json")
+    chooser.title = "Open project:"
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
@@ -102,6 +105,8 @@ object App extends SimpleSwingApplication with Logging {
 
   def saveProject() {
     val chooser = new FileChooser()
+    chooser.fileFilter = new FileNameExtensionFilter("project file (json)", "json")
+    chooser.title = "Save project:"
     if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"saving ${file.getAbsolutePath}")
