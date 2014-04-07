@@ -6,11 +6,12 @@ import org.jdesktop.swingx.JXMapKit
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
 import peregin.tov.model.Setup
+import javax.swing.filechooser.FileNameExtensionFilter
 
 
 class TelemetryPanel(setup: Setup) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
-  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData)
+  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, new FileNameExtensionFilter("GPS files (gpx)", "gpx"))
   add(chooser, "pushx, growx, wrap")
 
   val mapKit = new JXMapKit

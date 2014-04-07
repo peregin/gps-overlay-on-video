@@ -5,9 +5,10 @@ import peregin.tov.util.Logging
 import scala.swing.{FileChooser, TextArea, Button, Label}
 import scala.swing.event.ButtonClicked
 import peregin.tov.App
+import javax.swing.filechooser.FileNameExtensionFilter
 
 
-class FileChooserPanel(info: String, action: File => Unit) extends MigPanel("ins 0", "", "[grow, fill]") with Logging {
+class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExtensionFilter) extends MigPanel("ins 0", "", "[grow, fill]") with Logging {
   add(new Label(info), "span 2, wrap")
   val browseButton = new Button("Browse")
   add(browseButton, "")
@@ -21,6 +22,8 @@ class FileChooserPanel(info: String, action: File => Unit) extends MigPanel("ins
 
   def openData = {
     val chooser = new FileChooser()
+    chooser.fileFilter = filter
+    chooser.title = info
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
