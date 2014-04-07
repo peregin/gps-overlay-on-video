@@ -5,11 +5,9 @@ import java.io.Closeable
 
 object Io {
 
-  def withCloseable[T](c: Closeable)(body: => T): T = {
-    try {
-      body
-    } finally {
-      c.close()
-    }
+  def withCloseable[R](c: Closeable)(body: Closeable => R): R = try {
+    body(c)
+  } finally {
+    c.close()
   }
 }
