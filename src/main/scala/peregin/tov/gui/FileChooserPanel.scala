@@ -27,7 +27,6 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
-      fileInput.text = file.getAbsolutePath
       action(file)
     }
   }

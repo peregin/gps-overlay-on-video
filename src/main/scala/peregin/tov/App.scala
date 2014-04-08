@@ -9,8 +9,9 @@ import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLo
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.{Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
-import peregin.tov.model.Setup
+import peregin.tov.model.{Telemetry, Setup}
 import javax.swing.filechooser.FileNameExtensionFilter
+import java.io.File
 
 
 object App extends SimpleSwingApplication with Logging with Timed {
@@ -19,9 +20,10 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   initLookAndFeel()
 
-  val setup = Setup.empty
-  val videoPanel = new VideoPanel(setup)
-  val telemetryPanel = new TelemetryPanel(setup)
+  var setup = Setup.empty
+
+  val videoPanel = new VideoPanel(openVideoData)
+  val telemetryPanel = new TelemetryPanel(openGpsData)
 
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
@@ -87,9 +89,9 @@ object App extends SimpleSwingApplication with Logging with Timed {
   
   def newProject() {
     log.info("new project")
-    setup.reset()
-    videoPanel.refreshFromSetup()
-    telemetryPanel.refreshFromSetup()
+    setup = Setup.empty
+    videoPanel.refresh(setup)
+    telemetryPanel.refresh(setup, Telemetry.empty)
   }
 
   def openProject(): Unit = timed("open project") {
@@ -99,9 +101,10 @@ object App extends SimpleSwingApplication with Logging with Timed {
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
-      setup.copyAs(Setup.loadFile(file.getAbsolutePath))
-      videoPanel.refreshFromSetup()
-      telemetryPanel.refreshFromSetup()
+      setup = Setup.loadFile(file.getAbsolutePath)
+      videoPanel.refresh(setup)
+      val telemetry = setup.telemetryPath.map(p => Telemetry.load(new File(p)))
+      telemetryPanel.refresh(setup, telemetry.getOrElse(Telemetry.empty))
     }
   }
 
@@ -118,5 +121,15 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def exportProject() {
     log.info("export project")
+  }
+
+  def openVideoData(file: File) {
+    setup.videoPath = Some(file.getAbsolutePath)
+    videoPanel.refresh(setup)
+  }
+
+  def openGpsData(file: File) {
+    setup.telemetryPath = Some(file.getAbsolutePath)
+    telemetryPanel.refresh(setup, Telemetry.load(file))
   }
 }

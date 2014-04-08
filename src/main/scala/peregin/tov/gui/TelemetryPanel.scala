@@ -5,13 +5,15 @@ import peregin.tov.util.Logging
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
-import peregin.tov.model.{Telemetry, Setup}
+import peregin.tov.model.{Setup, Telemetry}
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{BasicStroke, RenderingHints, Color}
 
 
-class TelemetryPanel(setup: Setup) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
+
+  var telemetry = Telemetry.empty
 
   val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, new FileNameExtensionFilter("GPS files (gpx)", "gpx"))
   add(chooser, "pushx, growx, wrap")
@@ -35,38 +37,24 @@ class TelemetryPanel(setup: Setup) extends MigPanel("ins 2", "", "[fill]") with 
 
       var lastX = -1
       var lastY = -1
-      setup.telemetry.foreach{tm =>
-        val region = tm.track.map(tp => new GeoPosition(tp.latitude, tp.longitude))
-        region.foreach{gp =>
-          // convert geo to world bitmap pixel
-          val pt = mapKit.getMainMap().getTileFactory().geoToPixel(gp, mapKit.getMainMap().getZoom())
-          if (lastX != -1 && lastY != -1) {
-            g.drawLine(lastX, lastY, pt.getX().toInt, pt.getY().toInt)
-          }
-          lastX = pt.getX().toInt
-          lastY = pt.getY().toInt
+      val region = telemetry.track.map(tp => new GeoPosition(tp.latitude, tp.longitude))
+      region.foreach{gp =>
+        // convert geo to world bitmap pixel
+        val pt = mapKit.getMainMap().getTileFactory().geoToPixel(gp, mapKit.getMainMap().getZoom())
+        if (lastX != -1 && lastY != -1) {
+          g.drawLine(lastX, lastY, pt.getX().toInt, pt.getY().toInt)
         }
+        lastX = pt.getX().toInt
+        lastY = pt.getY().toInt
       }
       g.dispose()
     }
   }
   mapKit.getMainMap().setOverlayPainter(routePainter)
 
-  def openGpsData(file: File) {
-    setup.telemetryPath = Some(file.getAbsolutePath)
-    load(file)
-  }
-
-  def refreshFromSetup() {
-    chooser.fileInput.text = setup.telemetryPath.mkString
-    setup.telemetryPath match {
-      case Some(path) => load(new File(path))
-      case  _ => mapKit.repaint()
-    }
-  }
-
-  def load(file: File) {
-    setup.telemetry = Some(Telemetry.load(file))
+  def refresh(setup: Setup, telemetry: Telemetry) {
+    chooser.fileInput.text = setup.telemetryPath.getOrElse("")
+    this.telemetry = telemetry
     mapKit.repaint()
   }
 }
