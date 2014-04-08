@@ -5,10 +5,11 @@ import peregin.tov.util.Logging
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
-import peregin.tov.model.{Setup, Telemetry}
+import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{BasicStroke, RenderingHints, Color}
+import peregin.tov.Setup
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -53,7 +54,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   mapKit.getMainMap().setOverlayPainter(routePainter)
 
   def refresh(setup: Setup, telemetry: Telemetry) {
-    chooser.fileInput.text = setup.telemetryPath.getOrElse("")
+    chooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
     mapKit.repaint()
   }

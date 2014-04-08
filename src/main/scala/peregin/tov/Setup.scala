@@ -1,4 +1,4 @@
-package peregin.tov.model
+package peregin.tov
 
 import java.io.FileWriter
 import peregin.tov.util.JsonConverter
@@ -26,7 +26,7 @@ object Setup {
 }
 
 case class Setup(var videoPath: Option[String],
-                 var telemetryPath: Option[String]) {
+                 var gpsPath: Option[String]) {
 
   def save = Setup.save(this)
   def saveFile(path: String) = Setup.saveFile(path, this)

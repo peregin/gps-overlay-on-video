@@ -9,7 +9,7 @@ import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLo
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
 import peregin.tov.util.{Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
-import peregin.tov.model.{Telemetry, Setup}
+import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
 
@@ -103,7 +103,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
       log.debug(s"opening ${file.getAbsolutePath}")
       setup = Setup.loadFile(file.getAbsolutePath)
       videoPanel.refresh(setup)
-      val telemetry = setup.telemetryPath.map(p => Telemetry.load(new File(p)))
+      val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
       telemetryPanel.refresh(setup, telemetry.getOrElse(Telemetry.empty))
     }
   }
@@ -129,7 +129,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
   }
 
   def openGpsData(file: File) {
-    setup.telemetryPath = Some(file.getAbsolutePath)
+    setup.gpsPath = Some(file.getAbsolutePath)
     telemetryPanel.refresh(setup, Telemetry.load(file))
   }
 }

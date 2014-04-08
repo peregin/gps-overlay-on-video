@@ -2,6 +2,7 @@ package peregin.tov.model
 
 import org.specs2.mutable.Specification
 import peregin.tov.util.Logging
+import peregin.tov.Setup
 
 
 class SetupSpec extends Specification with Logging {
