@@ -1,3 +1,5 @@
 package peregin.tov.model
 
-case class TrackPoint(latitude: Double, longitude: Double)
+import org.jdesktop.swingx.mapviewer.GeoPosition
+
+case class TrackPoint(position: GeoPosition)

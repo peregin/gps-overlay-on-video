@@ -37,7 +37,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
       var lastX = -1
       var lastY = -1
-      val region = telemetry.track.map(tp => new GeoPosition(tp.latitude, tp.longitude))
+      val region = telemetry.track.map(_.position)
       region.foreach{gp =>
         // convert geo to world bitmap pixel
         val pt = mapKit.getMainMap().getTileFactory().geoToPixel(gp, mapKit.getMainMap().getZoom())
