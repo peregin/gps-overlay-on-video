@@ -53,6 +53,17 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
   mapKit.getMainMap().setOverlayPainter(routePainter)
 
+  class AltitudePanel extends Panel {
+    override def paint(g: Graphics2D) = {
+      g.setColor(Color.white)
+      val width = peer.getWidth
+      val height = peer.getHeight
+      g.fillRect(0, 0, width, height)
+    }
+  }
+  val altitude = new AltitudePanel
+  add(altitude, "pushy, grow, gaptop 10, wrap")
+
   def refresh(setup: Setup, telemetry: Telemetry) {
     chooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
