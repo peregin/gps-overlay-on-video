@@ -6,12 +6,13 @@ import javax.imageio.ImageIO
 import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
-import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
+import org.jdesktop.swingx._
 import peregin.tov.util.{Align, Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
 import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
+import scala.Some
 
 
 object App extends SimpleSwingApplication with Logging with Timed {
@@ -78,6 +79,28 @@ object App extends SimpleSwingApplication with Logging with Timed {
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
   }
+
+  def lookBusy(body: => Unit) {
+    val dlg = new Dialog(frame) {
+      modal = true
+      peer.setUndecorated(true)
+      contents = new MigPanel("ins 5", "", "") {
+        val busy = new JXBusyLabel
+        busy.setBusy(true)
+        add(Component.wrap(busy), "")
+        add(new Label("Loading..."), "")
+      }
+      import scala.concurrent._
+      import ExecutionContext.Implicits.global
+      future {
+        body
+        dispose()
+      }
+    }
+    dlg.pack()
+    Align.center(dlg)
+    dlg.visible = true
+  }
   
   def newProject() {
     log.info("new project")
@@ -93,10 +116,14 @@ object App extends SimpleSwingApplication with Logging with Timed {
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
-      setup = Setup.loadFile(file.getAbsolutePath)
-      videoPanel.refresh(setup)
-      val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
-      telemetryPanel.refresh(setup, telemetry.getOrElse(Telemetry.empty))
+      lookBusy {
+        setup = Setup.loadFile(file.getAbsolutePath)
+        val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
+        Swing.onEDT {
+          videoPanel.refresh(setup)
+          telemetryPanel.refresh(setup, telemetry.getOrElse(Telemetry.empty))
+        }
+      }
     }
   }
 
@@ -122,6 +149,9 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def openGpsData(file: File) {
     setup.gpsPath = Some(file.getAbsolutePath)
-    telemetryPanel.refresh(setup, Telemetry.load(file))
+    lookBusy {
+      val telemetry = Telemetry.load(file)
+      Swing.onEDT(telemetryPanel.refresh(setup, telemetry))
+    }
   }
 }

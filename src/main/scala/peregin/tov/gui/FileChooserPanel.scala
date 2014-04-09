@@ -21,7 +21,9 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
   }
 
   def openData = {
-    val chooser = new FileChooser()
+    val file = fileInput.text.trim
+    val dir = if (file.isEmpty) null else new File(file).getParentFile
+    val chooser = new FileChooser(dir)
     chooser.fileFilter = filter
     chooser.title = info
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
