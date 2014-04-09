@@ -7,7 +7,7 @@ import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx.{JXButton, JXLabel, JXStatusBar, JXTitledPanel}
-import peregin.tov.util.{Timed, Logging}
+import peregin.tov.util.{Align, Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
 import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -58,7 +58,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
   frame.title = "Telemetry data on videos"
   frame.iconImage = loadImage("images/video.png")
   frame.size = new Dimension(1024, 768)
-  center(frame)
+  Align.center(frame)
   frame.maximize()
 
   def top = frame
@@ -69,14 +69,6 @@ object App extends SimpleSwingApplication with Logging with Timed {
     val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
     theme.foreach(setPlasticTheme)
     UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
-  }
-
-  def center(w: Window) {
-    val screen = Toolkit.getDefaultToolkit.getScreenSize
-    val size = w.bounds
-    val x = (screen.width - size.width) / 2
-    val y = (screen.height - size.height) / 2
-    w.location = new Point(x, y)
   }
 
   def loadImage(path: String): Image = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
