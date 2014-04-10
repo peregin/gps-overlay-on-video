@@ -1,18 +1,17 @@
 package peregin.tov
 
 import scala.swing._
-import java.awt.{Point, Toolkit, Dimension}
+import java.awt.Dimension
 import javax.imageio.ImageIO
-import peregin.tov.gui.{DashboardPanel, VideoPanel, TelemetryPanel, MigPanel}
+import peregin.tov.gui._
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx._
-import peregin.tov.util.{Align, Timed, Logging}
+import peregin.tov.util.{Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
 import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
-import scala.Some
 
 
 object App extends SimpleSwingApplication with Logging with Timed {
@@ -41,7 +40,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
       toolbar.add(createToolbarButton("images/open.png", "Open", openProject))
       toolbar.add(createToolbarButton("images/save.png", "Save", saveProject))
       toolbar.addSeparator()
-      toolbar.add(createToolbarButton("images/play.png", "Export", exportProject))
+      toolbar.add(createToolbarButton("images/video.png", "Export", exportProject))
       add(Component.wrap(toolbar), "span 2, wrap")
 
       add(titled("Video", videoPanel), "pushy, width 60%")
@@ -59,7 +58,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
   frame.title = "Telemetry data on videos"
   frame.iconImage = loadImage("images/video.png")
   frame.size = new Dimension(1024, 768)
-  Align.center(frame)
+  Goodies.center(frame)
   frame.maximize()
 
   def top = frame
@@ -79,28 +78,6 @@ object App extends SimpleSwingApplication with Logging with Timed {
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
   }
-
-  def lookBusy(body: => Unit) {
-    val dlg = new Dialog(frame) {
-      modal = true
-      peer.setUndecorated(true)
-      contents = new MigPanel("ins 5", "", "") {
-        val busy = new JXBusyLabel
-        busy.setBusy(true)
-        add(Component.wrap(busy), "")
-        add(new Label("Loading..."), "")
-      }
-      import scala.concurrent._
-      import ExecutionContext.Implicits.global
-      future {
-        body
-        dispose()
-      }
-    }
-    dlg.pack()
-    Align.center(dlg)
-    dlg.visible = true
-  }
   
   def newProject() {
     log.info("new project")
@@ -116,7 +93,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
-      lookBusy {
+      Goodies.lookBusy(frame) {
         setup = Setup.loadFile(file.getAbsolutePath)
         val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
         Swing.onEDT {
@@ -149,7 +126,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def openGpsData(file: File) {
     setup.gpsPath = Some(file.getAbsolutePath)
-    lookBusy {
+    Goodies.lookBusy(frame) {
       val telemetry = Telemetry.load(file)
       Swing.onEDT(telemetryPanel.refresh(setup, telemetry))
     }

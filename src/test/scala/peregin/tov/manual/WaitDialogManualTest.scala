@@ -4,7 +4,7 @@ import scala.swing._
 import java.awt.Dimension
 import peregin.tov.util.Logging
 import scala.swing.event.ButtonClicked
-import peregin.tov.App
+import peregin.tov.gui.Goodies
 
 
 object WaitDialogManualTest extends SimpleSwingApplication with Logging {
@@ -18,9 +18,13 @@ object WaitDialogManualTest extends SimpleSwingApplication with Logging {
 
       listenTo(testButton)
       reactions += {
-        case ButtonClicked(`testButton`) => App.lookBusy{ Thread.sleep(2000) }
+        case ButtonClicked(`testButton`) => test()
       }
     }
     size = new Dimension(1024, 768)
+  }
+
+  def test() {
+    Goodies.lookBusy(frame){ Thread.sleep(2000) }
   }
 }

@@ -25,7 +25,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
     }
 
     override def paint(g: Graphics) = {
-      g.setColor(Color.yellow)
+      g.setColor(Color.black)
       val width = getWidth
       val height = getHeight
       g.fillRect(0, 0, width, height)
