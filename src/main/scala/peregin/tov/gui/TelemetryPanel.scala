@@ -21,7 +21,8 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val mapKit = new JXMapKit
   mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
-  mapKit.setAddressLocation(new GeoPosition(47.366074, 8.541264)) // Buerkliplatz
+  mapKit.setAddressLocation(telemetry.centerPosition)
+  mapKit.setZoom(6)
   add(Component.wrap(mapKit), "growx, wrap")
 
   val routePainter = new Painter[JXMapViewer] {
@@ -67,6 +68,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   def refresh(setup: Setup, telemetry: Telemetry) {
     chooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
+    mapKit.setAddressLocation(telemetry.centerPosition)
     mapKit.repaint()
   }
 }
