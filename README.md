@@ -1,7 +1,8 @@
 GPS data overlay on videos
 ==========================
 
-The idea came after I bought a GoPro camera and started to record some of my rides which were also tracked with a GPS device.
+The idea came after I bought a [GoPro](http://gopro.com/cameras/hd-hero3-silver-edition) camera and started to record
+some of my rides which were also tracked with a GPS device.
 For tracking the rides I was using the [Strava](http://www.strava.com) application on my phone
 or a [Garmin Edge 510](http://www.dcrainmaker.com/2013/01/garmin-edge-510-in-depth-review.html).
 After showing the video to friends I was asked why I'm not showing the speed and altitude information overlaid onto video?
