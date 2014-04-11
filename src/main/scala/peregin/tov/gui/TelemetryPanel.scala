@@ -3,13 +3,13 @@ package peregin.tov.gui
 import scala.swing._
 import peregin.tov.util.Logging
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
-import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.io.File
 import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{BasicStroke, RenderingHints, Color}
 import peregin.tov.Setup
+import org.jdesktop.swingx.mapviewer.DefaultTileFactory
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -21,6 +21,9 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val mapKit = new JXMapKit
   mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
+  mapKit.setTileFactory(new DefaultTileFactory(new MapQuestTileInfo))
+  mapKit.setDataProviderCreditShown(true)
+  mapKit.setMiniMapVisible(false)
   mapKit.setAddressLocation(telemetry.centerPosition)
   mapKit.setZoom(6)
   add(Component.wrap(mapKit), "growx, wrap")
@@ -72,3 +75,19 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     mapKit.repaint()
   }
 }
+
+//object MapQuestTileFactoryInfo {
+//  private val MAX_ZOOM = 17
+//}
+//
+//import MapQuestTileFactoryInfo._
+//class MapQuestTileFactoryInfo extends TileFactoryInfo(
+//  MAX_ZOOM - 2, MAX_ZOOM, 256, true, true,
+//  //"http://oatile1.mqcdn.com/tiles/1.0.0/sat", //aerial tiles
+//  "http://otile1.mqcdn.com/tiles/1.0.0/osm", //Mapquest OSM
+//  "x", "y", "z") {
+//    override def getTileUrl(x: Int, y: Int, zoom: Int): String = {
+//      val z = MAX_ZOOM - zoom
+//      this.baseURL + "/" + z + "/" + x + "/" + y + ".png"
+//    }
+//}
