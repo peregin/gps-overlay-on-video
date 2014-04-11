@@ -40,6 +40,6 @@ case class Telemetry(track: Seq[TrackPoint]) {
       latitudeBoundary.sample(point.position.getLatitude)
       longitudeBoundary.sample(point.position.getLongitude)
     }
-    centerPosition = new GeoPosition(latitudeBoundary.middle, longitudeBoundary.middle)
+    centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
   }
 }

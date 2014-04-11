@@ -12,5 +12,5 @@ case class MinMax(var min: Double, var max: Double) {
     else if (sample > max) max = sample
   }
 
-  def middle = (max + min) / 2
+  def mean = (max + min) / 2
 }
