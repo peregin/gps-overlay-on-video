@@ -8,6 +8,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 
 
 object Telemetry extends Timed with Logging {
+
   def load(file: File): Telemetry = timed("load telemetry file") {
     val node = XML.loadFile(file)
     val binding = scalaxb.fromXML[GpxType](node)
@@ -27,14 +28,14 @@ object Telemetry extends Timed with Logging {
   def empty = new Telemetry(Seq.empty)
 }
 
-case class Telemetry(track: Seq[TrackPoint]) {
+case class Telemetry(track: Seq[TrackPoint]) extends Timed {
 
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
-  var centerPosition = new GeoPosition(47.366074, 8.541264) // Buerkliplatz, Zurich
+  var centerPosition = new GeoPosition(47.366074, 8.541264) // Buerkliplatz, Zurich, Switzerland
 
-  def analyze() {
+  def analyze() = timed("analyze GPS data") {
     track.foreach{point =>
       elevationBoundary.sample(point.elevation)
       latitudeBoundary.sample(point.position.getLatitude)

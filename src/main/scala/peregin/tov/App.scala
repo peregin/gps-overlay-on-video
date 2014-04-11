@@ -93,7 +93,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
-      Goodies.lookBusy(frame) {
+      Goodies.showBusy(frame) {
         setup = Setup.loadFile(file.getAbsolutePath)
         val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
         Swing.onEDT {
@@ -126,7 +126,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def openGpsData(file: File) {
     setup.gpsPath = Some(file.getAbsolutePath)
-    Goodies.lookBusy(frame) {
+    Goodies.showBusy(frame) {
       val telemetry = Telemetry.load(file)
       Swing.onEDT(telemetryPanel.refresh(setup, telemetry))
     }

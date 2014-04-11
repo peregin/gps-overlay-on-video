@@ -15,7 +15,7 @@ object Goodies {
     w.location = new Point(x, y)
   }
 
-  def lookBusy(w: Window)(body: => Unit) {
+  def showBusy(w: Window)(body: => Unit) {
     val dlg = new Dialog(w) {
       modal = true
       peer.setUndecorated(true)

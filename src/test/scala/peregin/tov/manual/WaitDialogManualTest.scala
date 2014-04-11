@@ -25,6 +25,6 @@ object WaitDialogManualTest extends SimpleSwingApplication with Logging {
   }
 
   def test() {
-    Goodies.lookBusy(frame){ Thread.sleep(2000) }
+    Goodies.showBusy(frame){ Thread.sleep(2000) }
   }
 }
