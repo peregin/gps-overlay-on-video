@@ -17,8 +17,8 @@ object Telemetry extends Timed with Logging {
     val binding = scalaxb.fromXML[GpxType](node)
     val points = binding.trk.head.trkseg.head.trkpt.map(wyp =>
       TrackPoint(
-        new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble),
-        wyp.ele.map(_.toDouble).getOrElse(0)
+        new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0),
+        wyp.time
       )
     )
     log.info(s"found ${points.size} track points")

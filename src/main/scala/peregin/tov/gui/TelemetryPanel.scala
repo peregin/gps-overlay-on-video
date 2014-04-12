@@ -80,14 +80,18 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         val fm = g.getFontMetrics(elevFont)
         val metersWidth = fm.stringWidth("3000 m")
         val metersHalfHeight = fm.getAscent / 2
-        val pxHeight = height - 20
+        val pxHeight = height - 20 - fm.getHeight
         val mHeight = telemetry.elevationBoundary.diff
         val pxWidth = width - metersWidth - 20
 
         // legend
         g.setColor(Color.black)
         g.drawString(s"${telemetry.elevationBoundary.max.toInt} m", 10, 10 + metersHalfHeight)
-        g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 + metersHalfHeight)
+        g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 - fm.getHeight + metersHalfHeight)
+        val timeFirst = telemetry.track.head.time.toString("HH:MM:ss")
+        val timeLast = telemetry.track.last.time.toString("HH:MM:ss")
+        g.drawString(timeFirst, 10 + metersWidth, height - 10 + metersHalfHeight)
+        g.drawString(timeLast, width - 10 - fm.stringWidth(timeLast), height - 10 + metersHalfHeight)
 
         // elevation
         g.setColor(Color.lightGray)
@@ -97,7 +101,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
           val v = telemetry.track(i).elevation - telemetry.elevationBoundary.min
           val x = 10 + metersWidth + (i * pxWidth) / trackWidth
           val y = (v * pxHeight) / mHeight
-          g.drawLine(x, height - 10, x, height - 10 - y.toInt)
+          g.drawLine(x, height - 10 - fm.getHeight, x, height - 10 - fm.getHeight - y.toInt)
         }
 
         // grid
@@ -106,7 +110,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
           g.drawLine(10 + metersWidth, y, width - 10, y)
         }
         for (x <- 10 + metersWidth until width - 10 by pxWidth / 8) {
-          g.drawLine(x, 10, x, height - 10)
+          g.drawLine(x, 10, x, height - 10 - fm.getHeight)
         }
       }
     }
