@@ -55,7 +55,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     }
   }
 
-  frame.title = "Telemetry data on videos"
+  frame.title = "GPS data overlay onto video"
   frame.iconImage = loadImage("images/video.png")
   frame.size = new Dimension(1024, 768)
   Goodies.center(frame)
