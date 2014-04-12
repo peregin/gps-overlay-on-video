@@ -9,6 +9,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{BasicStroke, RenderingHints, Color}
 import peregin.tov.Setup
+import peregin.tov.gui.map.MapQuestTileFactory
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -20,7 +21,8 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val mapKit = new JXMapKit
   mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
-  mapKit.setTileFactory(MapQuestTileInfo.tileFactory)
+  //mapKit.setTileFactory(new NasaTileFactory)
+  mapKit.setTileFactory(new MapQuestTileFactory)
   mapKit.setDataProviderCreditShown(true)
   mapKit.setMiniMapVisible(false)
   mapKit.setAddressLocation(telemetry.centerPosition)
