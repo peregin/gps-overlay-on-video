@@ -26,4 +26,4 @@ The application is using libraries and images created by other people or organiz
 
 ## Evolution of the application
 Thought that it is a good idea to make some screenshots from time to time to see how the software evolves.
-![20140412](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/20140412.png "20140412")
+![20140412](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/20140412.jpg "20140412")
