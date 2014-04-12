@@ -5,7 +5,6 @@ import java.awt.Dimension
 import peregin.tov.util.Logging
 import scala.swing.event.ButtonClicked
 import peregin.tov.gui.Goodies
-import study.FontChooserComboBox
 
 
 object WidgetManualTest extends SimpleSwingApplication with Logging {
@@ -19,10 +18,6 @@ object WidgetManualTest extends SimpleSwingApplication with Logging {
 
       val testButton = new Button("Some Test")
       contents += testButton
-
-      val comboFont = new FontChooserComboBox
-      contents += Component.wrap(comboFont)
-
 
       listenTo(waitButton, testButton)
       reactions += {
