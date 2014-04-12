@@ -15,3 +15,7 @@ software for it, running on my Mac. So I decided the write one :)
 * once the gauges were added and adjusted (the size and position) allow to save the configuration as a template, so next time
 it is easier to just load the template and create the new video
 * and the final bit, export to newly created video with the gauges
+
+## Evolution of the application
+Thought that it is a good idea to make some screenshots from time to time to see how the software evolves.
+![20140412](https://raw.github.com/peregin/gps-overlay-on-video/master/docs/evolution/20140412.png "20140412")
