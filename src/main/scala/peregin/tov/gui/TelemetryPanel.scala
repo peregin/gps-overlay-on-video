@@ -7,18 +7,22 @@ import java.io.File
 import peregin.tov.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
-import java.awt.{BasicStroke, RenderingHints, Color}
+import java.awt.{Font, BasicStroke, RenderingHints, Color}
 import peregin.tov.Setup
 import peregin.tov.gui.map.MapQuestTileFactory
+import scala.swing.Font
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   var telemetry = Telemetry.empty
 
+  // file chooser widget
   val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, new FileNameExtensionFilter("GPS files (gpx)", "gpx"))
   add(chooser, "pushx, growx, wrap")
 
+
+  // map widget
   val mapKit = new JXMapKit
   mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
   //mapKit.setTileFactory(new NasaTileFactory)
@@ -58,37 +62,64 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
   mapKit.getMainMap().setOverlayPainter(routePainter)
 
+
+  // altitude widget
   class AltitudePanel extends Panel {
+    val elevFont = new Font("Arial", Font.BOLD, 10)
     override def paint(g: Graphics2D) = {
-      g.setColor(Color.white)
       val width = peer.getWidth
       val height = peer.getHeight
+
+      // background
+      g.setColor(Color.white)
       g.fillRect(0, 0, width, height)
+
+      // coordinates
+      if (!telemetry.track.isEmpty) {
+        g.setFont(elevFont)
+        val fm = g.getFontMetrics(elevFont)
+        val metersWidth = fm.stringWidth("3000 m")
+        val metersHalfHeight = fm.getAscent / 2
+        val pxHeight = height - 20
+        val mHeight = telemetry.elevationBoundary.diff
+        val pxWidth = width - metersWidth - 20
+
+        // legend
+        g.setColor(Color.black)
+        g.drawString(s"${telemetry.elevationBoundary.max.toInt} m", 10, 10 + metersHalfHeight)
+        g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 + metersHalfHeight)
+
+        // elevation
+        g.setColor(Color.lightGray)
+        // TODO: use time interpolation here, just painting based on the index is inaccurate
+        val trackWidth = telemetry.track.size
+        for (i <- 0 until trackWidth) {
+          val v = telemetry.track(i).elevation - telemetry.elevationBoundary.min
+          val x = 10 + metersWidth + (i * pxWidth) / trackWidth
+          val y = (v * pxHeight) / mHeight
+          g.drawLine(x, height - 10, x, height - 10 - y.toInt)
+        }
+
+        // grid
+        g.setColor(Color.gray)
+        for (y <- 10 until height - 10 by pxHeight / 6) {
+          g.drawLine(10 + metersWidth, y, width - 10, y)
+        }
+        for (x <- 10 + metersWidth until width - 10 by pxWidth / 8) {
+          g.drawLine(x, 10, x, height - 10)
+        }
+      }
     }
   }
   val altitude = new AltitudePanel
   add(altitude, "pushy, grow, gaptop 10, wrap")
+
 
   def refresh(setup: Setup, telemetry: Telemetry) {
     chooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
     mapKit.setAddressLocation(telemetry.centerPosition)
     mapKit.repaint()
+    altitude.repaint()
   }
 }
-
-//object MapQuestTileFactoryInfo {
-//  private val MAX_ZOOM = 17
-//}
-//
-//import MapQuestTileFactoryInfo._
-//class MapQuestTileFactoryInfo extends TileFactoryInfo(
-//  MAX_ZOOM - 2, MAX_ZOOM, 256, true, true,
-//  //"http://oatile1.mqcdn.com/tiles/1.0.0/sat", //aerial tiles
-//  "http://otile1.mqcdn.com/tiles/1.0.0/osm", //Mapquest OSM
-//  "x", "y", "z") {
-//    override def getTileUrl(x: Int, y: Int, zoom: Int): String = {
-//      val z = MAX_ZOOM - zoom
-//      this.baseURL + "/" + z + "/" + x + "/" + y + ".png"
-//    }
-//}

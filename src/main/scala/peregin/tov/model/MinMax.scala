@@ -13,4 +13,6 @@ case class MinMax(var min: Double, var max: Double) {
   }
 
   def mean = (max + min) / 2
+
+  def diff = max - min
 }

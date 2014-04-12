@@ -23,6 +23,10 @@ The application is using libraries and images created by other people or organiz
 * [xuggle library](http://www.xuggle.com/) to decode, encode and manipulate video files
 * [iconeden](http://www.iconeden.com/icon/category/free) for the beautiful icon packs they offer
 
+## Resources
+Useful links and information
+* [Geographical distance](http://en.wikipedia.org/wiki/Geographical_distance)
+* [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
 ## Evolution of the application
 Thought that it is a good idea to make some screenshots from time to time to see how the software evolves.
