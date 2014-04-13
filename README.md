@@ -28,7 +28,7 @@ Useful links and information
 * [Geographical distance](http://en.wikipedia.org/wiki/Geographical_distance)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
-## Gauges Ideas
+## Gauge ideas
 Drafts on the paper
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
 
