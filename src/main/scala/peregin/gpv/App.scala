@@ -53,7 +53,8 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
-      add(Component.wrap(statusPanel), "span 2")
+      add(Component.wrap(statusPanel), "")
+      add(Component.wrap(new JXHyperlink()), "") // setup website link
     }
   }
 
