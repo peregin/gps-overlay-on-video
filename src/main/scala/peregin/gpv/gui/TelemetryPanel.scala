@@ -74,15 +74,17 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       g.setColor(Color.white)
       g.fillRect(0, 0, width, height)
 
-      // coordinates
+      // some predefined values for painting
+      g.setFont(elevFont)
+      val fm = g.getFontMetrics(elevFont)
+      val metersWidth = fm.stringWidth("3000 m")
+      val metersHalfHeight = fm.getAscent / 2
+      val pxHeight = height - 20 - fm.getHeight
+      val pxWidth = width - metersWidth - 20
+
+      // coordinates, only if the track is not empty
       if (!telemetry.track.isEmpty) {
-        g.setFont(elevFont)
-        val fm = g.getFontMetrics(elevFont)
-        val metersWidth = fm.stringWidth("3000 m")
-        val metersHalfHeight = fm.getAscent / 2
-        val pxHeight = height - 20 - fm.getHeight
         val mHeight = telemetry.elevationBoundary.diff
-        val pxWidth = width - metersWidth - 20
 
         // legend
         g.setColor(Color.black)
@@ -103,15 +105,15 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
           val y = (v * pxHeight) / mHeight
           g.drawLine(x, height - 10 - fm.getHeight, x, height - 10 - fm.getHeight - y.toInt)
         }
+      }
 
-        // grid
-        g.setColor(Color.gray)
-        for (y <- 10 until height - 10 by pxHeight / 6) {
-          g.drawLine(10 + metersWidth, y, width - 10, y)
-        }
-        for (x <- 10 + metersWidth until width - 10 by pxWidth / 8) {
-          g.drawLine(x, 10, x, height - 10 - fm.getHeight)
-        }
+      // grid
+      g.setColor(Color.gray)
+      for (y <- 10 until height - 10 by pxHeight / 6) {
+        g.drawLine(10 + metersWidth, y, width - 10, y)
+      }
+      for (x <- 10 + metersWidth until width - 10 by pxWidth / 8) {
+        g.drawLine(x, 10, x, height - 10 - fm.getHeight)
       }
     }
   }

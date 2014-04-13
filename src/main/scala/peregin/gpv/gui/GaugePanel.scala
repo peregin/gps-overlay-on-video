@@ -1,15 +1,16 @@
 package peregin.gpv.gui
 
-import scala.swing.{Label, GridPanel}
+import scala.swing.GridPanel
+import peregin.gpv.gui.gauge.SpeedGauge
 
 
 class GaugePanel extends GridPanel(0, 5) {
 
-  contents += new Label("Gauge1")
-  contents += new Label("Gauge2")
-  contents += new Label("Gauge3")
-  contents += new Label("Gauge4")
-  contents += new Label("Gauge5")
-  contents += new Label("Gauge6")
-  contents += new Label("Gauge7")
+  contents += new SpeedGauge
+  contents += new SpeedGauge
+  contents += new SpeedGauge
+  contents += new SpeedGauge
+  contents += new SpeedGauge
+  contents += new SpeedGauge
+  contents += new SpeedGauge
 }
