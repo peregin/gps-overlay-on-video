@@ -33,5 +33,5 @@ Drafts on the paper
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
 
 ## Evolution of the application
-Thought that it is a good idea to make some screenshots from time to time to see how the software evolves.
+Thought that it is a good idea to make some screenshots from time to time to see how the development evolves.
 ![20140412](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/20140412.jpg "20140412")
