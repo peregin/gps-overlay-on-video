@@ -1,4 +1,4 @@
-package peregin.tov.manual
+package peregin.gpv.manual
 
 import org.jdesktop.swingx.JXMapKit
 

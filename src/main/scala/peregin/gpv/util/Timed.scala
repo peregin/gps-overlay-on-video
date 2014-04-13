@@ -1,4 +1,4 @@
-package peregin.tov.util
+package peregin.gpv.util
 
 trait Timed {
 

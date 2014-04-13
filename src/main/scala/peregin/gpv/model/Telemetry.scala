@@ -1,9 +1,9 @@
-package peregin.tov.model
+package peregin.gpv.model
 
 import java.io.File
 import scala.xml.XML
 import generated.GpxType
-import peregin.tov.util.{Logging, Timed}
+import peregin.gpv.util.{Logging, Timed}
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import javax.xml.datatype.XMLGregorianCalendar

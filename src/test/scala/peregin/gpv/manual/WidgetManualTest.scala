@@ -1,10 +1,10 @@
-package peregin.tov.manual
+package peregin.gpv.manual
 
 import scala.swing._
 import java.awt.Dimension
-import peregin.tov.util.Logging
+import peregin.gpv.util.Logging
 import scala.swing.event.ButtonClicked
-import peregin.tov.gui.Goodies
+import peregin.gpv.gui.Goodies
 
 
 object WidgetManualTest extends SimpleSwingApplication with Logging {

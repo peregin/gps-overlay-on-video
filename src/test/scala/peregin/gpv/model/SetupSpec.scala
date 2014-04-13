@@ -1,8 +1,8 @@
-package peregin.tov.model
+package peregin.gpv.model
 
 import org.specs2.mutable.Specification
-import peregin.tov.util.Logging
-import peregin.tov.Setup
+import peregin.gpv.util.Logging
+import peregin.gpv.Setup
 
 
 class SetupSpec extends Specification with Logging {

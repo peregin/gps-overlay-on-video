@@ -1,4 +1,4 @@
-package peregin.tov.gui
+package peregin.gpv.gui
 
 import scala.swing.{Component, Panel}
 import net.miginfocom.swing.MigLayout

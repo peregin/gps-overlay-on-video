@@ -1,4 +1,4 @@
-package peregin.tov.model
+package peregin.gpv.model
 
 object MinMax {
   def zero = new MinMax(0, 0)

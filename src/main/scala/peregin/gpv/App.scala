@@ -1,15 +1,15 @@
-package peregin.tov
+package peregin.gpv
 
 import scala.swing._
 import java.awt.Dimension
 import javax.imageio.ImageIO
-import peregin.tov.gui._
+import peregin.gpv.gui._
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx._
-import peregin.tov.util.{Timed, Logging}
+import peregin.gpv.util.{Timed, Logging}
 import java.awt.event.{ActionEvent, ActionListener}
-import peregin.tov.model.Telemetry
+import peregin.gpv.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
 
@@ -46,8 +46,10 @@ object App extends SimpleSwingApplication with Logging with Timed {
       add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
-      val dashboardPanel = new DashboardPanel
-      add(titled("Dashboard (gauges and templates)", dashboardPanel), "height 30%, span 2, wrap")
+      val gaugePanel = new GaugePanel
+      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
+      val templatePanel = new TemplatePanel
+      add(titled("Dashboard (gauges and templates)", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))

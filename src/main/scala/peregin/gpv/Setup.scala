@@ -1,7 +1,7 @@
-package peregin.tov
+package peregin.gpv
 
 import java.io.FileWriter
-import peregin.tov.util.JsonConverter
+import peregin.gpv.util.JsonConverter
 import scala.io.Source
 
 

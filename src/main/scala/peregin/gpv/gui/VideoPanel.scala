@@ -1,4 +1,4 @@
-package peregin.tov.gui
+package peregin.gpv.gui
 
 import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -8,7 +8,7 @@ import com.xuggle.mediatool.event.IVideoPictureEvent
 import javax.swing.JPanel
 import java.awt.{Color, Graphics, Image}
 import scala.swing.Component
-import peregin.tov.Setup
+import peregin.gpv.Setup
 
 
 class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") {

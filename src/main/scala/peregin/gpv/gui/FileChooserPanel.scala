@@ -1,10 +1,10 @@
-package peregin.tov.gui
+package peregin.gpv.gui
 
 import java.io.File
-import peregin.tov.util.Logging
+import peregin.gpv.util.Logging
 import scala.swing.{FileChooser, TextArea, Button, Label}
 import scala.swing.event.ButtonClicked
-import peregin.tov.App
+import peregin.gpv.App
 import javax.swing.filechooser.FileNameExtensionFilter
 
 

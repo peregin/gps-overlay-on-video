@@ -1,4 +1,4 @@
-package peregin.tov.gui.map
+package peregin.gpv.gui.map
 
 import org.jdesktop.swingx.mapviewer.wms.{WMSService, WMSTileFactory}
 

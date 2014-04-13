@@ -1,15 +1,15 @@
-package peregin.tov.gui
+package peregin.gpv.gui
 
 import scala.swing._
-import peregin.tov.util.Logging
+import peregin.gpv.util.Logging
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
 import java.io.File
-import peregin.tov.model.Telemetry
+import peregin.gpv.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{Font, BasicStroke, RenderingHints, Color}
-import peregin.tov.Setup
-import peregin.tov.gui.map.MapQuestTileFactory
+import peregin.gpv.Setup
+import peregin.gpv.gui.map.MapQuestTileFactory
 import scala.swing.Font
 
 

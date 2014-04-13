@@ -1,4 +1,4 @@
-package peregin.tov.model
+package peregin.gpv.model
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
