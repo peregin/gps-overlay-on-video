@@ -12,6 +12,7 @@ import java.awt.event.{ActionEvent, ActionListener}
 import peregin.gpv.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
+import java.net.URI
 
 
 object App extends SimpleSwingApplication with Logging with Timed {
@@ -41,7 +42,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
       toolbar.add(createToolbarButton("images/save.png", "Save", saveProject))
       toolbar.addSeparator()
       toolbar.add(createToolbarButton("images/video.png", "Export", exportProject))
-      add(Component.wrap(toolbar), "span 2, wrap")
+      add(toolbar, "span 2, wrap")
 
       add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
@@ -53,8 +54,10 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
-      add(Component.wrap(statusPanel), "")
-      add(Component.wrap(new JXHyperlink()), "") // setup website link
+      add(statusPanel, "pushx, growx")
+      val link = new JXHyperlink()
+      link.setURI(new URI("www.peregin.com"))
+      add(link, "split, w 150!, align right")
     }
   }
 

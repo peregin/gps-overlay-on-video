@@ -8,7 +8,7 @@ version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.10.3"
 
-scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation")
+scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation", "-language:implicitConversions")
 
 resolvers ++= Seq(
   "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"

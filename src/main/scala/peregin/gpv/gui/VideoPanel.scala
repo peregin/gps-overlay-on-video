@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage
 import com.xuggle.mediatool.event.IVideoPictureEvent
 import javax.swing.JPanel
 import java.awt.{Color, Graphics, Image}
-import scala.swing.Component
 import peregin.gpv.Setup
 
 
@@ -40,7 +39,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
     }
   }
   val imagePanel = new ImagePanel
-  add(Component.wrap(imagePanel), "grow, pushy, wrap")
+  add(imagePanel, "grow, pushy, wrap")
 
   def refresh(setup: Setup) {
     chooser.fileInput.text = setup.videoPath.getOrElse("")

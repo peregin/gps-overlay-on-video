@@ -1,6 +1,6 @@
 package peregin.gpv.gui
 
-import scala.swing.{Label, Component, Dialog, Window}
+import scala.swing.{Label, Dialog, Window}
 import java.awt.{Point, Toolkit}
 import org.jdesktop.swingx.JXBusyLabel
 
@@ -22,7 +22,7 @@ object Goodies {
       contents = new MigPanel("ins 5", "", "") {
         val busy = new JXBusyLabel
         busy.setBusy(true)
-        add(Component.wrap(busy), "")
+        add(busy, "")
         add(new Label("Loading..."), "")
       }
       import scala.concurrent._

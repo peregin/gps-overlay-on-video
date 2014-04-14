@@ -31,7 +31,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   mapKit.setMiniMapVisible(false)
   mapKit.setAddressLocation(telemetry.centerPosition)
   mapKit.setZoom(6)
-  add(Component.wrap(mapKit), "growx, wrap")
+  add(mapKit, "growx, wrap")
 
   val routePainter = new Painter[JXMapViewer] {
     override def paint(g2: Graphics2D, `object`: JXMapViewer, width: Int, height: Int) = {
