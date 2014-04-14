@@ -23,6 +23,7 @@ class SpeedGauge extends GaugeComponent {
     g.setColor(Color.yellow)
     g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
 
+    // draw a thick open arc
     var x = (w - d) / 2
     var y = (h - d) / 2
     val start = -45
@@ -32,6 +33,7 @@ class SpeedGauge extends GaugeComponent {
     g.setColor(Color.black)
     g.draw(arc)
 
+    // draw the border
     d = b - strokeWidth / 2
     x = (w - d) / 2
     y = (h - d) / 2
@@ -39,5 +41,18 @@ class SpeedGauge extends GaugeComponent {
     g.setColor(Color.white)
     g.setStroke(new BasicStroke(2))
     g.draw(arc)
+
+    // draw the marks
+    val r = d / 2 // the radius of the circle
+    val cx = w / 2
+    val cy = h / 2
+    val ticks = 6
+    for (t <- 0 to ticks) {
+      val angle = -start - t * extent / ticks
+      g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - 4, angle), polarY(cy, r - 4, angle))
+    }
   }
+  
+  def polarX(cx: Double, r: Double, angle: Double): Int = (cx + r * math.cos(math.toRadians(angle))).toInt
+  def polarY(cy: Double, r: Double, angle: Double): Int = (cy + r * math.sin(math.toRadians(angle))).toInt
 }
