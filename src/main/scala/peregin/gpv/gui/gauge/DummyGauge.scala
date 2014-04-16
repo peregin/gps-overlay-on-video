@@ -7,7 +7,7 @@ import scala.swing.{Graphics2D, Font}
 
 class DummyGauge extends GaugeComponent {
 
-   val sf = new Font("Dialog", Font.BOLD, 12)
+   val sf = new Font("Verdana", Font.BOLD, 12)
 
    override def paint(g: Graphics2D) = {
      val w = peer.getWidth
