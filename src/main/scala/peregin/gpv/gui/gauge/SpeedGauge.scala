@@ -2,14 +2,11 @@ package peregin.gpv.gui.gauge
 
 import peregin.gpv.gui.GaugeComponent
 import scala.swing.Graphics2D
-import java.awt.{RenderingHints, BasicStroke, Font, Color}
-import scala.swing.Font
+import java.awt.{RenderingHints, BasicStroke, Color}
 import java.awt.geom.Arc2D
 
 
 class SpeedGauge extends GaugeComponent {
-
-  val sf = new Font("Verdana", Font.BOLD, 12)
 
   override def paint(g: Graphics2D) = {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
@@ -19,9 +16,9 @@ class SpeedGauge extends GaugeComponent {
 
     val w = peer.getWidth
     val h = peer.getHeight
-    val b = math.min(w, h)
-    val strokeWidth = b / 5
-    var d = b - strokeWidth * 1.5
+    val box = math.min(w, h)
+    val strokeWidth = box / 5
+    var d = box - strokeWidth * 1.5
 
     g.setColor(Color.yellow)
     g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
@@ -37,7 +34,7 @@ class SpeedGauge extends GaugeComponent {
     g.draw(arc)
 
     // draw the border
-    d = b - strokeWidth / 2
+    d = box - strokeWidth / 2
     x = (w - d) / 2
     y = (h - d) / 2
     arc = new Arc2D.Double(x, y, d, d, start, extent, Arc2D.OPEN)
@@ -46,7 +43,7 @@ class SpeedGauge extends GaugeComponent {
     g.setStroke(borderStroke)
     g.draw(arc)
 
-    // draw the marks
+    // draw the the ticks and units
     val r = d / 2 // the radius of the circle
     val cx = w / 2
     val cy = h / 2
@@ -54,7 +51,7 @@ class SpeedGauge extends GaugeComponent {
     val longTickLength = math.max(2, r / 10)
     val smallTickLength = math.max(1, longTickLength / 2)
     val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20))
-    g.setFont(sf.deriveFont((longTickLength + 2).toFloat))
+    g.setFont(gaugeFont.deriveFont((longTickLength + 2).toFloat))
     for (t <- 0 to ticks) {
       val angle = -start - t * extent / ticks
       val tickLength = if (t % 10 == 0) {
@@ -72,8 +69,13 @@ class SpeedGauge extends GaugeComponent {
       }
       g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
+
+    // draw pointer
+    g.setColor(Color.black)
+    var cr = (longTickLength / 2).toInt + 1
+    g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
+    g.setColor(Color.yellow)
+    cr -= 1
+    g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
   }
-  
-  def polarX(cx: Double, r: Double, angle: Double): Int = (cx + r * math.cos(math.toRadians(angle))).toInt
-  def polarY(cy: Double, r: Double, angle: Double): Int = (cy + r * math.sin(math.toRadians(angle))).toInt
 }
