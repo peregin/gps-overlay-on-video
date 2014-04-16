@@ -10,3 +10,6 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.5")
 
 // xml data binding
 addSbtPlugin("org.scalaxb" % "sbt-scalaxb" % "1.1.2")
+
+// generates build information, timestamp
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.1")

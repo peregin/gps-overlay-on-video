@@ -1,5 +1,6 @@
 package peregin.gpv
 
+import info.BuildInfo
 import scala.swing._
 import java.awt.Dimension
 import javax.imageio.ImageIO
@@ -61,7 +62,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     }
   }
 
-  frame.title = "GPS data overlay onto video"
+  frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
   frame.iconImage = loadImage("images/video.png")
   frame.size = new Dimension(1024, 768)
   Goodies.center(frame)

@@ -1,5 +1,6 @@
 package peregin.gpv.manual
 
+import info.BuildInfo
 import scala.swing._
 import java.awt.{Color, Dimension}
 import peregin.gpv.gui.{Goodies, MigPanel}
@@ -11,7 +12,7 @@ import peregin.gpv.util.Logging
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
   val frame = new MainFrame {
-    title = "Gauge Test Container"
+    title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
       background = Color.lightGray
 

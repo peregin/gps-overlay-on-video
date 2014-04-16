@@ -1,3 +1,5 @@
+import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 import ScalaxbKeys._
 
 organization := "peregin.com"
@@ -21,6 +23,16 @@ net.virtualvoid.sbt.graph.Plugin.graphSettings
 scalaxbSettings
 
 sourceGenerators in Compile <+= scalaxb in Compile
+
+buildInfoSettings
+
+sourceGenerators in Compile <+= buildInfo
+
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
+  LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+})
+
+buildInfoPackage := "info"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.3"
 
