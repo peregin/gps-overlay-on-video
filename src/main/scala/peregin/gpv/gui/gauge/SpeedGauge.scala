@@ -39,7 +39,7 @@ class SpeedGauge extends GaugeComponent {
     y = (h - d) / 2
     arc = new Arc2D.Double(x, y, d, d, start, extent, Arc2D.OPEN)
     g.setColor(Color.white)
-    g.setStroke(new BasicStroke(math.max(1, strokeWidth/10)))
+    g.setStroke(new BasicStroke(math.max(2, strokeWidth/10)))
     g.draw(arc)
 
     // draw the marks
@@ -47,9 +47,10 @@ class SpeedGauge extends GaugeComponent {
     val cx = w / 2
     val cy = h / 2
     val ticks = 6
+    val tickLength = math.max(2, r / 10)
     for (t <- 0 to ticks) {
       val angle = -start - t * extent / ticks
-      g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - 4, angle), polarY(cy, r - 4, angle))
+      g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
   }
   
