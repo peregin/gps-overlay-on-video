@@ -56,9 +56,10 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
       add(controls, "span 2, wrap")
     }
   }
-  Goodies.center(frame)
-
   override def top = frame
+
+  Goodies.center(frame)
+  curValueAdjusted()
 
   def minValueAdjusted() {
     val min = minSpinner.getValue.asInstanceOf[Int]

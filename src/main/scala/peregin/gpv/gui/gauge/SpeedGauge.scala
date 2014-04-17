@@ -50,7 +50,7 @@ class SpeedGauge extends GaugeComponent {
     val r = d / 2 // the radius of the circle
     val cx = w / 2
     val cy = h / 2
-    val ticks = 6 * 10
+    val ticks = input.boundary.tenths
     val longTickLength = math.max(2, r / 10)
     val smallTickLength = math.max(1, longTickLength / 2)
     val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20))
