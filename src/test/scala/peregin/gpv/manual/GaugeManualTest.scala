@@ -9,6 +9,7 @@ import peregin.gpv.util.Logging
 import javax.swing.{JSlider, JSpinner}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 import scala.swing.Font
+import peregin.gpv.model.{MinMax, InputValue}
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
@@ -75,5 +76,6 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
 
   def updateGui(min: Int, max: Int, cur: Int) {
     status.text = s"Current Value $cur"
+    gauges.foreach(_.input = InputValue(cur, MinMax(min, max)))
   }
 }

@@ -1,12 +1,15 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.gui.GaugeComponent
 import scala.swing.Graphics2D
-import java.awt.{RenderingHints, BasicStroke, Color}
+import java.awt.{Font, RenderingHints, BasicStroke, Color}
 import java.awt.geom.Arc2D
+import peregin.gpv.model.{MinMax, InputValue}
 
 
 class SpeedGauge extends GaugeComponent {
+
+  val dummy = InputValue(27.81, MinMax(0, 62))
+  override def defaultInput = dummy
 
   override def paint(g: Graphics2D) = {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
@@ -69,6 +72,15 @@ class SpeedGauge extends GaugeComponent {
       }
       g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
+
+    // draw current speed
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4).toFloat))
+    val text = f"${input.current}%2.1f"
+    val tb = g.getFontMetrics.getStringBounds(text, g)
+    g.setColor(Color.black)
+    g.drawString(text, ((w - tb.getWidth) / 2).toInt + 1, (cy + box / 2 - tb.getHeight * 1.2).toInt + 1)
+    g.setColor(Color.yellow)
+    g.drawString(text, ((w - tb.getWidth) / 2).toInt, (cy + box / 2 - tb.getHeight * 1.2).toInt)
 
     // draw pointer
     g.setColor(Color.black)
