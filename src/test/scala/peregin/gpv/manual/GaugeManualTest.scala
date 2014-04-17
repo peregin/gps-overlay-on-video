@@ -2,32 +2,49 @@ package peregin.gpv.manual
 
 import info.BuildInfo
 import scala.swing._
-import java.awt.Color
+import java.awt.{Font, Color}
 import peregin.gpv.gui.{Goodies, MigPanel}
 import peregin.gpv.gui.gauge.SpeedGauge
 import peregin.gpv.util.Logging
 import javax.swing.{JSlider, JSpinner}
+import javax.swing.event.{ChangeEvent, ChangeListener}
+import scala.swing.Font
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
   val minSpinner = new JSpinner
   minSpinner.setValue(0)
+  minSpinner.addChangeListener(new ChangeListener {
+    override def stateChanged(e: ChangeEvent) = minValueAdjusted()
+  })
+
   val maxSpinner = new JSpinner
   maxSpinner.setValue(75)
+  maxSpinner.addChangeListener(new ChangeListener {
+    override def stateChanged(e: ChangeEvent) = maxValueAdjusted()
+  })
+
   val slider = new JSlider(0, 75, 32)
+  slider.addChangeListener(new ChangeListener {
+    override def stateChanged(e: ChangeEvent) = curValueAdjusted()
+  })
+
   val status = new Label(s"Current Value ${slider.getValue}")
+  status.font = new Font("Verdana", Font.BOLD, 16)
+
+  val gauges = List.fill(4)(new SpeedGauge)
 
   val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
       background = Color.lightGray
 
-      add(new SpeedGauge, "w 50px, h 50px")
+      add(gauges(0), "w 50px, h 50px")
       add(status, "wrap")
-      add(new SpeedGauge, "w 100px, h 100px, wrap")
-      add(new SpeedGauge, "w 200px, h 200px")
-      add(new SpeedGauge, "w 300px, h 300px, wrap")
+      add(gauges(1), "w 100px, h 100px, wrap")
+      add(gauges(2), "w 200px, h 200px")
+      add(gauges(3), "w 300px, h 300px, wrap")
       val controls = new MigPanel("", "[fill]", "[fill]") {
         add(new Label("Min"), "alignx left")
         add(minSpinner, "alignx left, wmin 50")
@@ -41,4 +58,22 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
   Goodies.center(frame)
 
   override def top = frame
+
+  def minValueAdjusted() {
+    val min = minSpinner.getValue.asInstanceOf[Int]
+    slider.setMinimum(min)
+    updateGui(min, maxSpinner.getValue.asInstanceOf[Int], slider.getValue)
+  }
+  def maxValueAdjusted() {
+    val max = maxSpinner.getValue.asInstanceOf[Int]
+    slider.setMaximum(max)
+    updateGui(minSpinner.getValue.asInstanceOf[Int], max, slider.getValue)
+  }
+  def curValueAdjusted() {
+    updateGui(minSpinner.getValue.asInstanceOf[Int], maxSpinner.getValue.asInstanceOf[Int], slider.getValue)
+  }
+
+  def updateGui(min: Int, max: Int, cur: Int) {
+    status.text = s"Current Value $cur"
+  }
 }
