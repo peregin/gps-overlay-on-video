@@ -4,12 +4,12 @@ import info.BuildInfo
 import scala.swing._
 import java.awt.{Font, Color}
 import peregin.gpv.gui.{Goodies, MigPanel}
-import peregin.gpv.gui.gauge.SpeedGauge
 import peregin.gpv.util.Logging
 import javax.swing.{JSlider, JSpinner}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 import scala.swing.Font
 import peregin.gpv.model.{MinMax, InputValue}
+import peregin.gpv.gui.gauge.CadenceGauge
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
@@ -34,7 +34,7 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
   val status = new Label(s"Current Value ${slider.getValue}")
   status.font = new Font("Verdana", Font.BOLD, 16)
 
-  val gauges = List.fill(4)(new SpeedGauge)
+  val gauges = List.fill(4)(new CadenceGauge)
 
   val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
