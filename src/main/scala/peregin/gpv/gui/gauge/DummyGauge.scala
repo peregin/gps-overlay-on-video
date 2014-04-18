@@ -1,6 +1,5 @@
 package peregin.gpv.gui.gauge
 
-import java.awt.Color
 import scala.swing.Graphics2D
 import peregin.gpv.model.{MinMax, InputValue}
 
@@ -11,11 +10,10 @@ class DummyGauge extends GaugeComponent {
   override def defaultInput = dummy
 
   override def paint(g: Graphics2D) = {
+    super.paint(g)
+
     val w = peer.getWidth
     val h = peer.getHeight
-
-    g.setColor(Color.yellow)
-    g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
 
     g.setFont(gaugeFont)
     val text = "Speed Gauge - 18 km/h"

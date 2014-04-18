@@ -12,19 +12,13 @@ class SpeedGauge extends GaugeComponent {
   override def defaultInput = dummy
 
   override def paint(g: Graphics2D) = {
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-    g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
-    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE)
+    super.paint(g)
 
     val w = peer.getWidth
     val h = peer.getHeight
     val box = math.min(w, h)
     val strokeWidth = box / 5
     var dia = box - strokeWidth * 1.5
-
-    g.setColor(Color.yellow)
-    g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
 
     // draw a thick open arc
     var x = (w - dia) / 2
