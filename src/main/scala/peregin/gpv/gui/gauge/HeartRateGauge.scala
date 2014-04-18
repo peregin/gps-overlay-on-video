@@ -24,7 +24,7 @@ class HeartRateGauge extends GaugeComponent {
     val px = 10
     val py = (h - 10) / 2
     val d = box / 5
-    g.fillOval(px, Kpy, d / 2, d / 2)
+    g.fillOval(px, py, d / 2, d / 2)
     g.fillOval(px + d / 2, py, d / 2, d / 2)
     val tri = new Polygon
     tri.addPoint(px, py + d / 4)
