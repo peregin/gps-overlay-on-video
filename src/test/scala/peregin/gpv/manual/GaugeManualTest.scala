@@ -9,32 +9,32 @@ import javax.swing.{JSlider, JSpinner}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 import scala.swing.Font
 import peregin.gpv.model.{MinMax, InputValue}
-import peregin.gpv.gui.gauge.CadenceGauge
+import peregin.gpv.gui.gauge.ElevationGauge
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
+  val gauges = List.fill(4)(new ElevationGauge)
+
   val minSpinner = new JSpinner
-  minSpinner.setValue(0)
+  minSpinner.setValue(gauges(0).defaultInput.boundary.min.toInt)
   minSpinner.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = minValueAdjusted()
   })
 
   val maxSpinner = new JSpinner
-  maxSpinner.setValue(75)
+  maxSpinner.setValue(gauges(0).defaultInput.boundary.max.toInt)
   maxSpinner.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = maxValueAdjusted()
   })
 
-  val slider = new JSlider(0, 75, 32)
+  val slider = new JSlider(gauges(0).defaultInput.boundary.min.toInt, gauges(0).defaultInput.boundary.max.toInt, gauges(0).defaultInput.current.toInt)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = curValueAdjusted()
   })
 
   val status = new Label(s"Current Value ${slider.getValue}")
   status.font = new Font("Verdana", Font.BOLD, 16)
-
-  val gauges = List.fill(4)(new CadenceGauge)
 
   val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
