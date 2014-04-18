@@ -27,10 +27,10 @@ class HeartRateGauge extends GaugeComponent {
     g.fillOval(px, py, d / 2, d / 2)
     g.fillOval(px + d / 2, py, d / 2, d / 2)
     val tri = new Polygon
-    tri.addPoint(px, py + d / 4)
-    tri.addPoint(px + d, py + d / 4)
+    val yadj = d / 12
+    tri.addPoint(px, py + d / 4 + yadj)
+    tri.addPoint(px + d, py + d / 4 + yadj)
     tri.addPoint(px + d / 2, py + d)
-    g.setColor(Color.black)
     g.fill(tri)
 
     // draw current value
