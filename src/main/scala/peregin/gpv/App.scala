@@ -51,7 +51,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
       val gaugePanel = new GaugePanel
       add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
       val templatePanel = new TemplatePanel
-      add(titled("Dashboard (gauges and templates)", templatePanel), "height 30%, wrap")
+      add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
