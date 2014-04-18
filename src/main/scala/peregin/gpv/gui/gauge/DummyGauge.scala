@@ -17,11 +17,10 @@ class DummyGauge extends GaugeComponent {
     g.setColor(Color.yellow)
     g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
 
-    g.setColor(Color.white)
     g.setFont(gaugeFont)
     val text = "Speed Gauge - 18 km/h"
     val fm = g.getFontMetrics(gaugeFont)
     val sw = fm.stringWidth(text)
-    g.drawString(text, (w - sw) / 2, (h + fm.getHeight) / 2)
+    textWidthShadow(g, text, (w - sw) / 2, (h + fm.getHeight) / 2)
   }
 }

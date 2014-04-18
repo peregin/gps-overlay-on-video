@@ -1,9 +1,9 @@
 package peregin.gpv.gui.gauge
 
-import scala.swing.Graphics2D
-import java.awt.{Font, RenderingHints, BasicStroke, Color}
+import java.awt._
 import java.awt.geom.Arc2D
-import peregin.gpv.model.{MinMax, InputValue}
+import peregin.gpv.model.MinMax
+import peregin.gpv.model.InputValue
 
 
 class SpeedGauge extends GaugeComponent {
@@ -21,33 +21,34 @@ class SpeedGauge extends GaugeComponent {
     val h = peer.getHeight
     val box = math.min(w, h)
     val strokeWidth = box / 5
-    var d = box - strokeWidth * 1.5
+    var dia = box - strokeWidth * 1.5
 
     g.setColor(Color.yellow)
     g.drawRoundRect(1, 1, w - 2, h - 2, 5, 5)
 
     // draw a thick open arc
-    var x = (w - d) / 2
-    var y = (h - d) / 2
+    var x = (w - dia) / 2
+    var y = (h - dia) / 2
     val start = -45
     val extent = 270
-    var arc = new Arc2D.Double(x, y, d, d, start, extent, Arc2D.OPEN)
+    var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
     g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
     g.setColor(Color.black)
     g.draw(arc)
 
     // draw the border
-    d = box - strokeWidth / 2
-    x = (w - d) / 2
-    y = (h - d) / 2
-    arc = new Arc2D.Double(x, y, d, d, start, extent, Arc2D.OPEN)
+    dia = box - strokeWidth / 2
+    x = (w - dia) / 2
+    y = (h - dia) / 2
+    arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
     g.setColor(Color.white)
     val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10))
     g.setStroke(borderStroke)
     g.draw(arc)
 
     // draw the the ticks and units
-    val r = d / 2 // the radius of the circle
+    g.setColor(Color.white)
+    val r = dia / 2 // the radius of the circle
     val cx = w / 2
     val cy = h / 2
     val ticks = input.boundary.tenths
@@ -73,14 +74,33 @@ class SpeedGauge extends GaugeComponent {
       g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
 
+    // draw colored sections with color
+    dia = box - strokeWidth * 2.5
+    x = (w - dia) / 2
+    y = (h - dia) / 2
+    g.setColor(Color.red)
+    arc = new Arc2D.Double(x, y, dia, dia, start, 50, Arc2D.OPEN)
+    g.draw(arc)
+    g.setColor(Color.yellow)
+    arc = new Arc2D.Double(x, y, dia, dia, start + 50, 50, Arc2D.OPEN)
+    g.draw(arc)
+    g.setColor(Color.green)
+    arc = new Arc2D.Double(x, y, dia, dia, start + 100, 100, Arc2D.OPEN)
+    g.draw(arc)
+    g.setColor(Color.gray)
+    arc = new Arc2D.Double(x, y, dia, dia, start + 200, extent - 200, Arc2D.OPEN)
+    g.draw(arc)
+
     // draw current speed
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4).toFloat))
     val text = f"${input.current}%2.1f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
-    g.setColor(Color.black)
-    g.drawString(text, ((w - tb.getWidth) / 2).toInt + 1, (cy + box / 2 - tb.getHeight * 1.2).toInt + 1)
-    g.setColor(Color.yellow)
-    g.drawString(text, ((w - tb.getWidth) / 2).toInt, (cy + box / 2 - tb.getHeight * 1.2).toInt)
+    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    // draw unit
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 1).toFloat))
+    val utext = "km/h"
+    val utb = g.getFontMetrics.getStringBounds(utext, g)
+    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 3)
 
     // draw pointer
     g.setColor(Color.black)
@@ -89,5 +109,17 @@ class SpeedGauge extends GaugeComponent {
     g.setColor(Color.yellow)
     cr -= 1
     g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
+
+    val pointerAngle = - extent - start + input.current * extent / input.boundary.tenths
+    val pointer = r - strokeWidth / 1.2
+    val pointerStroke = new BasicStroke(math.max(2, strokeWidth / 5), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f)
+    g.setStroke(pointerStroke)
+    val px = polarX(cx, pointer, pointerAngle)
+    val py = polarY(cy, pointer, pointerAngle)
+    g.setColor(Color.black)
+    g.drawLine(cx + 1, cy + 1, px + 1, py + 1)
+    g.setColor(Color.yellow)
+    g.drawLine(cx, cy, px, py)
+
   }
 }
