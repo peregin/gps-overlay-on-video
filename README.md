@@ -34,4 +34,4 @@ Drafts on the paper
 
 ## Evolution of the application
 Thought that it is a good idea to make some screenshots from time to time to see how the development evolves.
-![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/20140414.jpg "latest screenshot")
+![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/20140418.jpg "latest screenshot")
