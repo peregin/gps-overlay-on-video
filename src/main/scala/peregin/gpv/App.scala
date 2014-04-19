@@ -38,20 +38,20 @@ object App extends SimpleSwingApplication with Logging with Timed {
         })
         btn
       }
-      toolbar.add(createToolbarButton("images/new.png", "New", newProject))
-      toolbar.add(createToolbarButton("images/open.png", "Open", openProject))
-      toolbar.add(createToolbarButton("images/save.png", "Save", saveProject))
+      toolbar.add(createToolbarButton("images/new.png", "New", newProject()))
+      toolbar.add(createToolbarButton("images/open.png", "Open", openProject()))
+      toolbar.add(createToolbarButton("images/save.png", "Save", saveProject()))
       toolbar.addSeparator()
-      toolbar.add(createToolbarButton("images/video.png", "Export", exportProject))
+      toolbar.add(createToolbarButton("images/video.png", "Export", exportProject()))
       add(toolbar, "span 2, wrap")
 
       add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
       val gaugePanel = new GaugePanel
-      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
+      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 25%")
       val templatePanel = new TemplatePanel
-      add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
+      add(titled("Dashboard templates", templatePanel), "height 25%, wrap")
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
