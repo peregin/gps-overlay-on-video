@@ -48,9 +48,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
       mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
       mediaReader.addListener(new MediaToolAdapter {
         override def onVideoPicture(event: IVideoPictureEvent) = {
-
           imagePanel.show(event.getImage)
-
           super.onVideoPicture(event)
         }
       })
