@@ -5,12 +5,13 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import com.xuggle.mediatool.{MediaToolAdapter, ToolFactory}
 import java.awt.image.BufferedImage
 import com.xuggle.mediatool.event.IVideoPictureEvent
-import javax.swing.JPanel
+import javax.swing.{JSlider, JPanel}
 import java.awt.{Color, Graphics, Image}
 import peregin.gpv.Setup
+import peregin.gpv.util.Logging
 
 
-class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") {
+class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   val chooser = new FileChooserPanel("Load video file:", openVideoData, new FileNameExtensionFilter("Video files (mp4)", "mp4"))
   add(chooser, "pushx, growx, wrap")
@@ -41,6 +42,12 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
   val imagePanel = new ImagePanel
   add(imagePanel, "grow, pushy, wrap")
 
+  val controlPanel = new MigPanel("ins 0", "", "") {
+    add(new JSlider(0, 100, 0), "pushx, growx")
+    add(new ImageButton("images/play.png", "Play", playVideo), "align right")
+  }
+  add(controlPanel, "growx")
+
   def refresh(setup: Setup) {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
     setup.videoPath.foreach{path =>
@@ -54,5 +61,9 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
       })
       (1 until 100)foreach(_ => mediaReader.readPacket())
     }
+  }
+
+  def playVideo() {
+    log.info("play video...")
   }
 }

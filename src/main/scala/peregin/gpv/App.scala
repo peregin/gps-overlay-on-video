@@ -3,13 +3,11 @@ package peregin.gpv
 import info.BuildInfo
 import scala.swing._
 import java.awt.Dimension
-import javax.imageio.ImageIO
 import peregin.gpv.gui._
 import javax.swing._
 import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx._
-import peregin.gpv.util.{Timed, Logging}
-import java.awt.event.{ActionEvent, ActionListener}
+import peregin.gpv.util.{Io, Timed, Logging}
 import peregin.gpv.model.Telemetry
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
@@ -30,28 +28,20 @@ object App extends SimpleSwingApplication with Logging with Timed {
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
-      def createToolbarButton[T](image: String, tooltip: String, action: => T): JXButton = {
-        val btn = new JXButton(loadIcon(image))
-        btn.setToolTipText(tooltip)
-        btn.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent) = action
-        })
-        btn
-      }
-      toolbar.add(createToolbarButton("images/new.png", "New", newProject()))
-      toolbar.add(createToolbarButton("images/open.png", "Open", openProject()))
-      toolbar.add(createToolbarButton("images/save.png", "Save", saveProject()))
+      toolbar.add(new ImageButton("images/new.png", "New", newProject()))
+      toolbar.add(new ImageButton("images/open.png", "Open", openProject()))
+      toolbar.add(new ImageButton("images/save.png", "Save", saveProject()))
       toolbar.addSeparator()
-      toolbar.add(createToolbarButton("images/video.png", "Export", exportProject()))
+      toolbar.add(new ImageButton("images/video.png", "Export", exportProject()))
       add(toolbar, "span 2, wrap")
 
       add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
       val gaugePanel = new GaugePanel
-      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 25%")
+      add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
       val templatePanel = new TemplatePanel
-      add(titled("Dashboard templates", templatePanel), "height 25%, wrap")
+      add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
       statusPanel.add(new JXLabel("Ready"))
@@ -63,7 +53,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
   }
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
-  frame.iconImage = loadImage("images/video.png")
+  frame.iconImage = Io.loadImage("images/video.png")
   frame.size = new Dimension(1024, 768)
   Goodies.center(frame)
   frame.maximize()
@@ -80,9 +70,6 @@ object App extends SimpleSwingApplication with Logging with Timed {
     theme.foreach(setPlasticTheme)
     UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
   }
-
-  def loadImage(path: String): Image = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
-  def loadIcon(path: String): Icon = new ImageIcon(loadImage(path))
 
   def titled(title: String, c: Component): Component = {
     val panel = new JXTitledPanel(title, c.peer)
