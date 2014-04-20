@@ -44,7 +44,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
   val controlPanel = new MigPanel("ins 0", "", "") {
     add(new JSlider(0, 100, 0), "pushx, growx")
-    add(new ImageButton("images/play.png", "Play", playVideo), "align right")
+    add(new ImageButton("images/play.png", "Play", playOrPauseVideo), "align right")
   }
   add(controlPanel, "growx")
 
@@ -55,6 +55,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
       mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
       mediaReader.addListener(new MediaToolAdapter {
         override def onVideoPicture(event: IVideoPictureEvent) = {
+          log.debug(s"ts = ${event.getTimeStamp} ${event.getTimeUnit}")
           imagePanel.show(event.getImage)
           super.onVideoPicture(event)
         }
@@ -63,7 +64,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
     }
   }
 
-  def playVideo() {
+  def playOrPauseVideo() {
     log.info("play video...")
   }
 }
