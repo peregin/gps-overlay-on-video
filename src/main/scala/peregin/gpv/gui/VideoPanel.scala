@@ -2,13 +2,15 @@ package peregin.gpv.gui
 
 import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
-import com.xuggle.mediatool.{MediaToolAdapter, ToolFactory}
+import com.xuggle.mediatool.{IMediaReader, MediaToolAdapter, ToolFactory}
 import java.awt.image.BufferedImage
 import com.xuggle.mediatool.event.IVideoPictureEvent
 import javax.swing.{JSlider, JPanel}
 import java.awt.{Color, Graphics, Image}
 import peregin.gpv.Setup
 import peregin.gpv.util.Logging
+import scala.swing.Swing
+import scala.concurrent._
 
 
 class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -48,19 +50,35 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
   }
   add(controlPanel, "growx")
 
+  @volatile var reader: Option[IMediaReader] = None
+
   def refresh(setup: Setup) {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
     setup.videoPath.foreach{path =>
-      val mediaReader = ToolFactory.makeReader(path)
-      mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
-      mediaReader.addListener(new MediaToolAdapter {
-        override def onVideoPicture(event: IVideoPictureEvent) = {
-          log.debug(s"ts = ${event.getTimeStamp} ${event.getTimeUnit}")
-          imagePanel.show(event.getImage)
-          super.onVideoPicture(event)
+      synchronized {
+        reader.foreach {
+          mr =>
+            if (mr.isOpen) mr.close()
         }
-      })
-      (1 until 100)foreach(_ => mediaReader.readPacket())
+        reader = Some(ToolFactory.makeReader(path))
+        reader.foreach{mr =>
+          mr.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
+          mr.addListener(new MediaToolAdapter {
+            override def onVideoPicture(event: IVideoPictureEvent) = {
+              log.debug(s"ts = ${event.getTimeStamp} ${event.getTimeUnit}")
+              Swing.onEDT(imagePanel.show(event.getImage))
+              super.onVideoPicture(event)
+            }
+          })
+        import ExecutionContext.Implicits.global
+          future {
+            (0 until 200).foreach{_ =>
+              mr.readPacket()
+              Thread.sleep(30)
+            }
+          }
+        }
+      }
     }
   }
 
