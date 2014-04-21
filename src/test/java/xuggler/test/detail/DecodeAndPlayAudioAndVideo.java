@@ -17,7 +17,7 @@
  * along with Xuggle-Xuggler-Main.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package xuggler.test;
+package xuggler.test.detail;
 
 import com.xuggle.xuggler.*;
 import com.xuggle.xuggler.demos.VideoImage;

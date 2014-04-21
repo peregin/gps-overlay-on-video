@@ -17,7 +17,7 @@
  * along with Xuggle-Xuggler-Main.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package xuggler.test;
+package xuggler.test.detail;
 
 import com.xuggle.xuggler.*;
 import com.xuggle.xuggler.demos.VideoImage;
@@ -49,6 +49,7 @@ public class DecodeAndPlayVideo
     //  throw new IllegalArgumentException("must pass in a filename" +
     //  		" as the first argument");
 
+    //String filename = args[0];
     String filename = "/Users/levi/Downloads/gopro/sihlwald-web.mp4"; //args[0];
 
     // Let's make sure that we can actually convert video pixel formats.

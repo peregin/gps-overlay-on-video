@@ -17,7 +17,7 @@
  * along with Xuggle-Xuggler-Main.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
-package xuggler.test;
+package xuggler.test.tools;
 
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
