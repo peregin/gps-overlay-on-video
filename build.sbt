@@ -1,5 +1,3 @@
-import java.time.format.DateTimeFormatter
-import java.time.LocalDateTime
 import ScalaxbKeys._
 
 organization := "peregin.com"
@@ -29,7 +27,7 @@ buildInfoSettings
 sourceGenerators in Compile <+= buildInfo
 
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
-  LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
 })
 
 buildInfoPackage := "info"
