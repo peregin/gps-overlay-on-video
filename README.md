@@ -22,6 +22,7 @@ The application is using libraries and images created by other people or organiz
 * [JXMapViewer](http://wiki.openstreetmap.org/wiki/JXMapViewer) to show the map and the track
 * [xuggle library](http://www.xuggle.com/) to decode, encode and manipulate video files
 * [iconeden](http://www.iconeden.com/icon/category/free) for the beautiful icon packs they offer
+* [digital true type fonts](http://www.styleseven.com/) for the gauges with digital numbers
 
 ## Resources
 Useful links and information

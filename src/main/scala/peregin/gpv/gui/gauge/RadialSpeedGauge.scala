@@ -6,7 +6,7 @@ import peregin.gpv.model.MinMax
 import peregin.gpv.model.InputValue
 
 
-class SpeedGauge extends GaugeComponent {
+class RadialSpeedGauge extends GaugeComponent {
 
   val dummy = InputValue(27.81, MinMax(0, 62))
   override def defaultInput = dummy

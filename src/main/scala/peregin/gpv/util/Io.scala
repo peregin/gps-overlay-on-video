@@ -14,6 +14,9 @@ object Io {
     c.close()
   }
 
-  def loadImage(path: String): Image = ImageIO.read(classOf[App].getClassLoader.getResourceAsStream(path))
+  def getResource(path: String) = classOf[App].getClassLoader.getResourceAsStream(path)
+
+  def loadImage(path: String): Image = ImageIO.read(getResource(path))
+
   def loadIcon(path: String): Icon = new ImageIcon(loadImage(path))
 }
