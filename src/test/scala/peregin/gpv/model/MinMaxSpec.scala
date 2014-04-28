@@ -24,5 +24,20 @@ class MinMaxSpec extends Specification {
       0.roundDownToTenth === 0
       -11.roundDownToTenth === -20
     }
+
+    "round up to nearest hundredth" in {
+      27.2.roundUpToHundredth === 100
+      210.5.roundUpToHundredth === 300
+      301.roundUpToHundredth === 400
+      0.roundUpToHundredth === 0
+      -11.roundUpToHundredth === 0
+    }
+
+    "round down to nearest hundredth" in {
+      210.5.roundDownToHundredth === 200
+      301.roundDownToHundredth === 300
+      0.roundDownToHundredth === 0
+      -11.roundDownToHundredth === -100
+    }
   }
 }

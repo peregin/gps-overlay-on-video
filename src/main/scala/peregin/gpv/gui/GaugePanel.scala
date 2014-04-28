@@ -8,7 +8,8 @@ class GaugePanel extends GridPanel(0, 5) {
 
   contents += new RadialSpeedGauge
   contents += new CadenceGauge
-  contents += new ElevationGauge
+  contents += new IconicElevationGauge
+  contents += new LinearElevationGauge
   contents += new HeartRateGauge
   contents += new DigitalSpeedGauge
 }

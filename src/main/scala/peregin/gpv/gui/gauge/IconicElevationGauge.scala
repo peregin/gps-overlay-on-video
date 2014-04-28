@@ -6,7 +6,7 @@ import peregin.gpv.model.InputValue
 import java.awt.geom.{Rectangle2D, Area}
 
 
-class ElevationGauge extends GaugeComponent {
+class IconicElevationGauge extends GaugeComponent {
 
   val dummy = InputValue(689, MinMax(432, 1252))
   override def defaultInput = dummy

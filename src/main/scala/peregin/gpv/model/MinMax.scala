@@ -5,14 +5,19 @@ object MinMax {
   def extreme = new MinMax(Double.MaxValue, Double.MinValue)
 
   implicit class RoundedDouble(v: Double) {
-    def roundUpToTenth = {
-      val r = v % 10
-      val adjust = if (r <= 0) 0d else 10d
+    def roundUpToTenth = roundUpTo(10)
+    def roundUpToHundredth = roundUpTo(100)
+    private def roundUpTo(base: Int) = {
+      val r = v % base
+      val adjust = if (r <= 0) 0d else base
       v - r + adjust
     }
-    def roundDownToTenth = {
-      val r = v % 10
-      val adjust = if (r >= 0) 0d else 10d
+
+    def roundDownToTenth = roundDownTo(10)
+    def roundDownToHundredth = roundDownTo(100)
+    def roundDownTo(base: Int) = {
+      val r = v % base
+      val adjust = if (r >= 0) 0d else base
       v - r - adjust
     }
   }
@@ -31,4 +36,5 @@ case class MinMax(var min: Double, var max: Double) {
 
   import MinMax._
   def tenths = (max.roundUpToTenth - min.roundDownToTenth).toInt
+  def hundredths = (max.roundUpToHundredth - min.roundDownToHundredth).toInt
 }

@@ -8,12 +8,12 @@ import peregin.gpv.util.Logging
 import javax.swing.{JSlider, JSpinner}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 import peregin.gpv.model.{MinMax, InputValue}
-import peregin.gpv.gui.gauge.{DigitalSpeedGauge, HeartRateGauge}
+import peregin.gpv.gui.gauge.LinearElevationGauge
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
-  val gauges = List.fill(4)(new DigitalSpeedGauge)
+  val gauges = List.fill(4)(new LinearElevationGauge)
   gauges.foreach(_.debug = true)
 
   val minSpinner = new JSpinner
