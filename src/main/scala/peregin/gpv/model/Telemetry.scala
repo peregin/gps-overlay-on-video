@@ -35,7 +35,7 @@ object Telemetry extends Timed with Logging {
   def empty = new Telemetry(Seq.empty)
 }
 
-case class Telemetry(track: Seq[TrackPoint]) extends Timed {
+case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
@@ -49,5 +49,40 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed {
       longitudeBoundary.sample(point.position.getLongitude)
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
+  }
+
+  def minTime = track.head.time
+  def maxTime = track.last.time
+
+  /**
+   * retrieves the interpolated time for the given progress
+   * @param progressInPerc is defined between 0 and 100
+   */
+  def timeForProgress(progressInPerc: Double): Option[DateTime] = {
+    if (progressInPerc <= 0d) track.headOption.map(_.time)
+    else if (progressInPerc >= 100d) track.lastOption.map(_.time)
+    else (track.headOption, track.lastOption) match {
+      case (Some(first), Some(last)) =>
+        val firstMillis = first.time.getMillis
+        val lastMillis = last.time.getMillis
+        val millis = firstMillis + progressInPerc * (lastMillis - firstMillis) / 100
+        //log.info(s"min=$firstMillis max=$lastMillis millis=$millis")
+        Some(new DateTime(millis.toLong))
+      case _ => None
+    }
+  }
+
+  /**
+   * retrieves a progress between 0 and 100
+   */
+  def progressForTime(t: DateTime): Double = (track.headOption, track.lastOption) match {
+    case (Some(first), Some(last)) =>
+      val millis = t.getMillis
+      val firstMillis = first.time.getMillis
+      val lastMillis = last.time.getMillis
+      if (millis <= firstMillis) 0d
+      else if (millis >= lastMillis) 100d
+      else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
+    case _ => 0d
   }
 }
