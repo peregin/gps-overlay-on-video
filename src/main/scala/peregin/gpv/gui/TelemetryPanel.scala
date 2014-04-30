@@ -4,7 +4,7 @@ import scala.swing._
 import peregin.gpv.util.Logging
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
 import java.io.File
-import peregin.gpv.model.Telemetry
+import peregin.gpv.model.{Sonda, Telemetry}
 import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{Font, BasicStroke, RenderingHints, Color}
@@ -31,7 +31,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   mapKit.setTileFactory(new MapQuestTileFactory)
   mapKit.setDataProviderCreditShown(true)
   mapKit.setMiniMapVisible(false)
-  mapKit.setAddressLocation(telemetry.centerPosition)
+  mapKit.setAddressLocation(telemetry.centerGeoPosition)
   mapKit.setZoom(6)
   add(mapKit, "growx, wrap")
 
@@ -68,7 +68,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   // altitude widget
   class AltitudePanel extends Panel {
 
-    private var poi: Option[DateTime] = None
+    private var poi: Option[Sonda] = None
 
     val elevFont = new Font("Arial", Font.BOLD, 10)
     lazy val elevFm = peer.getGraphics.getFontMetrics(elevFont)
@@ -108,28 +108,29 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
         // elevation
         g.setColor(Color.lightGray)
-        // TODO: use time interpolation here, just painting based on the index is inaccurate
-        val trackWidth = telemetry.track.size
-        for (i <- 0 until trackWidth) {
-          val v = telemetry.track(i).elevation - telemetry.elevationBoundary.min
-          val x = gridLeft + (i * pxWidth) / trackWidth
-          val y = (v * pxHeight) / mHeight
-          g.drawLine(x, gridBottom, x, gridBottom - y.toInt)
+        for (i <- 0 until pxWidth) {
+          val f = i * 100 / pxWidth
+          telemetry.timeForProgress(f).map(telemetry.sonda).foreach{sonda =>
+            val v = sonda.elevation.current - telemetry.elevationBoundary.min
+            val x = gridLeft + i
+            val y = v * pxHeight / mHeight
+            g.drawLine(x, gridBottom, x, gridBottom - y.toInt)
+          }
         }
       }
 
       // grid
       g.setColor(Color.gray)
-      for (y <- 10 until height - 10 by pxHeight / 6) {
+      for (y <- 10 until height - 10 by math.max(1, pxHeight / 6)) {
         g.drawLine(gridLeft, y, gridRight, y)
       }
-      for (x <- gridLeft until gridRight by pxWidth / 8) {
+      for (x <- gridLeft until gridRight by math.max(1, pxWidth / 8)) {
         g.drawLine(x, 10, x, gridBottom)
       }
 
       // POI marker and data
-      poi.foreach{t =>
-        val p = telemetry.progressForTime(t)
+      poi.foreach{sonda =>
+        val p = telemetry.progressForTime(sonda.time)
         val x = (gridLeft + p * pxWidth / 100).toInt
         g.setColor(Color.blue)
         g.drawLine(x, 10, x, gridBottom)
@@ -138,22 +139,24 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
         // draw data; time, speed, distance
         g.setColor(Color.blue)
-        g.drawString(t.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
+        g.drawString(sonda.time.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
+        g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + timeWidth * 3, height - 10 + metersHalfHeight)
       }
     }
 
     def timeForPoint(pt: Point): Option[DateTime] = {
-      val x = pt.x.toDouble
+      val x = pt.x
       val width = peer.getWidth
       // constants below are defined in the paint method as well
       val gridLeft = 10 + metersWidth
       val gridRight = width - 10
-      val progressInPerc = (x - gridLeft) * 100 / (gridRight - gridLeft)
+      val progressInPerc = (x - gridLeft).toDouble * 100 / (gridRight - gridLeft)
+      //log.info(s"progress $progressInPerc")
       telemetry.timeForProgress(progressInPerc)
     }
     
-    def refreshPoi(t: Option[DateTime]) {
-      poi = t
+    def refreshPoi(sonda: Option[Sonda]) {
+      poi = sonda
       repaint()
     }
   }
@@ -162,14 +165,16 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   listenTo(altitude.mouse.clicks)
   reactions += {
-    case MouseClicked(`altitude`, pt, _, 1, false) => altitude.refreshPoi(altitude.timeForPoint(pt))
+    case MouseClicked(`altitude`, pt, _, 1, false) =>
+      val sonda = altitude.timeForPoint(pt).map(telemetry.sonda)
+      altitude.refreshPoi(sonda)
   }
 
   def refresh(setup: Setup, telemetry: Telemetry) {
     chooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
 
-    mapKit.setAddressLocation(telemetry.centerPosition)
+    mapKit.setAddressLocation(telemetry.centerGeoPosition)
     mapKit.repaint()
 
     altitude.refreshPoi(None)

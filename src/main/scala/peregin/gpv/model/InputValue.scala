@@ -1,5 +1,9 @@
 package peregin.gpv.model
 
+object InputValue {
+
+  def zero = new InputValue(0d, MinMax.zero)
+}
 
 case class InputValue(current: Double, boundary: MinMax) {
 

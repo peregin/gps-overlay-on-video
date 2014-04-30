@@ -12,6 +12,8 @@ import scala.language.implicitConversions
 
 object Telemetry extends Timed with Logging {
 
+  val centerPosition = new GeoPosition(47.366074, 8.541264) // Buerkliplatz, Zurich, Switzerland
+
   def load(file: File): Telemetry = timed("load telemetry file") {
     val node = XML.loadFile(file)
     val binding = scalaxb.fromXML[GpxType](node)
@@ -40,7 +42,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
-  var centerPosition = new GeoPosition(47.366074, 8.541264) // Buerkliplatz, Zurich, Switzerland
+  private var centerPosition = Telemetry.centerPosition
 
   def analyze() = timed("analyze GPS data") {
     track.foreach{point =>
@@ -50,6 +52,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
   }
+
+  def centerGeoPosition = centerPosition
 
   def minTime = track.head.time
   def maxTime = track.last.time
@@ -63,10 +67,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     else if (progressInPerc >= 100d) track.lastOption.map(_.time)
     else (track.headOption, track.lastOption) match {
       case (Some(first), Some(last)) =>
-        val firstMillis = first.time.getMillis
-        val lastMillis = last.time.getMillis
-        val millis = firstMillis + progressInPerc * (lastMillis - firstMillis) / 100
-        //log.info(s"min=$firstMillis max=$lastMillis millis=$millis")
+        val millis = interpolate(progressInPerc, first.time.getMillis, last.time.getMillis)
         Some(new DateTime(millis.toLong))
       case _ => None
     }
@@ -76,13 +77,53 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
    * retrieves a progress between 0 and 100
    */
   def progressForTime(t: DateTime): Double = (track.headOption, track.lastOption) match {
-    case (Some(first), Some(last)) =>
-      val millis = t.getMillis
-      val firstMillis = first.time.getMillis
-      val lastMillis = last.time.getMillis
-      if (millis <= firstMillis) 0d
-      else if (millis >= lastMillis) 100d
-      else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
+    case (Some(first), Some(last)) => progressForTime(t, first.time, last.time)
     case _ => 0d
   }
+
+  // 0 - 100
+  def progressForTime(t: DateTime, first: DateTime, last: DateTime): Double = {
+    val millis = t.getMillis
+    val firstMillis = first.getMillis
+    val lastMillis = last.getMillis
+    if (millis <= firstMillis) 0d
+    else if (millis >= lastMillis) 100d
+    else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
+  }
+
+  def sonda(t: DateTime): Sonda = {
+    val tn = track.size
+    if (tn < 2) Sonda(t, InputValue.zero)
+    else {
+      // find the closest track point with a simple binary search
+      // eventually to improve the performance by searching on percentage of time between the endpoints of the list
+      def findClosestIndex(list: Seq[TrackPoint], t: DateTime, ix: Int): Int = {
+        val n = list.size
+        if (n < 2) ix
+        else {
+          val c = n / 2
+          val tp = list(c)
+          if (t.isBefore(tp.time)) findClosestIndex(list.slice(0, c), t, ix)
+          else findClosestIndex(list.slice(c, n), t, ix + c)
+        }
+      }
+      val ix = findClosestIndex(track, t, 0)
+      val tr = track(ix)
+      val (left, right) = ix match {
+        case 0 => (tr, track(1))
+        case last if last >= tn - 1 => (track(tn - 2), tr)
+        case _ if t.isBefore(tr.time) => (tr, track(ix + 1))
+        case _ => (track(ix - 1), tr)
+      }
+      interpolate(t, left, right)
+    }
+  }
+
+  def interpolate(t: DateTime, left: TrackPoint, right: TrackPoint): Sonda = {
+    val f = progressForTime(t, left.time, right.time)
+    val elevation = interpolate(f, left.elevation, right.elevation)
+    Sonda(t, InputValue(elevation, elevationBoundary))
+  }
+
+  def interpolate(f: Double, left: Double, right: Double): Double = left + f * (right - left) / 100
 }
