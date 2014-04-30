@@ -39,7 +39,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     override def paint(g2: Graphics2D, `object`: JXMapViewer, width: Int, height: Int) = {
       val g = g2.create().asInstanceOf[Graphics2D]
       // convert from viewport to world bitmap
-      val rect = mapKit.getMainMap().getViewportBounds()
+      val rect = mapKit.getMainMap.getViewportBounds
       g.translate(-rect.x, -rect.y)
 
       // do the drawing
@@ -52,17 +52,17 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       val region = telemetry.track.map(_.position)
       region.foreach{gp =>
         // convert geo to world bitmap pixel
-        val pt = mapKit.getMainMap().getTileFactory().geoToPixel(gp, mapKit.getMainMap().getZoom())
+        val pt = mapKit.getMainMap.getTileFactory.geoToPixel(gp, mapKit.getMainMap.getZoom)
         if (lastX != -1 && lastY != -1) {
-          g.drawLine(lastX, lastY, pt.getX().toInt, pt.getY().toInt)
+          g.drawLine(lastX, lastY, pt.getX.toInt, pt.getY.toInt)
         }
-        lastX = pt.getX().toInt
-        lastY = pt.getY().toInt
+        lastX = pt.getX.toInt
+        lastY = pt.getY.toInt
       }
       g.dispose()
     }
   }
-  mapKit.getMainMap().setOverlayPainter(routePainter)
+  mapKit.getMainMap.setOverlayPainter(routePainter)
 
 
   // altitude widget
@@ -74,6 +74,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     lazy val elevFm = peer.getGraphics.getFontMetrics(elevFont)
     lazy val metersWidth = elevFm.stringWidth("3000 m")
     lazy val metersHalfHeight = elevFm.getAscent / 2
+    lazy val timeWidth = elevFm.stringWidth("00:00:00")
 
     override def paint(g: Graphics2D) = {
       val width = peer.getWidth
@@ -103,7 +104,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         val timeFirst = telemetry.minTime.toString("HH:mm:ss")
         val timeLast = telemetry.maxTime.toString("HH:mm:ss")
         g.drawString(timeFirst, gridLeft, height - 10 + metersHalfHeight)
-        g.drawString(timeLast, gridRight - elevFm.stringWidth(timeLast), height - 10 + metersHalfHeight)
+        g.drawString(timeLast, gridRight - timeWidth, height - 10 + metersHalfHeight)
 
         // elevation
         g.setColor(Color.lightGray)
@@ -126,14 +127,18 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         g.drawLine(x, 10, x, gridBottom)
       }
 
-      // POI
+      // POI marker and data
       poi.foreach{t =>
         val p = telemetry.progressForTime(t)
         val x = (gridLeft + p * pxWidth / 100).toInt
         g.setColor(Color.blue)
         g.drawLine(x, 10, x, gridBottom)
         g.fillOval(x - 5, 5, 10, 10)
-        g.fillOval(x - 5, gridBottom - 5, 10, 10)
+        //g.fillOval(x - 5, gridBottom - 5, 10, 10)
+
+        // draw data; time, speed, distance
+        g.setColor(Color.blue)
+        g.drawString(t.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
       }
     }
 
