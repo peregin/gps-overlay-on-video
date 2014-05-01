@@ -109,12 +109,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         // elevation
         g.setColor(Color.lightGray)
         for (i <- 0 until pxWidth) {
-          val f = i.toDouble * 100 / pxWidth
+          val f = i.toDouble * 100 / pxWidth // use double value for the percentage
           telemetry.timeForProgress(f).map(telemetry.sonda).foreach{sonda =>
             val v = sonda.elevation.current - telemetry.elevationBoundary.min
             val x = gridLeft + i
             val y = v * pxHeight / mHeight
-            log.info(s"x=$i f=$f elev=${sonda.elevation.current} y=$y")
+            //log.info(s"x=$i f=$f elev=${sonda.elevation.current} y=$y")
             g.drawLine(x, gridBottom, x, gridBottom - y.toInt)
           }
         }

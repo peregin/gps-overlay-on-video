@@ -18,11 +18,16 @@ class TelemetrySpec extends Specification {
       telemetry.progressForTime(new DateTime(2014, 6, 1, 11, 0)) === 100
     }
 
-    "interpolate data" in {
-      val t = new DateTime(2014, 6, 1, 10, 30)
-      val sonda = telemetry.sonda(t)
-      sonda.time === t
+    "interpolate elevation" in {
+      val sonda = telemetry.sonda(new DateTime(2014, 6, 1, 10, 30))
+      sonda.time === new DateTime(2014, 6, 1, 10, 30)
       sonda.elevation.current === 150
+
+      telemetry.sonda(new DateTime(2014, 6, 1, 9, 0)).elevation.current === 100
+      telemetry.sonda(new DateTime(2014, 6, 1, 10, 0)).elevation.current === 100
+      telemetry.sonda(new DateTime(2014, 6, 1, 11, 0)).elevation.current === 200
+      telemetry.sonda(new DateTime(2014, 6, 1, 12, 0)).elevation.current === 200
+      telemetry.sonda(new DateTime(2014, 6, 1, 10, 15)).elevation.current === 125
     }
   }
 }
