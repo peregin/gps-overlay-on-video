@@ -12,14 +12,12 @@ import scala.language.implicitConversions
 
 object Telemetry extends Timed with Logging {
 
-  val centerPosition = new GeoPosition(47.366074, 8.541264) // Buerkliplatz, Zurich, Switzerland
-
   def load(file: File): Telemetry = timed("load telemetry file") {
     val node = XML.loadFile(file)
     val binding = scalaxb.fromXML[GpxType](node)
     val points = binding.trk.head.trkseg.head.trkpt.map(wyp =>
       TrackPoint(
-        new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0),
+        new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0d),
         wyp.time
       )
     )
@@ -42,7 +40,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
-  private var centerPosition = Telemetry.centerPosition
+  private var centerPosition = TrackPoint.centerPosition
 
   def analyze() = timed("analyze GPS data") {
     track.foreach{point =>
