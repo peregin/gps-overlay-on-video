@@ -39,8 +39,9 @@ class TelemetrySpec extends Specification {
 
     "calculate telemetry data min max" in {
       telemetry.track must haveSize(2219)
-      telemetry.minTime === new DateTime(2014, 4, 6, 10, 6, 21)
-      telemetry.maxTime === new DateTime(2014, 4, 6, 12, 6, 26)
+      val tz = telemetry.minTime.getZone
+      telemetry.minTime === new DateTime(2014, 4, 6, 10, 6, 21, tz)
+      telemetry.maxTime === new DateTime(2014, 4, 6, 12, 6, 26, tz)
     }
   }
 }
