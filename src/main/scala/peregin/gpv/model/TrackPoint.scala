@@ -18,6 +18,7 @@ object TrackPoint {
 
 /**
  * GeoPosition holds the (latitude, longitude) pair, sometimes referred as phi and lambda.
+ * Percent slope = %m = (rise / run) * 100
  */
 case class TrackPoint(position: GeoPosition,
                       elevation: Double,
@@ -32,8 +33,13 @@ case class TrackPoint(position: GeoPosition,
   // average grade (expressed in percentage) or steepness of the segment between previous and current track points
   var grade = 0d
 
+  val millisToHours = 1000 * 60 * 60
   def analyze(prev: TrackPoint) {
-    // TODO: continue from here, calculate all values
+    segment = distanceTo(prev)
+    distance = prev.distance + segment
+    val dt = (time.getMillis - prev.time.getMillis).toDouble / millisToHours
+    if (dt != 0d) speed = segment / dt
+    if (segment > 0) (elevation - prev.elevation) * 100 / distance
   }
 
   // The return value is the distance expressed in kilometers.
