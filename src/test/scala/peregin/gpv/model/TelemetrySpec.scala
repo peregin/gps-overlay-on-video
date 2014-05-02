@@ -35,6 +35,9 @@ class TelemetrySpec extends Specification {
 
   "telemetry with test data from Sihlwald" should {
 
+    // activity tracked:
+    // http://connect.garmin.com/activity/491279898 - extact data
+    // http://app.strava.com/activities/127544825 - contains more data
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/sihlwald.gpx")))
 
     "calculate telemetry data min max" in {
@@ -45,6 +48,7 @@ class TelemetrySpec extends Specification {
       telemetry.elevationBoundary === MinMax(446.2, 913.2)
       telemetry.latitudeBoundary === MinMax(47.231995, 47.310311)
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
+      // 25.87 - according to garmin connect is
       telemetry.totalDistance === 20.395783185056917
       telemetry.speedBoundary === MinMax(0.0200150867454907, 59.35393308722325)
     }
