@@ -1,7 +1,7 @@
 package peregin.gpv.model
 
-import java.io.File
-import scala.xml.XML
+import java.io.{InputStream, File}
+import scala.xml.{Node, XML}
 import generated.GpxType
 import peregin.gpv.util.{Logging, Timed}
 import org.jdesktop.swingx.mapviewer.GeoPosition
@@ -12,8 +12,10 @@ import scala.language.implicitConversions
 
 object Telemetry extends Timed with Logging {
 
-  def load(file: File): Telemetry = timed("load telemetry file") {
-    val node = XML.loadFile(file)
+  def load(file: File): Telemetry = loadWith(XML.loadFile(file))
+  
+  def loadWith(loadFunc: => Node): Telemetry = timed("load telemetry") {
+    val node = loadFunc
     val binding = scalaxb.fromXML[GpxType](node)
     val points = binding.trk.head.trkseg.head.trkpt.map(wyp =>
       TrackPoint(
