@@ -36,9 +36,10 @@ case class TrackPoint(position: GeoPosition,
   def analyze(next: TrackPoint) {
     segment = distanceTo(next)
     next.distance = distance + segment
+    val flatSegment = flatDistanceTo(next)
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
-    if (dt != 0d) speed = flatDistanceTo(next) / dt
-    if (segment > 0) grade = (next.elevation - elevation) / (segment * 10)
+    if (dt != 0d) speed = flatSegment / dt
+    if (flatSegment > 0) grade = (next.elevation - elevation) / (flatSegment * 1000)
   }
 
   // The return value is the distance expressed in kilometers.

@@ -106,6 +106,13 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         g.drawString(timeFirst, gridLeft, height - 10 + metersHalfHeight)
         g.drawString(timeLast, gridRight - timeWidth, height - 10 + metersHalfHeight)
 
+        // max distance and speed
+        g.setColor(Color.red)
+        g.drawString(f"${telemetry.speedBoundary.max}%1.1f", 10, 10 + metersHalfHeight + elevFm.getHeight)
+        g.drawString("km/h", 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
+        g.drawString(f"${telemetry.totalDistance}%1.1f", 10, 10 + metersHalfHeight + 4 * elevFm.getHeight)
+        g.drawString("km", 10, 10 + metersHalfHeight + 5 * elevFm.getHeight)
+
         // elevation
         g.setColor(Color.lightGray)
         for (i <- 0 until pxWidth) {
@@ -141,7 +148,9 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         // draw data; time, speed, distance
         g.setColor(Color.blue)
         g.drawString(sonda.time.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
-        g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + timeWidth * 3, height - 10 + metersHalfHeight)
+        g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + (timeWidth * 2.9).toInt, height - 10 + metersHalfHeight)
+        g.drawString(f"${sonda.distance.current}%1.1fkm", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
+        g.drawString(f"${sonda.speed.current}%1.1fkm/h", gridLeft + (timeWidth * 4.9).toInt, height - 10 + metersHalfHeight)
       }
     }
 

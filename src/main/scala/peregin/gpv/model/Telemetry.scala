@@ -43,6 +43,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
   val speedBoundary = MinMax.extreme
+  val gradeBoundary = MinMax.extreme
 
   private var centerPosition = TrackPoint.centerPosition
 
@@ -57,6 +58,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
         val nextPoint = track(i + 1)
         point.analyze(nextPoint)
         speedBoundary.sample(point.speed)
+        gradeBoundary.sample(point.grade)
       }
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
@@ -104,7 +106,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   def sonda(t: DateTime): Sonda = {
     val tn = track.size
-    if (tn < 2) Sonda(t, InputValue.zero)
+    if (tn < 2) Sonda.zeroAt(t)
     else {
       // find the closest track point with a simple binary search
       // eventually to improve the performance by searching on percentage of time between the endpoints of the list
@@ -133,7 +135,11 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def interpolate(t: DateTime, left: TrackPoint, right: TrackPoint): Sonda = {
     val f = progressForTime(t, left.time, right.time)
     val elevation = interpolate(f, left.elevation, right.elevation)
-    Sonda(t, InputValue(elevation, elevationBoundary))
+    val distance = left.distance + interpolate(f, 0, left.segment)
+    Sonda(t,
+      InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
+      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary)
+    )
   }
 
   def interpolate(f: Double, left: Double, right: Double): Double = left + f * (right - left) / 100
