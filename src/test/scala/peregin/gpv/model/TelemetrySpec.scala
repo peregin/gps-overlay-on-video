@@ -1,7 +1,7 @@
 package peregin.gpv.model
 
 import org.specs2.mutable.Specification
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
 import scala.xml.XML
 
 
@@ -39,7 +39,7 @@ class TelemetrySpec extends Specification {
 
     "calculate telemetry data min max" in {
       telemetry.track must haveSize(2219)
-      val tz = telemetry.minTime.getZone
+      val tz = DateTimeZone.forID("Europe/Zurich")
       telemetry.minTime === new DateTime(2014, 4, 6, 10, 6, 21, tz)
       telemetry.maxTime === new DateTime(2014, 4, 6, 12, 6, 26, tz)
     }
