@@ -33,10 +33,10 @@ Useful links and information
 * [Slope percentage](http://geology.isu.edu/geostac/Field_Exercise/topomaps/slope_calc.htm)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
-## Gauge ideas
-Drafts on the paper
-![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
-
 ## Evolution of the application
 Thought that it is a good idea to make some screenshots from time to time to see how the development evolves.
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
+
+## Gauge ideas
+Drafts on the paper
+![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
