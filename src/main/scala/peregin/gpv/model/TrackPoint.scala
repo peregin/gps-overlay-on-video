@@ -12,6 +12,8 @@ object TrackPoint {
   // The default position shown in the map when no GPS data is loaded.
   // Buerkliplatz, Zurich, Switzerland
   val centerPosition = new GeoPosition(47.366074, 8.541264)
+
+  def empty = new TrackPoint(centerPosition, 0, DateTime.now())
 }
 
 /**
@@ -20,6 +22,19 @@ object TrackPoint {
 case class TrackPoint(position: GeoPosition,
                       elevation: Double,
                       time: DateTime) {
+
+  // total distance up to this track point
+  var distance = 0d
+  // distance between the previous and current track points
+  var segment = 0d
+  // average speed of travelling form the previous to current track point
+  var speed = 0d
+  // average grade (expressed in percentage) or steepness of the segment between previous and current track points
+  var grade = 0d
+
+  def analyze(prev: TrackPoint) {
+    // TODO: continue from here, calculate all values
+  }
 
   // The return value is the distance expressed in kilometers.
   // It uses a flat surface formula, spherical earth projected to a plane with the pythagorean theorem.

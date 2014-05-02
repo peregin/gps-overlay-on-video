@@ -45,10 +45,13 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   private var centerPosition = TrackPoint.centerPosition
 
   def analyze() = timed("analyze GPS data") {
+    var prevPoint = if (track.isEmpty) TrackPoint.empty else track.head
     track.foreach{point =>
       elevationBoundary.sample(point.elevation)
       latitudeBoundary.sample(point.position.getLatitude)
       longitudeBoundary.sample(point.position.getLongitude)
+      point.analyze(prevPoint)
+      prevPoint = point
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
   }
