@@ -6,7 +6,7 @@ name := "telemetry-on-video"
 
 version := "1.0.0-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation", "-language:implicitConversions")
 
@@ -32,7 +32,7 @@ buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, Buil
 
 buildInfoPackage := "info"
 
-libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.3"
+libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
