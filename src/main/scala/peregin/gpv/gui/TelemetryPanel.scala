@@ -13,6 +13,7 @@ import peregin.gpv.gui.map.MapQuestTileFactory
 import scala.swing.Font
 import org.joda.time.DateTime
 import scala.swing.event.MouseClicked
+import org.jdesktop.swingx.mapviewer.GeoPosition
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
@@ -25,45 +26,59 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
 
   // map widget
-  val mapKit = new JXMapKit
-  mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
-  //mapKit.setTileFactory(new NasaTileFactory)
-  mapKit.setTileFactory(new MapQuestTileFactory)
-  mapKit.setDataProviderCreditShown(true)
-  mapKit.setMiniMapVisible(false)
-  mapKit.setAddressLocation(telemetry.centerGeoPosition)
-  mapKit.setZoom(6)
-  add(mapKit, "growx, wrap")
+  class MapPanel extends JXMapKit {
 
-  val routePainter = new Painter[JXMapViewer] {
-    override def paint(g2: Graphics2D, `object`: JXMapViewer, width: Int, height: Int) = {
-      val g = g2.create().asInstanceOf[Graphics2D]
-      // convert from viewport to world bitmap
-      val rect = mapKit.getMainMap.getViewportBounds
-      g.translate(-rect.x, -rect.y)
+    private var poi: Option[GeoPosition] = None
 
-      // do the drawing
-      g.setColor(Color.RED)
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-      g.setStroke(new BasicStroke(2))
+    setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
+    //setTileFactory(new NasaTileFactory)
+    setTileFactory(new MapQuestTileFactory)
+    setDataProviderCreditShown(true)
+    setMiniMapVisible(false)
+    setAddressLocation(telemetry.centerGeoPosition)
+    setZoom(6)
 
-      var lastX = -1
-      var lastY = -1
-      val region = telemetry.track.map(_.position)
-      region.foreach{gp =>
-        // convert geo to world bitmap pixel
-        val pt = mapKit.getMainMap.getTileFactory.geoToPixel(gp, mapKit.getMainMap.getZoom)
-        if (lastX != -1 && lastY != -1) {
-          g.drawLine(lastX, lastY, pt.getX.toInt, pt.getY.toInt)
+    val routePainter = new Painter[JXMapViewer] {
+      override def paint(g2: Graphics2D, `object`: JXMapViewer, width: Int, height: Int) = {
+        val g = g2.create().asInstanceOf[Graphics2D]
+        // convert from viewport to world bitmap
+        val rect = getMainMap.getViewportBounds
+        g.translate(-rect.x, -rect.y)
+
+        // do the drawing
+        g.setColor(Color.RED)
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g.setStroke(new BasicStroke(2))
+
+        var lastX = -1
+        var lastY = -1
+        val region = telemetry.track.map(_.position)
+        region.foreach{ gp =>
+          // convert geo to world bitmap pixel
+          val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
+          if (lastX != -1 && lastY != -1) {
+            g.drawLine(lastX, lastY, pt.getX.toInt, pt.getY.toInt)
+          }
+          lastX = pt.getX.toInt
+          lastY = pt.getY.toInt
         }
-        lastX = pt.getX.toInt
-        lastY = pt.getY.toInt
+
+        // poi
+        poi.foreach{gp =>
+          g.setColor(Color.blue)
+          val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
+          g.fillOval(pt.getX.toInt - 5, pt.getY.toInt - 5, 10, 10)
+        }
+        g.dispose()
       }
-      g.dispose()
+    }
+    getMainMap.setOverlayPainter(routePainter)
+
+    def refreshPoi(sonda: Option[GeoPosition]) {
+      poi = sonda
+      repaint()
     }
   }
-  mapKit.getMainMap.setOverlayPainter(routePainter)
-
 
   // altitude widget
   class AltitudePanel extends Panel {
@@ -170,6 +185,10 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       repaint()
     }
   }
+
+  val mapKit = new MapPanel
+  add(mapKit, "growx, wrap")
+
   val altitude = new AltitudePanel
   add(altitude, "pushy, grow, gaptop 10, wrap")
 
@@ -179,6 +198,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       val sonda = altitude.timeForPoint(pt).map(telemetry.sonda)
       log.info(s"track index = ${sonda.map(_.getTrackIndex).getOrElse(0)}")
       altitude.refreshPoi(sonda)
+      mapKit.refreshPoi(sonda.map(_.location))
     }
   }
 
@@ -187,7 +207,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     this.telemetry = telemetry
 
     mapKit.setAddressLocation(telemetry.centerGeoPosition)
-    mapKit.repaint()
+    mapKit.refreshPoi(None)
 
     altitude.refreshPoi(None)
   }

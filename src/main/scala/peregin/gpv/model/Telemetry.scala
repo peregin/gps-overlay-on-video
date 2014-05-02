@@ -136,7 +136,11 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val f = progressForTime(t, left.time, right.time)
     val elevation = interpolate(f, left.elevation, right.elevation)
     val distance = left.distance + interpolate(f, 0, left.segment)
-    Sonda(t,
+    val location = new GeoPosition(
+      interpolate(f, left.position.getLatitude, right.position.getLatitude),
+      interpolate(f, left.position.getLongitude, right.position.getLongitude)
+    )
+    Sonda(t, location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
       InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary)
     )
