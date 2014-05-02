@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/peregin/gps-overlay-on-video.svg?branch=master)
+
 GPS data overlay on videos
 ==========================
 
