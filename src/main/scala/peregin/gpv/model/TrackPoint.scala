@@ -29,7 +29,7 @@ case class TrackPoint(position: GeoPosition,
   def flatDistanceTo(that: TrackPoint): Double = {
     val deltaPhi = (position.getLatitude - that.position.getLatitude).toRadians
     val deltaLambda = (position.getLongitude - that.position.getLongitude).toRadians
-    val phiMean = (position.getLatitude + that.position.getLatitude) / 2
+    val phiMean = (position.getLatitude + that.position.getLatitude).toRadians / 2
     import math._
     TrackPoint.earthRadius * sqrt(square(deltaPhi) + square(cos(phiMean) * square(deltaLambda)))
   }

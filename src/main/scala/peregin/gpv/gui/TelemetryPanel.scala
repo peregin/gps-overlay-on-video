@@ -1,7 +1,7 @@
 package peregin.gpv.gui
 
 import scala.swing._
-import peregin.gpv.util.Logging
+import peregin.gpv.util.{Timed, Logging}
 import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
 import java.io.File
 import peregin.gpv.model.{Sonda, Telemetry}
@@ -15,7 +15,7 @@ import org.joda.time.DateTime
 import scala.swing.event.MouseClicked
 
 
-class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
 
   var telemetry = Telemetry.empty
 
@@ -166,9 +166,11 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   listenTo(altitude.mouse.clicks)
   reactions += {
-    case MouseClicked(`altitude`, pt, _, 1, false) =>
+    case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"sonda for x=${pt.x}") {
       val sonda = altitude.timeForPoint(pt).map(telemetry.sonda)
+      log.info(s"track index = ${sonda.map(_.getTrackIndex).getOrElse(0)}")
       altitude.refreshPoi(sonda)
+    }
   }
 
   def refresh(setup: Setup, telemetry: Telemetry) {

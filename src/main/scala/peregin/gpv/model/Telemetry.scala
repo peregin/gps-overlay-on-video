@@ -95,17 +95,17 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     else {
       // find the closest track point with a simple binary search
       // eventually to improve the performance by searching on percentage of time between the endpoints of the list
-      def findClosestIndex(list: Seq[TrackPoint], t: DateTime, ix: Int): Int = {
+      def findNearestIndex(list: Seq[TrackPoint], t: DateTime, ix: Int): Int = {
         val n = list.size
         if (n < 2) ix
         else {
           val c = n / 2
           val tp = list(c)
-          if (t.isBefore(tp.time)) findClosestIndex(list.slice(0, c), t, ix)
-          else findClosestIndex(list.slice(c, n), t, ix + c)
+          if (t.isBefore(tp.time)) findNearestIndex(list.slice(0, c), t, ix)
+          else findNearestIndex(list.slice(c, n), t, ix + c)
         }
       }
-      val ix = findClosestIndex(track, t, 0)
+      val ix = findNearestIndex(track, t, 0)
       val tr = track(ix)
       val (left, right) = ix match {
         case 0 => (tr, track(1))
@@ -113,7 +113,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
         case _ if t.isBefore(tr.time) => (tr, track(ix + 1))
         case _ => (track(ix - 1), tr)
       }
-      interpolate(t, left, right)
+      interpolate(t, left, right).withTrackIndex(ix)
     }
   }
 

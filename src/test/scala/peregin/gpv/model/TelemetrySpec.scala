@@ -8,8 +8,8 @@ class TelemetrySpec extends Specification {
 
   "telemetry with 2 track points" should {
     val telemetry = Telemetry(Seq(
-      TrackPoint(Telemetry.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0)),
-      TrackPoint(Telemetry.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0))
+      TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0)),
+      TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0))
     ))
 
     "interpolate time" in {
