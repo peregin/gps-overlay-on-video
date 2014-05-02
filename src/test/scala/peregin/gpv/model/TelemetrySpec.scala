@@ -45,8 +45,8 @@ class TelemetrySpec extends Specification {
       telemetry.elevationBoundary === MinMax(446.2, 913.2)
       telemetry.latitudeBoundary === MinMax(47.231995, 47.310311)
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
-      telemetry.speedBoundary === MinMax(0.0200150867454907, 10080.042357393271)
-      telemetry.totalDistance === 1741.7786104158054
+      telemetry.totalDistance === 20.395783185056917
+      telemetry.speedBoundary === MinMax(0.0200150867454907, 59.35393308722325)
     }
 
     "validate first segment details" in {
