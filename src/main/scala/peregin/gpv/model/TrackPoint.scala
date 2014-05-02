@@ -12,8 +12,6 @@ object TrackPoint {
   // The default position shown in the map when no GPS data is loaded.
   // Buerkliplatz, Zurich, Switzerland
   val centerPosition = new GeoPosition(47.366074, 8.541264)
-
-  def empty = new TrackPoint(centerPosition, 0, DateTime.now())
 }
 
 /**
@@ -34,12 +32,13 @@ case class TrackPoint(position: GeoPosition,
   var grade = 0d
 
   val millisToHours = 1000 * 60 * 60
-  def analyze(prev: TrackPoint) {
-    segment = distanceTo(prev)
-    distance = prev.distance + segment
-    val dt = (time.getMillis - prev.time.getMillis).toDouble / millisToHours
+
+  def analyze(next: TrackPoint) {
+    segment = distanceTo(next)
+    next.distance = distance + segment
+    val dt = (next.time.getMillis - time.getMillis).toDouble / millisToHours
     if (dt != 0d) speed = segment / dt
-    if (segment > 0) (elevation - prev.elevation) * 100 / distance
+    if (segment > 0) grade = (next.elevation - elevation) / (segment * 10)
   }
 
   // The return value is the distance expressed in kilometers.

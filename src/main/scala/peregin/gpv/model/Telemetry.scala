@@ -1,6 +1,6 @@
 package peregin.gpv.model
 
-import java.io.{InputStream, File}
+import java.io.File
 import scala.xml.{Node, XML}
 import generated.GpxType
 import peregin.gpv.util.{Logging, Timed}
@@ -42,16 +42,22 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
+  val speedBoundary = MinMax.extreme
+
   private var centerPosition = TrackPoint.centerPosition
 
   def analyze() = timed("analyze GPS data") {
-    var prevPoint = if (track.isEmpty) TrackPoint.empty else track.head
-    track.foreach{point =>
+    val n = track.size
+    for (i <- 0 until n) {
+      val point = track(i)
       elevationBoundary.sample(point.elevation)
       latitudeBoundary.sample(point.position.getLatitude)
       longitudeBoundary.sample(point.position.getLongitude)
-      point.analyze(prevPoint)
-      prevPoint = point
+      if (i < n - 1) {
+        val nextPoint = track(i + 1)
+        point.analyze(nextPoint)
+        speedBoundary.sample(point.speed)
+      }
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
   }
@@ -60,6 +66,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   def minTime = track.head.time
   def maxTime = track.last.time
+
+  def totalDistance = track.last.distance
 
   /**
    * retrieves the interpolated time for the given progress

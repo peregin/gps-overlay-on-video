@@ -1,3 +1,0 @@
-TODO
-==================
-* altitude widget
