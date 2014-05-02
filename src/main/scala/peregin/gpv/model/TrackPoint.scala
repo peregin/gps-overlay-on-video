@@ -37,15 +37,25 @@ case class TrackPoint(position: GeoPosition,
     segment = distanceTo(next)
     next.distance = distance + segment
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
-    if (dt != 0d) speed = segment / dt
+    if (dt != 0d) speed = flatDistanceTo(next) / dt
     if (segment > 0) grade = (next.elevation - elevation) / (segment * 10)
   }
 
   // The return value is the distance expressed in kilometers.
-  // It uses a flat surface formula, spherical earth projected to a plane with the pythagorean theorem.
+  // It uses the haversine formula.
   // The accuracy of the distance is decreasing if:
   // - the points are distant
   // - points are closer to the geographic pole
+  def haversineDistanceTo(that: TrackPoint): Double = {
+    val deltaPhi = (position.getLatitude - that.position.getLatitude).toRadians
+    val deltaLambda = (position.getLongitude - that.position.getLongitude).toRadians
+    import math._
+    val a = square(sin(deltaPhi / 2)) +
+      cos(that.position.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    TrackPoint.earthRadius * c
+  }
+  
   def flatDistanceTo(that: TrackPoint): Double = {
     val deltaPhi = (position.getLatitude - that.position.getLatitude).toRadians
     val deltaLambda = (position.getLongitude - that.position.getLongitude).toRadians
@@ -55,7 +65,7 @@ case class TrackPoint(position: GeoPosition,
   }
 
   def distanceTo(that: TrackPoint): Double = {
-    val d = flatDistanceTo(that) // km
+    val d = haversineDistanceTo(that) // km
     val h = (elevation - that.elevation) / 1000 // km
     import math._
     sqrt(square(d) + square(h))
