@@ -79,8 +79,9 @@ object App extends SimpleSwingApplication with Logging with Timed {
   def newProject() {
     log.info("new project")
     setup = Setup.empty
-    videoPanel.refresh(setup)
-    telemetryPanel.refresh(setup, Telemetry.empty)
+    val tm = Telemetry.empty
+    videoPanel.refresh(setup, tm)
+    telemetryPanel.refresh(setup, tm)
   }
 
   def openProject(): Unit = timed("open project") {
@@ -94,8 +95,9 @@ object App extends SimpleSwingApplication with Logging with Timed {
         setup = Setup.loadFile(file.getAbsolutePath)
         val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
         Swing.onEDT {
-          videoPanel.refresh(setup)
-          telemetryPanel.refresh(setup, telemetry.getOrElse(Telemetry.empty))
+          val tm = telemetry.getOrElse(Telemetry.empty)
+          videoPanel.refresh(setup, tm)
+          telemetryPanel.refresh(setup, tm)
         }
       }
     }
@@ -118,7 +120,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def openVideoData(file: File) {
     setup.videoPath = Some(file.getAbsolutePath)
-    videoPanel.refresh(setup)
+    videoPanel.refresh(setup, telemetryPanel.telemetry)
   }
 
   def openGpsData(file: File) {

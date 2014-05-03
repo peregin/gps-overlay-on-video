@@ -7,6 +7,8 @@ import scala.swing.{Graphics2D, Component}
 class GaugeComponent extends Component {
   this: GaugePainter =>
 
+  debug = true
+
   override def preferredSize = desiredSize
 
   override def paint(g: Graphics2D) {

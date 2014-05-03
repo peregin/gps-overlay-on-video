@@ -8,6 +8,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.language.implicitConversions
+import java.util.concurrent.TimeUnit
 
 
 object Telemetry extends Timed with Logging {
@@ -18,7 +19,6 @@ object Telemetry extends Timed with Logging {
     val node = loadFunc
     val binding = scalaxb.fromXML[GpxType](node)
     val points = binding.trk.head.trkseg.head.trkpt.map{wyp =>
-      //val HAHA = wyp.extensions.map(_.any)
       val extension = wyp.extensions.flatMap(_.any.map(_.value).headOption.map(_.toString)).
         map(GarminExtension.parse).getOrElse(GarminExtension.empty)
       TrackPoint(
@@ -111,6 +111,11 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     if (millis <= firstMillis) 0d
     else if (millis >= lastMillis) 100d
     else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
+  }
+
+  def sonda(tsInMillis: Long): Option[Sonda] = {
+    if (track.isEmpty) None
+    else Some(sonda(track.head.time.plusMillis(tsInMillis.toInt)))
   }
 
   def sonda(t: DateTime): Sonda = {

@@ -11,9 +11,13 @@ import peregin.gpv.Setup
 import peregin.gpv.util.Logging
 import scala.swing.Swing
 import scala.concurrent._
+import peregin.gpv.gui.gauge.RadialSpeedGauge
+import peregin.gpv.model.Telemetry
 
 
 class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
+
+  var telemetry = Telemetry.empty
 
   val chooser = new FileChooserPanel("Load video file:", openVideoData, new FileNameExtensionFilter("Video files (mp4)", "mp4"))
   add(chooser, "pushx, growx, wrap")
@@ -52,10 +56,15 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
   @volatile var reader: Option[IMediaReader] = None
 
-  def refresh(setup: Setup) {
+  def refresh(setup: Setup, telemetry: Telemetry) {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
+    this.telemetry = telemetry
+
     setup.videoPath.foreach{path =>
       synchronized {
+
+        val speedGauge = new RadialSpeedGauge {}
+
         reader.foreach {
           mr => if (mr.isOpen) mr.close()
         }
@@ -64,8 +73,23 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
           mr.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
           mr.addListener(new MediaToolAdapter {
             override def onVideoPicture(event: IVideoPictureEvent) = {
-              log.debug(s"ts = ${event.getTimeStamp} ${event.getTimeUnit}")
-              Swing.onEDT(imagePanel.show(event.getImage))
+              val ts = event.getTimeStamp
+              val unit = event.getTimeUnit
+              val tsInMillis = unit.toMillis(ts)
+              log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
+
+              val image = event.getImage
+              val g = image.createGraphics
+
+              telemetry.sonda(tsInMillis).foreach {sonda =>
+                speedGauge.input = sonda.speed
+              }
+              speedGauge.paint(g, 75, 75)
+
+              g.dispose()
+
+              Swing.onEDT(imagePanel.show(image))
+
               super.onVideoPicture(event)
             }
           })

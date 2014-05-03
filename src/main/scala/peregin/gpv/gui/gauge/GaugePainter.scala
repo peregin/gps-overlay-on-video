@@ -9,7 +9,7 @@ trait GaugePainter {
 
   lazy val gaugeFont = new Font("Verdana", Font.PLAIN, 12)
   private var currentInput: Option[InputValue] = None
-  private var debugging = true
+  private var debugging = false
 
   def desiredSize = new Dimension(75, 75)
 

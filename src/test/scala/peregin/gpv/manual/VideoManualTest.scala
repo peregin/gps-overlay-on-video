@@ -7,6 +7,7 @@ import peregin.gpv.gui.{VideoPanel, Goodies, MigPanel}
 import java.awt.{Dimension, Color}
 import java.io.File
 import peregin.gpv.Setup
+import peregin.gpv.model.Telemetry
 
 
 object VideoManualTest extends SimpleSwingApplication with Logging {
@@ -28,6 +29,6 @@ object VideoManualTest extends SimpleSwingApplication with Logging {
     val setup = Setup.empty
     setup.videoPath = Some(file.getAbsolutePath)
     log.info(s"opening $file")
-    video.refresh(setup)
+    video.refresh(setup, Telemetry.empty)
   }
 }
