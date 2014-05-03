@@ -25,14 +25,11 @@ trait GaugePainter {
     }
   }
 
-  def repaint()
-
   def defaultInput: InputValue
 
   def input = currentInput.getOrElse(defaultInput)
   def input_= (v: InputValue) {
     currentInput = Some(v)
-    repaint()
   }
 
   def debug = debugging

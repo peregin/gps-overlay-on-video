@@ -77,6 +77,9 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
 
   def updateGui(min: Int, max: Int, cur: Int) {
     status.text = s"Current Value $cur"
-    gauges.foreach(_.input = InputValue(cur, MinMax(min, max)))
+    gauges.foreach{g =>
+      g.input = InputValue(cur, MinMax(min, max))
+      g.repaint()
+    }
   }
 }
