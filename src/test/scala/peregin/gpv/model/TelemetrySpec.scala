@@ -7,7 +7,7 @@ import scala.xml.XML
 
 class TelemetrySpec extends Specification {
 
-  "telemetry with 2 track points" should {
+  "telemetry data with 2 track points" should {
     val track = Seq(
       TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0), GarminExtension(Some(72), Some(12), Some(110))),
       TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0), GarminExtension(Some(81), Some(14), Some(120)))
@@ -33,8 +33,7 @@ class TelemetrySpec extends Specification {
     }
   }
 
-  "telemetry with test data from Sihlwald" should {
-
+  "telemetry data cycling from Sihlwald collected with Garmin" should {
     // activity tracked:
     // http://connect.garmin.com/activity/491279898 - extact data
     // http://app.strava.com/activities/127544825 - contains more data
@@ -51,6 +50,9 @@ class TelemetrySpec extends Specification {
       telemetry.totalDistance === 25.969048381307253
       telemetry.speedBoundary === MinMax(0d, 59.24465691454863)
       //telemetry.gradeBoundary === MinMax(0d, 59.24465691454863)
+      telemetry.cadenceBoundary === MinMax(0, 120)
+      telemetry.temperatureBoundary === MinMax(6, 14)
+      telemetry.heartRateBoundary === MinMax(104, 175)
     }
 
     "validate first segment details" in {
@@ -58,6 +60,32 @@ class TelemetrySpec extends Specification {
       first.segment === 0.005317274837638873
       first.speed === 18.814181589111467
       first.grade === 0d
+    }
+  }
+
+  "telemetry cycling data from Stelvio collected with Strava" in {
+    // activity tracked:
+    // http://app.strava.com/activities/78985204 - exact data
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/stelvio.gpx")))
+
+    "calculate min max" in {
+      telemetry.track must haveSize(9558)
+      telemetry.elevationBoundary === MinMax(886.0, 2763.0)
+      telemetry.speedBoundary.max === 85.26426975194404
+      telemetry.totalDistance === 63.23256444282121
+    }
+  }
+
+  "telemetry running data from Tuefi track collected with Strava" in {
+    // activity tracked:
+    // http://app.strava.com/activities/78985204 - exact data
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/track-run.gpx")))
+
+    "calculate min max" in {
+      telemetry.track must haveSize(1009)
+      telemetry.elevationBoundary === MinMax(442.0, 447.0)
+      telemetry.speedBoundary.max === 16.412371173964363
+      telemetry.totalDistance === 4.234620202017025
     }
   }
 }

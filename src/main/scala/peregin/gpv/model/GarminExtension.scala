@@ -23,18 +23,21 @@ object GarminExtension extends Logging {
     //log.info(s"parsing extension $xml")
     val node = XML.loadString(xml)
     //val binding = scalaxb.fromXML[TrackPointExtension_t](node)
+    val map = collection.mutable.HashMap[String, String]()
     val list = node.child
     list.filter(_.isInstanceOf[Elem]).foreach{item =>
-      //println(item)
-      println
-      println("name="+item.label)
-      println("text="+item.text)
+      map += item.label -> item.text
     }
-    empty
+    import scala.util.control.Exception._
+    def convert2Double(s: String): Option[Double] = catching(classOf[NumberFormatException]) opt s.toDouble
+    val cadence = map.get("cad").flatMap(convert2Double)
+    val temperature = map.get("atemp").flatMap(convert2Double)
+    val heartRate = map.get("hr").flatMap(convert2Double)
+    new GarminExtension(cadence, temperature, heartRate)
   }
 }
 
 case class GarminExtension(cadence: Option[Double],
-                               temperature: Option[Double],
-                               heartRate: Option[Double]) {
+                           temperature: Option[Double],
+                           heartRate: Option[Double]) {
 }
