@@ -38,10 +38,9 @@ case class TrackPoint(position: GeoPosition,
   def analyze(next: TrackPoint) {
     segment = distanceTo(next)
     next.distance = distance + segment
-    val flatSegment = flatDistanceTo(next)
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
-    if (dt != 0d) speed = flatSegment / dt
-    if (flatSegment > 0) grade = (next.elevation - elevation) / (flatSegment * 1000)
+    if (dt != 0d) speed = segment / dt
+    if (segment > 0) grade = (next.elevation - elevation) / (segment * 1000)
   }
 
   // The return value is the distance expressed in kilometers.
@@ -59,15 +58,6 @@ case class TrackPoint(position: GeoPosition,
       cos(gp.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     TrackPoint.earthRadius * c
-  }
-
-  def flatDistanceTo(that: TrackPoint): Double = flatDistanceTo(that.position)
-  
-  def flatDistanceTo(gp: GeoPosition): Double = {
-    val deltaPhi = (position.getLatitude - gp.getLatitude).toRadians
-    val deltaLambda = (position.getLongitude - gp.getLongitude).toRadians
-    val phiMean = (position.getLatitude + gp.getLatitude).toRadians / 2
-    TrackPoint.earthRadius * pythagoras(deltaPhi, cos(phiMean) * square(deltaLambda))
   }
 
   def distanceTo(that: TrackPoint): Double = {

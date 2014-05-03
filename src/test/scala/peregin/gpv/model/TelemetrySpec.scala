@@ -48,8 +48,8 @@ class TelemetrySpec extends Specification {
       telemetry.latitudeBoundary === MinMax(47.231995, 47.310311)
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
       telemetry.totalDistance === 25.969048381307253
-      telemetry.speedBoundary === MinMax(0d, 59.24465691454863)
-      //telemetry.gradeBoundary === MinMax(0d, 59.24465691454863)
+      telemetry.speedBoundary === MinMax(0.07879420148031871, 86.28724568098714)
+      //telemetry.gradeBoundary === MinMax(-1.0,0.8300310261101451)
       telemetry.cadenceBoundary === MinMax(0, 120)
       telemetry.temperatureBoundary === MinMax(6, 14)
       telemetry.heartRateBoundary === MinMax(104, 175)
@@ -58,7 +58,7 @@ class TelemetrySpec extends Specification {
     "validate first segment details" in {
       val first = telemetry.track(0)
       first.segment === 0.005317274837638873
-      first.speed === 18.814181589111467
+      first.speed === 19.142189415499942
       first.grade === 0d
     }
   }
@@ -71,7 +71,7 @@ class TelemetrySpec extends Specification {
     "calculate min max" in {
       telemetry.track must haveSize(9558)
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
-      telemetry.speedBoundary.max === 85.26426975194404
+      telemetry.speedBoundary.max === 85.56435201871793
       telemetry.totalDistance === 63.23256444282121
     }
   }
@@ -84,7 +84,7 @@ class TelemetrySpec extends Specification {
     "calculate min max" in {
       telemetry.track must haveSize(1009)
       telemetry.elevationBoundary === MinMax(442.0, 447.0)
-      telemetry.speedBoundary.max === 16.412371173964363
+      telemetry.speedBoundary.max === 23.656438316953857
       telemetry.totalDistance === 4.234620202017025
     }
   }
