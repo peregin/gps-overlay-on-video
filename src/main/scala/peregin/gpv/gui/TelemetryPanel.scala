@@ -14,6 +14,7 @@ import scala.swing.Font
 import org.joda.time.DateTime
 import scala.swing.event.MouseClicked
 import org.jdesktop.swingx.mapviewer.GeoPosition
+import java.awt.event.{MouseEvent, MouseAdapter}
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
@@ -26,7 +27,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
 
   // map widget
-  class MapPanel extends JXMapKit {
+  class MapPanel extends JXMapKit with Publisher {
 
     private var poi: Option[GeoPosition] = None
 
@@ -37,6 +38,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     setMiniMapVisible(false)
     setAddressLocation(telemetry.centerGeoPosition)
     setZoom(6)
+
+    getMainMap.addMouseListener(new MouseAdapter {
+      override def mouseClicked(e: MouseEvent) {
+        MapPanel.this.publish(new MouseClicked(MapPanel.this, e.getPoint, e.getModifiers, e.getClickCount, e.isPopupTrigger)(e))
+      }
+    })
 
     val routePainter = new Painter[JXMapViewer] {
       override def paint(g2: Graphics2D, `object`: JXMapViewer, width: Int, height: Int) = {
@@ -187,16 +194,24 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
 
   val mapKit = new MapPanel
+  val mapKitWrapper = Component.wrap(mapKit)
   add(mapKit, "growx, wrap")
 
   val altitude = new AltitudePanel
   add(altitude, "pushy, grow, gaptop 10, wrap")
 
-  listenTo(altitude.mouse.clicks)
+  listenTo(altitude.mouse.clicks, mapKit)
   reactions += {
-    case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"sonda for x=${pt.x}") {
+    case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
       val sonda = altitude.timeForPoint(pt).map(telemetry.sonda)
       log.info(s"track index = ${sonda.map(_.getTrackIndex).getOrElse(0)}")
+      altitude.refreshPoi(sonda)
+      mapKit.refreshPoi(sonda.map(_.location))
+    }
+    case MouseClicked(`mapKitWrapper`, pt, _, 1, false) => timed(s"geo/map for x=${pt.x}, y=${pt.y}") {
+      val gp = mapKit.getMainMap.convertPointToGeoPosition(pt)
+      log.info(s"geo location $gp")
+      val sonda = telemetry.sonda(gp)
       altitude.refreshPoi(sonda)
       mapKit.refreshPoi(sonda.map(_.location))
     }

@@ -2,6 +2,7 @@ package peregin.gpv.model
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
+import math._
 
 object TrackPoint {
 
@@ -48,30 +49,34 @@ case class TrackPoint(position: GeoPosition,
   // The accuracy of the distance is decreasing if:
   // - the points are distant
   // - points are closer to the geographic pole
-  def haversineDistanceTo(that: TrackPoint): Double = {
-    val deltaPhi = (position.getLatitude - that.position.getLatitude).toRadians
-    val deltaLambda = (position.getLongitude - that.position.getLongitude).toRadians
+  def haversineDistanceTo(that: TrackPoint): Double = haversineDistanceTo(that.position)
+
+  def haversineDistanceTo(gp: GeoPosition): Double = {
+    val deltaPhi = (position.getLatitude - gp.getLatitude).toRadians
+    val deltaLambda = (position.getLongitude - gp.getLongitude).toRadians
     import math._
     val a = square(sin(deltaPhi / 2)) +
-      cos(that.position.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
+      cos(gp.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     TrackPoint.earthRadius * c
   }
+
+  def flatDistanceTo(that: TrackPoint): Double = flatDistanceTo(that.position)
   
-  def flatDistanceTo(that: TrackPoint): Double = {
-    val deltaPhi = (position.getLatitude - that.position.getLatitude).toRadians
-    val deltaLambda = (position.getLongitude - that.position.getLongitude).toRadians
-    val phiMean = (position.getLatitude + that.position.getLatitude).toRadians / 2
-    import math._
-    TrackPoint.earthRadius * sqrt(square(deltaPhi) + square(cos(phiMean) * square(deltaLambda)))
+  def flatDistanceTo(gp: GeoPosition): Double = {
+    val deltaPhi = (position.getLatitude - gp.getLatitude).toRadians
+    val deltaLambda = (position.getLongitude - gp.getLongitude).toRadians
+    val phiMean = (position.getLatitude + gp.getLatitude).toRadians / 2
+    TrackPoint.earthRadius * pythagoras(deltaPhi, cos(phiMean) * square(deltaLambda))
   }
 
   def distanceTo(that: TrackPoint): Double = {
     val d = haversineDistanceTo(that) // km
     val h = (elevation - that.elevation) / 1000 // km
-    import math._
-    sqrt(square(d) + square(h))
+    pythagoras(d, h)
   }
 
   def square(v: Double) = v * v
+
+  def pythagoras(a: Double, b: Double): Double = sqrt(square(a) + square(b))
 }

@@ -141,6 +141,16 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     }
   }
 
+  def sonda(gp: GeoPosition): Option[Sonda] = {
+    if (track.size < 3) None
+    else {
+      // drop first and last where the distance is incorrect
+      val dList = track.map(t => (t.haversineDistanceTo(gp), t))
+      val tp = dList.minBy(_._1)._2
+      Some(sonda(tp.time))
+    }
+  }
+
   def interpolate(t: DateTime, left: TrackPoint, right: TrackPoint): Sonda = {
     val f = progressForTime(t, left.time, right.time)
     val elevation = interpolate(f, left.elevation, right.elevation)
