@@ -17,12 +17,15 @@ object Telemetry extends Timed with Logging {
   def loadWith(loadFunc: => Node): Telemetry = timed("load telemetry") {
     val node = loadFunc
     val binding = scalaxb.fromXML[GpxType](node)
-    val points = binding.trk.head.trkseg.head.trkpt.map(wyp =>
+    val points = binding.trk.head.trkseg.head.trkpt.map{wyp =>
+      //val HAHA = wyp.extensions.map(_.any)
+      val extension = wyp.extensions.flatMap(_.any.map(_.value).headOption.map(_.toString)).
+        map(GarminExtension.parse).getOrElse(GarminExtension.empty)
       TrackPoint(
         new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0d),
-        wyp.time
+        wyp.time, extension
       )
-    )
+    }
     log.info(s"found ${points.size} track points")
     val data = new Telemetry(points)
     data.analyze()

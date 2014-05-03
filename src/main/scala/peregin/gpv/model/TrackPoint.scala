@@ -22,7 +22,8 @@ object TrackPoint {
  */
 case class TrackPoint(position: GeoPosition,
                       elevation: Double,
-                      time: DateTime) {
+                      time: DateTime,
+                      extension: GarminExtension) {
 
   // total distance up to this track point
   var distance = 0d

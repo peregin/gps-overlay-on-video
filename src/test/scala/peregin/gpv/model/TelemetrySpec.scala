@@ -9,8 +9,8 @@ class TelemetrySpec extends Specification {
 
   "telemetry with 2 track points" should {
     val track = Seq(
-      TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0)),
-      TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0))
+      TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0), GarminExtension(Some(72), Some(12), Some(110))),
+      TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0), GarminExtension(Some(81), Some(14), Some(120)))
     )
     val telemetry = Telemetry(track)
 
