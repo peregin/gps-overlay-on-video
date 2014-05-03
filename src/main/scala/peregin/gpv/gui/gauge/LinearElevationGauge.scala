@@ -6,16 +6,14 @@ import peregin.gpv.model.InputValue
 import MinMax.RoundedDouble
 
 
-class LinearElevationGauge extends GaugeComponent {
+trait LinearElevationGauge extends GaugePainter {
 
-  val dummy = InputValue(728, MinMax(592, 1718))
+  lazy val dummy = InputValue(728, MinMax(592, 1718))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) = {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val box = math.min(w, h)
     val boxWidth = box / 8
     val boxHeight = (box / 1.2).toInt

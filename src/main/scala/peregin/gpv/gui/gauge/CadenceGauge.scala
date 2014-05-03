@@ -6,16 +6,14 @@ import peregin.gpv.model.MinMax
 import peregin.gpv.model.InputValue
 
 
-class CadenceGauge extends GaugeComponent {
+trait CadenceGauge extends GaugePainter {
 
-  val dummy = InputValue(81, MinMax(0, 123))
+  lazy val dummy = InputValue(81, MinMax(0, 123))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val box = math.min(w, h)
     val strokeWidth = box / 5
     var dia = box - strokeWidth * 1.5

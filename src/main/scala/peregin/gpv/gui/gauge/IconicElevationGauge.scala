@@ -1,21 +1,19 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.model.{MinMax, InputValue}
+import peregin.gpv.model.MinMax
 import java.awt._
 import peregin.gpv.model.InputValue
 import java.awt.geom.{Rectangle2D, Area}
 
 
-class IconicElevationGauge extends GaugeComponent {
+trait IconicElevationGauge extends GaugePainter {
 
-  val dummy = InputValue(689, MinMax(432, 1252))
+  lazy val dummy = InputValue(689, MinMax(432, 1252))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) = {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val box = math.min(w, h)
     val cy = h / 2
 

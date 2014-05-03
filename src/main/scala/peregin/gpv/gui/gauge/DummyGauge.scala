@@ -4,16 +4,15 @@ import scala.swing.Graphics2D
 import peregin.gpv.model.{MinMax, InputValue}
 
 
-class DummyGauge extends GaugeComponent {
+trait DummyGauge extends GaugePainter {
 
-  val dummy = InputValue(18, MinMax(0, 27))
+  lazy val dummy = InputValue(18, MinMax(0, 27))
+
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
+  override def paint(g: Graphics2D, w: Int, h: Int) {
+    super.paint(g, w, h)
 
     g.setFont(gaugeFont)
     val text = "Speed Gauge - 18 km/h"

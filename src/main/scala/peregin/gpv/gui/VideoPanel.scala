@@ -57,8 +57,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
     setup.videoPath.foreach{path =>
       synchronized {
         reader.foreach {
-          mr =>
-            if (mr.isOpen) mr.close()
+          mr => if (mr.isOpen) mr.close()
         }
         reader = Some(ToolFactory.makeReader(path))
         reader.foreach{mr =>

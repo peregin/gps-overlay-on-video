@@ -6,10 +6,10 @@ import peregin.gpv.gui.gauge._
 
 class GaugePanel extends GridPanel(0, 5) {
 
-  contents += new RadialSpeedGauge
-  contents += new CadenceGauge
-  contents += new IconicElevationGauge
-  contents += new LinearElevationGauge
-  contents += new HeartRateGauge
-  contents += new DigitalSpeedGauge
+  contents += new GaugeComponent with RadialSpeedGauge
+  contents += new GaugeComponent with CadenceGauge
+  contents += new GaugeComponent with IconicElevationGauge
+  contents += new GaugeComponent with LinearElevationGauge
+  contents += new GaugeComponent with HeartRateGauge
+  contents += new GaugeComponent with DigitalSpeedGauge
 }

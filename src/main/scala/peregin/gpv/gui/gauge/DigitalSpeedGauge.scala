@@ -4,16 +4,14 @@ import peregin.gpv.model.{MinMax, InputValue}
 import java.awt.{Font, Graphics2D}
 
 
-class DigitalSpeedGauge extends GaugeComponent with DigitalFont {
+trait DigitalSpeedGauge extends GaugePainter with DigitalFont {
 
-  val dummy = InputValue(23.52, MinMax(0, 71))
+  lazy val dummy = InputValue(23.52, MinMax(0, 71))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) = {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val cy = h / 2
     val box = math.min(w, h)
     val fs = box / 2

@@ -3,19 +3,16 @@ package peregin.gpv.gui.gauge
 import peregin.gpv.model.MinMax
 import java.awt._
 import peregin.gpv.model.InputValue
-import java.awt.geom.{Rectangle2D, Area}
 
 
-class HeartRateGauge extends GaugeComponent {
+trait HeartRateGauge extends GaugePainter {
 
-  val dummy = InputValue(89, MinMax(62, 171))
+  lazy val dummy = InputValue(89, MinMax(62, 171))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) = {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val box = math.min(w, h)
     val cy = h / 2
 

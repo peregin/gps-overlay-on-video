@@ -6,16 +6,14 @@ import peregin.gpv.model.MinMax
 import peregin.gpv.model.InputValue
 
 
-class RadialSpeedGauge extends GaugeComponent {
+trait RadialSpeedGauge extends GaugePainter {
 
-  val dummy = InputValue(27.81, MinMax(0, 62))
+  lazy val dummy = InputValue(27.81, MinMax(0, 62))
   override def defaultInput = dummy
 
-  override def paint(g: Graphics2D) = {
-    super.paint(g)
+  override def paint(g: Graphics2D, w: Int, h: Int) = {
+    super.paint(g, w, h)
 
-    val w = peer.getWidth
-    val h = peer.getHeight
     val box = math.min(w, h)
     val strokeWidth = box / 5
     var dia = box - strokeWidth * 1.5
