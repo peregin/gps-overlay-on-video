@@ -11,7 +11,7 @@ import peregin.gpv.Setup
 import peregin.gpv.util.Logging
 import scala.swing.Swing
 import scala.concurrent._
-import peregin.gpv.gui.gauge.{IconicElevationGauge, CadenceGauge, RadialSpeedGauge}
+import peregin.gpv.gui.gauge.{IconicDistanceGauge, IconicElevationGauge, CadenceGauge, RadialSpeedGauge}
 import peregin.gpv.model.Telemetry
 
 
@@ -66,6 +66,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
         val speedGauge = new RadialSpeedGauge {}
         val cadenceGauge = new CadenceGauge {}
         val elevationGauge = new IconicElevationGauge {}
+        val distanceGauge = new IconicDistanceGauge {}
 
         reader.foreach {
           mr => if (mr.isOpen) mr.close()
@@ -94,6 +95,8 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
                 }
                 g.translate(75, 0)
                 elevationGauge.paint(g, 75, 75, sonda)
+                g.translate(75, 0)
+                distanceGauge.paint(g, 75, 75, sonda)
               }
 
               g.dispose()
