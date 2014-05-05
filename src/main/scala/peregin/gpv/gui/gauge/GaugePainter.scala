@@ -45,9 +45,6 @@ trait GaugePainter {
   def debug = debugging
   def debug_= (v: Boolean) = debugging = v
 
-  def polarX(cx: Double, r: Double, angle: Double): Int = (cx + r * math.cos(math.toRadians(angle))).toInt
-  def polarY(cy: Double, r: Double, angle: Double): Int = (cy + r * math.sin(math.toRadians(angle))).toInt
-
   def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow) {
     val ix = x.toInt
     val iy = y.toInt

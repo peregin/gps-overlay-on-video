@@ -13,7 +13,7 @@ import peregin.gpv.gui.gauge._
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
-  val gauges = List.fill(4)(new GaugeComponent with IconicElevationGauge)
+  val gauges = List.fill(4)(new GaugeComponent with IconicDistanceGauge)
   gauges.foreach(_.debug = true)
 
   val minSpinner = new JSpinner

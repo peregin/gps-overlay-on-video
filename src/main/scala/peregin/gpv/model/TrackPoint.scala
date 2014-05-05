@@ -2,7 +2,7 @@ package peregin.gpv.model
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
-import math._
+import peregin.gpv.util.Trigo._
 
 object TrackPoint {
 
@@ -65,8 +65,4 @@ case class TrackPoint(position: GeoPosition,
     val h = (elevation - that.elevation) / 1000 // km
     pythagoras(d, h)
   }
-
-  def square(v: Double) = v * v
-
-  def pythagoras(a: Double, b: Double): Double = sqrt(square(a) + square(b))
 }

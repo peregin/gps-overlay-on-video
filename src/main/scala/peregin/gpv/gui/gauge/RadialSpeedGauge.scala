@@ -3,6 +3,7 @@ package peregin.gpv.gui.gauge
 import java.awt._
 import java.awt.geom.Arc2D
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
+import peregin.gpv.util.Trigo._
 
 
 trait RadialSpeedGauge extends GaugePainter {
