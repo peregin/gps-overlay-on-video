@@ -6,7 +6,7 @@ import com.xuggle.mediatool.{IMediaReader, MediaToolAdapter, ToolFactory}
 import java.awt.image.BufferedImage
 import com.xuggle.mediatool.event.IVideoPictureEvent
 import javax.swing.{JSlider, JPanel}
-import java.awt.{Color, Graphics, Image}
+import java.awt.{AlphaComposite, Color, Graphics, Image}
 import peregin.gpv.Setup
 import peregin.gpv.util.Logging
 import scala.swing.Swing
@@ -50,7 +50,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
   val controlPanel = new MigPanel("ins 0", "", "") {
     add(new JSlider(0, 100, 0), "pushx, growx")
-    add(new ImageButton("images/play.png", "Play", playOrPauseVideo), "align right")
+    add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
   }
   add(controlPanel, "growx")
 
@@ -80,6 +80,10 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
               val image = event.getImage
               val g = image.createGraphics
+
+              // set transparency
+              g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
+
 
               telemetry.sonda(tsInMillis).foreach {sonda =>
                 speedGauge.input = sonda.speed
