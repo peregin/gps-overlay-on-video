@@ -164,11 +164,19 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       interpolate(f, left.position.getLatitude, right.position.getLatitude),
       interpolate(f, left.position.getLongitude, right.position.getLongitude)
     )
+    val cadence = interpolate(f, left.extension.cadence, right.extension.cadence)
+    val heartRate = interpolate(f, left.extension.heartRate, right.extension.heartRate)
     Sonda(t, location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
-      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary)
+      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary),
+      cadence.map(InputValue(_, cadenceBoundary)), heartRate.map(InputValue(_, heartRateBoundary))
     )
   }
 
   def interpolate(f: Double, left: Double, right: Double): Double = left + f * (right - left) / 100
+
+  def interpolate(f: Double, oLeft: Option[Double], oRight: Option[Double]): Option[Double] = (oLeft, oRight) match {
+    case (Some(l), Some(r)) => Some(interpolate(f, l, r))
+    case _ => None
+  }
 }

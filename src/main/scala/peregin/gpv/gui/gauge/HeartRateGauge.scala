@@ -1,14 +1,14 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.model.MinMax
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import java.awt._
-import peregin.gpv.model.InputValue
 
 
 trait HeartRateGauge extends GaugePainter {
 
   lazy val dummy = InputValue(89, MinMax(62, 171))
   override def defaultInput = dummy
+  override def sample(sonda: Sonda) {sonda.heartRate.foreach(input = _)}
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)

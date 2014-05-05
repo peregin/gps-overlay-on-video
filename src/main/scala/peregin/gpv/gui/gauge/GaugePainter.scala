@@ -2,7 +2,7 @@ package peregin.gpv.gui.gauge
 
 import scala.swing._
 import java.awt.{RenderingHints, Color, Font, Dimension}
-import peregin.gpv.model.InputValue
+import peregin.gpv.model.{Sonda, InputValue}
 
 
 trait GaugePainter {
@@ -25,6 +25,16 @@ trait GaugePainter {
     }
   }
 
+  final def paint(g: Graphics2D, w: Int, h: Int, sonda: Sonda) {
+    sample(sonda)
+    paint(g, w, h)
+  }
+
+  // each implementation should extract the desired input data from the sonda
+  // e.g. speed gauge extracts speed input, etc.
+  def sample(sonda: Sonda)
+
+  // each implementation should provide the default values used for testing or to show a sample in the gauges' list
   def defaultInput: InputValue
 
   def input = currentInput.getOrElse(defaultInput)

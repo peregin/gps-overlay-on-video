@@ -1,8 +1,7 @@
 package peregin.gpv.gui.gauge
 
 import java.awt._
-import peregin.gpv.model.MinMax
-import peregin.gpv.model.InputValue
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import MinMax.RoundedDouble
 
 
@@ -10,6 +9,7 @@ trait LinearElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(728, MinMax(592, 1718))
   override def defaultInput = dummy
+  override def sample(sonda: Sonda) {input = sonda.elevation}
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)
@@ -53,12 +53,12 @@ trait LinearElevationGauge extends GaugePainter {
 
     // draw current altitude
     val ry = h / 2
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (boxWidth).toFloat))
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, boxWidth.toFloat))
     val text = f"${input.current}%1.0f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, ry + tb.getHeight / 2)
     // draw unit
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (strokeWidth).toFloat))
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, strokeWidth.toFloat))
     val utext = "m"
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, (w - utb.getWidth) / 2, ry + tb.getHeight / 2 + utb.getHeight)

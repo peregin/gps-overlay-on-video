@@ -1,6 +1,6 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.model.{MinMax, InputValue}
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import java.awt.{Font, Graphics2D}
 
 
@@ -8,6 +8,7 @@ trait DigitalSpeedGauge extends GaugePainter with DigitalFont {
 
   lazy val dummy = InputValue(23.52, MinMax(0, 71))
   override def defaultInput = dummy
+  override def sample(sonda: Sonda) {input = sonda.speed}
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)

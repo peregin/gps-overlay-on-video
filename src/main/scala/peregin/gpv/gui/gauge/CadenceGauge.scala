@@ -2,14 +2,14 @@ package peregin.gpv.gui.gauge
 
 import java.awt._
 import java.awt.geom.Arc2D
-import peregin.gpv.model.MinMax
-import peregin.gpv.model.InputValue
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 
 
 trait CadenceGauge extends GaugePainter {
 
   lazy val dummy = InputValue(81, MinMax(0, 123))
   override def defaultInput = dummy
+  override def sample(sonda: Sonda) {sonda.cadence.foreach(input = _)}
 
   override def paint(g: Graphics2D, w: Int, h: Int) {
     super.paint(g, w, h)

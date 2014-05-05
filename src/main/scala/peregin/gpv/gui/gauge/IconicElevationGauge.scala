@@ -1,8 +1,7 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.model.MinMax
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import java.awt._
-import peregin.gpv.model.InputValue
 import java.awt.geom.{Rectangle2D, Area}
 
 
@@ -10,6 +9,7 @@ trait IconicElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(689, MinMax(432, 1252))
   override def defaultInput = dummy
+  override def sample(sonda: Sonda) {input = sonda.elevation}
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)

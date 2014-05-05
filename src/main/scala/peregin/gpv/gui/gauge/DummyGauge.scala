@@ -1,15 +1,14 @@
 package peregin.gpv.gui.gauge
 
 import scala.swing.Graphics2D
-import peregin.gpv.model.{MinMax, InputValue}
+import peregin.gpv.model.{Sonda, MinMax, InputValue}
 
 
 trait DummyGauge extends GaugePainter {
 
   lazy val dummy = InputValue(18, MinMax(0, 27))
-
   override def defaultInput = dummy
-
+  override def sample(sonda: Sonda) {input = sonda.speed}
 
   override def paint(g: Graphics2D, w: Int, h: Int) {
     super.paint(g, w, h)
