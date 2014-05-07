@@ -68,7 +68,7 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
         val cadenceGauge = new CadenceGauge {}
         val elevationGauge = new IconicElevationGauge {}
         val distanceGauge = new IconicDistanceGauge {}
-        val heartRateGauge = new HeartRateGauge {}
+        val heartRateGauge = new IconicHeartRateGauge {}
 
         reader.foreach {
           mr => if (mr.isOpen) mr.close()
