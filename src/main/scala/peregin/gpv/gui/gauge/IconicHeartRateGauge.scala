@@ -25,8 +25,8 @@ trait IconicHeartRateGauge extends GaugePainter {
     g.setColor(Color.white)
     val px = 10
     val py = (h - 10) / 2
-    g.fillOval(px, py, d / 2, d / 2)
-    g.fillOval(px + d / 2, py, d / 2, d / 2)
+    //g.fillOval(px, py, d / 2, d / 2)
+    //g.fillOval(px + d / 2, py, d / 2, d / 2)
     val b = ph - r
     val oe = 2 * math.asin(r.toDouble / b) - math.Pi / 2
     val ty = polarY(py + ph, b, oe.toDegrees)
@@ -36,7 +36,10 @@ trait IconicHeartRateGauge extends GaugePainter {
     romb.addPoint(tx, ty)
     romb.addPoint(px + 2 * r, py + r)
     romb.addPoint(2 * (px + 2 * r) - tx, ty)
-    g.fill(romb)
+    val hr = new Area(romb)
+    hr.add(new Area(new Ellipse2D.Double(px, py, d / 2, d / 2)))
+    hr.add(new Area(new Ellipse2D.Double(px + d / 2, py, d / 2, d / 2)))
+    g.fill(hr)
 
     // fill the heart based on the current value
     val pointerHeight = (input.current - input.boundary.min) * ph / input.boundary.diff

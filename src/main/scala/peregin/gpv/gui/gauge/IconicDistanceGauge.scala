@@ -25,7 +25,6 @@ trait IconicDistanceGauge extends GaugePainter {
     val ph = d + r
     val px = 10
     val py = ((h - 10) - r) / 2
-    g.fillOval(px, py, d, d)
     // http://en.wikipedia.org/wiki/List_of_trigonometric_identities
     val l = leg(d, r)
     val oe = math.asin(r.toDouble / d) - math.Pi / 2
@@ -35,8 +34,10 @@ trait IconicDistanceGauge extends GaugePainter {
     poly.addPoint(px + r, py + ph)
     poly.addPoint(tx, ty)
     poly.addPoint(2 * (px + r) - tx, ty)
-    g.draw(poly)
-    g.fill(poly)
+    val pp = new Area(poly)
+    pp.add(new Area(new Ellipse2D.Double(px, py, d, d)))
+    g.draw(pp)
+    g.fill(pp)
 
     // fill the pinpoint according to the current distance
     val pointerHeight = (input.current - input.boundary.min) * ph / input.boundary.diff

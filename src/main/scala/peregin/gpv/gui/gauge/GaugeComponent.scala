@@ -12,6 +12,8 @@ class GaugeComponent extends Component {
   override def preferredSize = desiredSize
 
   override def paint(g: Graphics2D) {
+    // set transparency for testing
+    // g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
     paint(g, peer.getWidth, peer.getHeight)
   }
 }
