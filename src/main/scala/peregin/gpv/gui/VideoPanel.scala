@@ -112,10 +112,14 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
               super.onVideoPicture(event)
             }
           })
+
+        val controller = new VideoController
+        mr.addListener(controller)
         import ExecutionContext.Implicits.global
           future {
             (0 until 200).foreach{_ =>
               mr.readPacket()
+              //controller.waitIfNeeded()
               Thread.sleep(30)
             }
           }
@@ -126,5 +130,11 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
   def playOrPauseVideo() {
     log.info("play video...")
+  }
+
+  class VideoController extends MediaToolAdapter {
+    override def onVideoPicture(event: IVideoPictureEvent) = {
+      super.onVideoPicture(event)
+    }
   }
 }
