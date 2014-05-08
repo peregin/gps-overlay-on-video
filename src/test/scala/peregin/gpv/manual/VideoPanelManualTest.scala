@@ -10,7 +10,7 @@ import peregin.gpv.Setup
 import peregin.gpv.model.Telemetry
 
 
-object VideoManualTest extends SimpleSwingApplication with Logging {
+object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
   val video = new VideoPanel(openVideoFile)
   val frame = new MainFrame {

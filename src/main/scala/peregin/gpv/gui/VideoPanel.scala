@@ -14,6 +14,7 @@ import scala.concurrent._
 import peregin.gpv.gui.gauge._
 import peregin.gpv.model.Telemetry
 import scala.Some
+import com.xuggle.xuggler.ICodec
 
 
 class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -49,8 +50,9 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
   val imagePanel = new ImagePanel
   add(imagePanel, "grow, pushy, wrap")
 
+  val slider = new JSlider(0, 100, 0)
   val controlPanel = new MigPanel("ins 0", "", "") {
-    add(new JSlider(0, 100, 0), "pushx, growx")
+    add(slider, "pushx, growx")
     add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
   }
   add(controlPanel, "growx")
@@ -62,66 +64,77 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
     this.telemetry = telemetry
 
     setup.videoPath.foreach{path =>
-      synchronized {
+      val speedGauge = new RadialSpeedGauge {}
+      val cadenceGauge = new CadenceGauge {}
+      val elevationGauge = new IconicElevationGauge {}
+      val distanceGauge = new IconicDistanceGauge {}
+      val heartRateGauge = new IconicHeartRateGauge {}
 
-        val speedGauge = new RadialSpeedGauge {}
-        val cadenceGauge = new CadenceGauge {}
-        val elevationGauge = new IconicElevationGauge {}
-        val distanceGauge = new IconicDistanceGauge {}
-        val heartRateGauge = new IconicHeartRateGauge {}
+      reader.foreach {
+        mr => if (mr.isOpen) mr.close()
+      }
+      reader = Some(ToolFactory.makeReader(path))
+      reader.foreach{mr =>
+        mr.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
+        mr.addListener(new MediaToolAdapter {
+          override def onVideoPicture(event: IVideoPictureEvent) = {
+            val ts = event.getTimeStamp
+            val unit = event.getTimeUnit
+            val tsInMillis = unit.toMillis(ts)
+            log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
 
-        reader.foreach {
-          mr => if (mr.isOpen) mr.close()
-        }
-        reader = Some(ToolFactory.makeReader(path))
-        reader.foreach{mr =>
-          mr.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
-          mr.addListener(new MediaToolAdapter {
-            override def onVideoPicture(event: IVideoPictureEvent) = {
-              val ts = event.getTimeStamp
-              val unit = event.getTimeUnit
-              val tsInMillis = unit.toMillis(ts)
-              log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
+            val image = event.getImage
+            val g = image.createGraphics
 
-              val image = event.getImage
-              val g = image.createGraphics
+            // set transparency
+            g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
 
-              // set transparency
-              g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
-
-              telemetry.sonda(tsInMillis).foreach{sonda =>
-                speedGauge.paint(g, 75, 75, sonda)
-                if (sonda.cadence.isDefined) {
-                  g.translate(75, 0)
-                  cadenceGauge.paint(g, 75, 75, sonda)
-                }
+            telemetry.sonda(tsInMillis).foreach{sonda =>
+              speedGauge.paint(g, 75, 75, sonda)
+              if (sonda.cadence.isDefined) {
                 g.translate(75, 0)
-                elevationGauge.paint(g, 75, 75, sonda)
-                g.translate(75, 0)
-                distanceGauge.paint(g, 75, 75, sonda)
-                if (sonda.heartRate.isDefined) {
-                  g.translate(75, 0)
-                  heartRateGauge.paint(g, 75, 75, sonda)
-                }
+                cadenceGauge.paint(g, 75, 75, sonda)
               }
-
-              g.dispose()
-
-              Swing.onEDT(imagePanel.show(image))
-
-              super.onVideoPicture(event)
+              g.translate(75, 0)
+              elevationGauge.paint(g, 75, 75, sonda)
+              g.translate(75, 0)
+              distanceGauge.paint(g, 75, 75, sonda)
+              if (sonda.heartRate.isDefined) {
+                g.translate(75, 0)
+                heartRateGauge.paint(g, 75, 75, sonda)
+              }
             }
-          })
 
-        val controller = new VideoController
-        mr.addListener(controller)
-        import ExecutionContext.Implicits.global
-          future {
-            (0 until 200).foreach{_ =>
-              mr.readPacket()
-              //controller.waitIfNeeded()
-              Thread.sleep(30)
-            }
+            g.dispose()
+
+            Swing.onEDT(imagePanel.show(image))
+
+            super.onVideoPicture(event)
+          }
+        })
+
+      val controller = new VideoController
+      mr.addListener(controller)
+
+      // show some video info
+      val container = mr.getContainer
+      log.info(s"duration = ${container.getDuration/1000} millis")
+      log.info(s"streams = ${container.getNumStreams}")
+      log.info(s"bit rate = ${container.getBitRate}")
+      log.info(s"start time = ${container.getStartTime/1000} millis")
+      import ICodec.Type._
+      (0 until container.getNumStreams).map(container.getStream(_).getStreamCoder).filter(_.getCodecType == CODEC_TYPE_VIDEO).foreach{coder =>
+        log.info(s"size [${coder.getWidth}, ${coder.getHeight}")
+        log.info(s"format: ${coder.getPixelType}")
+        log.info(f"frame-rate: ${coder.getFrameRate.getDouble}%5.2f")
+      }
+
+      import ExecutionContext.Implicits.global
+        future {
+          (0 until 200).foreach{_ =>
+            mr.readPacket()
+            //controller.waitIfNeeded()
+            Thread.sleep(30)
           }
         }
       }
