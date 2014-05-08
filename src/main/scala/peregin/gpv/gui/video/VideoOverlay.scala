@@ -20,7 +20,7 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
     val ts = event.getTimeStamp
     val unit = event.getTimeUnit
     val tsInMillis = unit.toMillis(ts)
-    log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
+    //log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
 
     val image = event.getImage
     val g = image.createGraphics

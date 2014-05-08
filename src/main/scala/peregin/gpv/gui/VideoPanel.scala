@@ -14,11 +14,11 @@ import peregin.gpv.model.Telemetry
 import peregin.gpv.gui.video.{VideoController, VideoOverlay}
 
 
-class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class VideoPanel(openVideoHandler: File => Unit, timeHandler: Long => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   var telemetry = Telemetry.empty
 
-  val chooser = new FileChooserPanel("Load video file:", openVideoData, new FileNameExtensionFilter("Video files (mp4)", "mp4"))
+  val chooser = new FileChooserPanel("Load video file:", openVideoHandler, new FileNameExtensionFilter("Video files (mp4)", "mp4"))
   add(chooser, "pushx, growx, wrap")
 
   class ImagePanel extends JPanel {
@@ -70,13 +70,13 @@ class VideoPanel(openVideoData: File => Unit) extends MigPanel("ins 2", "", "[fi
 
         mr.addListener(new VideoOverlay(telemetry, (image: Image) => Swing.onEDT(imagePanel.show(image))))
 
-        val controller = new VideoController
+        val controller = new VideoController(timeHandler)
         mr.addListener(controller)
 
         import ExecutionContext.Implicits.global
         future {
           while(mr.readPacket() == null) {
-            controller.waitIfNeeded()
+            // runs in a loop until the end
           }
         }
       }

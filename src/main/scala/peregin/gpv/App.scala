@@ -22,7 +22,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData)
+  val videoPanel = new VideoPanel(openVideoData, showVideoProgress)
   val telemetryPanel = new TelemetryPanel(openGpsData)
 
   val frame = new MainFrame {
@@ -129,5 +129,9 @@ object App extends SimpleSwingApplication with Logging with Timed {
       val telemetry = Telemetry.load(file)
       Swing.onEDT(telemetryPanel.refresh(setup, telemetry))
     }
+  }
+
+  def showVideoProgress(videoTimeInMillis: Long) {
+    log.info(s"video progress $videoTimeInMillis")
   }
 }

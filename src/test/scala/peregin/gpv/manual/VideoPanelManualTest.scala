@@ -12,7 +12,7 @@ import peregin.gpv.model.Telemetry
 
 object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
-  val video = new VideoPanel(openVideoFile)
+  val video = new VideoPanel(openVideoFile, (Long) => {})
   val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
