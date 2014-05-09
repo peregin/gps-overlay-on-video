@@ -28,6 +28,7 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
     // set transparency
     g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
 
+    // TODO: apply the shift between video and gps streams
     telemetry.sonda(tsInMillis).foreach{sonda =>
       speedGauge.paint(g, 75, 75, sonda)
       if (sonda.cadence.isDefined) {

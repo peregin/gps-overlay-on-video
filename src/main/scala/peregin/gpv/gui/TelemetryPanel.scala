@@ -30,6 +30,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   class MapPanel extends JXMapKit with Publisher {
 
     private var poi: Option[GeoPosition] = None
+    private var progress: Option[GeoPosition] = None
 
     setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
     //setTileFactory(new NasaTileFactory)
@@ -76,6 +77,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
           val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
           g.fillOval(pt.getX.toInt - 5, pt.getY.toInt - 5, 10, 10)
         }
+        // progress
+        progress.foreach{gp =>
+          g.setColor(Color.orange)
+          val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
+          g.fillOval(pt.getX.toInt - 5, pt.getY.toInt - 5, 10, 10)
+        }
         g.dispose()
       }
     }
@@ -85,12 +92,18 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       poi = sonda
       repaint()
     }
+
+    def refreshProgress(sonda: Option[GeoPosition]) {
+      progress = sonda
+      repaint()
+    }
   }
 
   // altitude widget
   class AltitudePanel extends Panel {
 
     private var poi: Option[Sonda] = None
+    private var progress: Option[Sonda] = None
 
     val elevFont = new Font("Arial", Font.BOLD, 10)
     lazy val elevFm = peer.getGraphics.getFontMetrics(elevFont)
@@ -174,6 +187,15 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         g.drawString(f"${sonda.distance.current}%1.1fkm", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
         g.drawString(f"${sonda.speed.current}%1.1fkm/h", gridLeft + (timeWidth * 4.9).toInt, height - 10 + metersHalfHeight)
       }
+
+      // progress when playing the video
+      progress.foreach{sonda =>
+        val p = telemetry.progressForTime(sonda.time)
+        val x = (gridLeft + p * pxWidth / 100).toInt
+        g.setColor(Color.orange)
+        g.drawLine(x, 10, x, gridBottom)
+        g.fillOval(x - 5, 5, 10, 10)
+      }
     }
 
     def timeForPoint(pt: Point): Option[DateTime] = {
@@ -189,6 +211,11 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     
     def refreshPoi(sonda: Option[Sonda]) {
       poi = sonda
+      repaint()
+    }
+
+    def refreshProgress(sonda: Option[Sonda]) {
+      progress = sonda
       repaint()
     }
   }
@@ -223,7 +250,18 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
     mapKit.setAddressLocation(telemetry.centerGeoPosition)
     mapKit.refreshPoi(None)
+    mapKit.refreshProgress(None)
 
     altitude.refreshPoi(None)
+    altitude.refreshProgress(None)
+  }
+
+  // dispatched by the video controller, invoked from EDT
+  def showVideoProgress(videoTimeInMillis: Long) {
+    log.info(s"video progress $videoTimeInMillis")
+    // TODO: apply the shift between video and gps streams
+    val sonda = telemetry.sonda(videoTimeInMillis)
+    altitude.refreshProgress(sonda)
+    mapKit.refreshProgress(sonda.map(_.location))
   }
 }

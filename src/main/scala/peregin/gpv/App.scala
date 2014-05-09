@@ -132,6 +132,6 @@ object App extends SimpleSwingApplication with Logging with Timed {
   }
 
   def showVideoProgress(videoTimeInMillis: Long) {
-    log.info(s"video progress $videoTimeInMillis")
+    Swing.onEDT(telemetryPanel.showVideoProgress(videoTimeInMillis))
   }
 }
