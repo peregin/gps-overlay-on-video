@@ -11,7 +11,9 @@ import peregin.gpv.util.Logging
 import scala.swing.Swing
 import scala.concurrent._
 import peregin.gpv.model.Telemetry
-import peregin.gpv.gui.video.{VideoController, VideoOverlay}
+import peregin.gpv.gui.video.{VideoInfo, VideoController, VideoOverlay}
+import javax.swing.event.{ChangeEvent, ChangeListener}
+import com.xuggle.xuggler.IContainer
 
 
 class VideoPanel(openVideoHandler: File => Unit, timeHandler: Long => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
@@ -48,6 +50,22 @@ class VideoPanel(openVideoHandler: File => Unit, timeHandler: Long => Unit) exte
   add(imagePanel, "grow, pushy, wrap")
 
   val slider = new JSlider(0, 100, 0)
+  slider.addChangeListener(new ChangeListener {
+    override def stateChanged(e: ChangeEvent) = {
+      if (!slider.getValueIsAdjusting) {
+        reader.foreach {mr =>
+          val container = mr.getContainer
+          val length = container.getDuration / 1000
+          val f = slider.getValue * length / 100 // mill
+          val stream = 0
+          //val frameRate = container.getStream(stream).getStreamCoder.getFrameRate().getDouble()
+          //val jumpTo = length * frameRate * f
+          container.seekKeyFrame(stream, f * 1000, IContainer.SEEK_FLAG_FRAME)
+          //VideoInfo.logInfo(mr)
+        }
+      }
+    }
+  })
   val controlPanel = new MigPanel("ins 0", "", "") {
     add(slider, "pushx, growx")
     add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
