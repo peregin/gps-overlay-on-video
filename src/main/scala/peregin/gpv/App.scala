@@ -5,7 +5,6 @@ import scala.swing._
 import java.awt.Dimension
 import peregin.gpv.gui._
 import javax.swing._
-import com.jgoodies.looks.plastic.{PlasticTheme, PlasticLookAndFeel, Plastic3DLookAndFeel}
 import org.jdesktop.swingx._
 import peregin.gpv.util.{Io, Timed, Logging}
 import peregin.gpv.model.Telemetry
@@ -18,7 +17,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   log.info("initializing...")
 
-  initLookAndFeel()
+  Goodies.initLookAndFeel()
 
   var setup = Setup.empty
 
@@ -59,17 +58,6 @@ object App extends SimpleSwingApplication with Logging with Timed {
   frame.maximize()
 
   def top = frame
-
-  // on Mac start with VM parameter -Xdock:name="GSPonVideo"
-  def initLookAndFeel() {
-    import PlasticLookAndFeel._
-    import collection.JavaConverters._
-    sys.props += "apple.laf.useScreenMenuBar" -> "true"
-    sys.props += "com.apple.mrj.application.apple.menu.about.name" -> "GPSonVideo"
-    val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
-    theme.foreach(setPlasticTheme)
-    UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
-  }
 
   def titled(title: String, c: Component): Component = {
     val panel = new JXTitledPanel(title, c.peer)

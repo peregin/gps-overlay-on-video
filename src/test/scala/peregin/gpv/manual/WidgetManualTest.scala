@@ -9,6 +9,8 @@ import peregin.gpv.gui.Goodies
 
 object WidgetManualTest extends SimpleSwingApplication with Logging {
 
+  Goodies.initLookAndFeel()
+
   override def top = frame
   val frame = new MainFrame {
     title = "hello"

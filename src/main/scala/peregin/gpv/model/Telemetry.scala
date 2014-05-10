@@ -1,6 +1,6 @@
 package peregin.gpv.model
 
-import java.io.File
+import java.io.{InputStream, File}
 import scala.xml.{Node, XML}
 import generated.GpxType
 import peregin.gpv.util.{Logging, Timed}
@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit
 object Telemetry extends Timed with Logging {
 
   def load(file: File): Telemetry = loadWith(XML.loadFile(file))
-  
+
+  def load(is: InputStream): Telemetry = loadWith(XML.load(is))
+
   def loadWith(loadFunc: => Node): Telemetry = timed("load telemetry") {
     val node = loadFunc
     val binding = scalaxb.fromXML[GpxType](node)

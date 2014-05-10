@@ -13,6 +13,8 @@ import peregin.gpv.gui.gauge._
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
 
+  Goodies.initLookAndFeel()
+
   val gauges = List.fill(4)(new GaugeComponent with IconicHeartRateGauge)
   gauges.foreach(_.debug = true)
 
