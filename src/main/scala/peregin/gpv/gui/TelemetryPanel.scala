@@ -264,7 +264,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   // dispatched by the video controller, invoked from EDT
   def showVideoProgress(videoTimeInMillis: Long) {
-    log.info(s"video progress $videoTimeInMillis")
+    //log.info(s"video progress $videoTimeInMillis")
     // TODO: apply the shift between video and gps streams
     val sonda = telemetry.sonda(videoTimeInMillis)
     altitude.refreshProgress(sonda)

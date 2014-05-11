@@ -86,7 +86,7 @@ class VideoPanel(openVideoHandler: File => Unit, timeHandler: Long => Unit) exte
       reader.foreach{ mr =>
         mr.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
 
-        mr.addListener(new VideoOverlay(telemetry, (image: Image) => Swing.onEDT(imagePanel.show(image))))
+        mr.addListener(new VideoOverlay(telemetry, (image: Image) => Swing.onEDT(imagePanel.show(image)), true))
 
         val controller = new VideoController(timeHandler)
         mr.addListener(controller)

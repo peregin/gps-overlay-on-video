@@ -8,14 +8,13 @@ import peregin.gpv.gui.gauge._
 import peregin.gpv.util.Logging
 
 
-class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends MediaToolAdapter with Logging {
+class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, debug: Boolean) extends MediaToolAdapter with Logging {
 
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
   val elevationGauge = new IconicElevationGauge {}
   val distanceGauge = new IconicDistanceGauge {}
   val heartRateGauge = new IconicHeartRateGauge {}
-  val debug = true
   val debugGauge = if (debug) Some(new DebugGauge {}) else None
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
