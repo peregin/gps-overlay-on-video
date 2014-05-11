@@ -227,6 +227,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   val altitude = new AltitudePanel
   add(altitude, "pushy, grow, gaptop 10, wrap")
 
+  val spinner = new DurationSpinner
+  val controlPanel = new MigPanel("ins 0", "", "") {
+    add(spinner, "align left")
+  }
+  add(controlPanel, "growx")
+
   listenTo(altitude.mouse.clicks, mapKit)
   reactions += {
     case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
