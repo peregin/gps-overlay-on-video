@@ -228,7 +228,10 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   add(altitude, "pushy, grow, gaptop 10, wrap")
 
   val spinner = new DurationSpinner
+  val direction = new ComboBox(Seq("Forward", "Backward"))
   val controlPanel = new MigPanel("ins 0", "", "") {
+    add(new Label("Shift"), "")
+    add(direction, "")
     add(spinner, "align left")
   }
   add(controlPanel, "growx")
