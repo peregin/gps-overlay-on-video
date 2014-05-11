@@ -2,13 +2,24 @@ package peregin.gpv.gui.gauge
 
 import peregin.gpv.model.{Sonda, InputValue}
 import java.awt._
-import org.joda.time.DateTime
+import org.joda.time.{Duration, DateTime}
 import peregin.gpv.util.Io
+import org.joda.time.format.PeriodFormatterBuilder
 
 
 trait DebugGauge extends GaugePainter {
 
   lazy val bugImage = Io.loadImage("images/bug.png")
+  lazy val formatter = new PeriodFormatterBuilder()
+    .appendDays()
+    .appendSuffix("d")
+    .appendHours()
+    .appendSuffix("h")
+    .appendMinutes()
+    .appendSuffix("m")
+    .appendSeconds()
+    .appendSuffix("s")
+    .toFormatter
 
   var current: Option[Sonda] = None
 
@@ -39,9 +50,11 @@ trait DebugGauge extends GaugePainter {
     // start drawing debug info
     var text = current.map(_.time).getOrElse(DateTime.now()).toString("HH:mm:ss.SSS")
     textWidthShadow(g, s"GPS Time: $text", tx, ty, Color.white)
-    text = "another line"
-    textWidthShadow(g, text, tx, ty + fh, Color.white)
-    text = "and another"
-    textWidthShadow(g, text, tx, ty + 2 * fh, Color.white)
+    text = millis2Period(current.map(_.elapsedTime.current.toLong))
+    textWidthShadow(g, s"GPS Elapsed: $text", tx, ty + fh, Color.white)
+    text = millis2Period(current.map(_.videoProgress))
+    textWidthShadow(g, s"VID Elapsed: $text", tx, ty + 2 * fh, Color.white)
   }
+
+  def millis2Period(elapsed: Option[Long]) = formatter.print(new Duration(elapsed.getOrElse(0L)).toPeriod)
 }

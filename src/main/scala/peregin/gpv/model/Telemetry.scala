@@ -8,7 +8,6 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import javax.xml.datatype.XMLGregorianCalendar
 import scala.language.implicitConversions
-import java.util.concurrent.TimeUnit
 
 
 object Telemetry extends Timed with Logging {
@@ -168,7 +167,9 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     )
     val cadence = interpolate(f, left.extension.cadence, right.extension.cadence)
     val heartRate = interpolate(f, left.extension.heartRate, right.extension.heartRate)
-    Sonda(t, location,
+    val firstTs = track.head.time.getMillis
+    Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
+      location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
       InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary),
       cadence.map(InputValue(_, cadenceBoundary)), heartRate.map(InputValue(_, heartRateBoundary))

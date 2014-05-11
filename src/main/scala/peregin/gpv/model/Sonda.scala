@@ -5,14 +5,16 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 
 object Sonda {
 
-  def zeroAt(t: DateTime) = new Sonda(t, new GeoPosition(0, 0),
+  def zeroAt(t: DateTime) = new Sonda(t, InputValue.zero,
+    new GeoPosition(0, 0),
     InputValue.zero, InputValue.zero,
     InputValue.zero, InputValue.zero,
     None, None
   )
 }
 
-case class Sonda(time: DateTime, location: GeoPosition,
+case class Sonda(time: DateTime, elapsedTime: InputValue,
+                 location: GeoPosition,
                  elevation: InputValue, grade: InputValue,
                  distance: InputValue, speed: InputValue,
                  cadence: Option[InputValue], heartRate: Option[InputValue]) {
