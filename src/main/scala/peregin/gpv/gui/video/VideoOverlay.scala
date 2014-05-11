@@ -57,7 +57,7 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
         val debugBoxW = 250
         val debugBoxH = 150
         g.translate(w - debugBoxW, h - debugBoxH)
-        gauge.paint(g, debugBoxW, debugBoxH)
+        gauge.paint(g, debugBoxW, debugBoxH, sonda)
       }
     }
 
