@@ -15,12 +15,13 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
   val elevationGauge = new IconicElevationGauge {}
   val distanceGauge = new IconicDistanceGauge {}
   val heartRateGauge = new IconicHeartRateGauge {}
+  val debug = true
+  val debugGauge = if (debug) Some(new DebugGauge {}) else None
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
     val ts = event.getTimeStamp
     val unit = event.getTimeUnit
     val tsInMillis = unit.toMillis(ts)
-    //log.debug(s"mill = $tsInMillis, ts = $ts, unit = $unit")
 
     val image = event.getImage
     val g = image.createGraphics
@@ -30,6 +31,9 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
 
     // TODO: apply the shift between video and gps streams
     telemetry.sonda(tsInMillis).foreach{sonda =>
+      if (debugGauge.isDefined) sonda.videoProgress = tsInMillis
+      val stash = g.getTransform
+
       speedGauge.paint(g, 75, 75, sonda)
       if (sonda.cadence.isDefined) {
         g.translate(75, 0)
@@ -42,6 +46,18 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit) extends Me
       if (sonda.heartRate.isDefined) {
         g.translate(75, 0)
         heartRateGauge.paint(g, 75, 75, sonda)
+      }
+
+      // restore any kind of transformations until this point
+      g.setTransform(stash)
+      debugGauge.foreach{gauge =>
+        // paint to bottom/right
+        val w = image.getWidth
+        val h = image.getHeight
+        val debugBoxW = 250
+        val debugBoxH = 150
+        g.translate(w - debugBoxW, h - debugBoxH)
+        gauge.paint(g, debugBoxW, debugBoxH)
       }
     }
 

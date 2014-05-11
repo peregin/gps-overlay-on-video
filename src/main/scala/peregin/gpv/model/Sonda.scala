@@ -19,11 +19,14 @@ case class Sonda(time: DateTime, location: GeoPosition,
 
   // just for debugging purposes
   private var trackIndex: Int = 0
+  private var videoProgressInMillis = 0L 
 
   def withTrackIndex(v: Int): Sonda = {
     trackIndex = v
     this
   }
-
   def getTrackIndex = trackIndex
+  
+  def videoProgress_= (progressInMillis: Long) = videoProgressInMillis = progressInMillis
+  def videoProgress = videoProgressInMillis
 }

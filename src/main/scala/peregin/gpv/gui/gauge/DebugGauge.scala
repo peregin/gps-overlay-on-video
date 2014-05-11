@@ -3,9 +3,12 @@ package peregin.gpv.gui.gauge
 import peregin.gpv.model.{Sonda, InputValue}
 import java.awt._
 import org.joda.time.DateTime
+import peregin.gpv.util.Io
 
 
 trait DebugGauge extends GaugePainter {
+
+  lazy val bugImage = Io.loadImage("images/bug.png")
 
   var current: Option[Sonda] = None
 
@@ -26,10 +29,7 @@ trait DebugGauge extends GaugePainter {
     val r = d / 2
     val px = 10
     val py = cy - r
-    // draw a clock icon
-    g.setColor(Color.white)
-    g.setStroke(new BasicStroke(math.max(1, d / 10), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
-    g.drawOval(px, py, d, d)
+    g.drawImage(bugImage, px, py, null)
 
     // draw current time
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 14).toFloat))
@@ -37,11 +37,11 @@ trait DebugGauge extends GaugePainter {
     val tx = px + d + r
     val ty = cy - fh
     // start drawing debug info
-    var text = current.map(_.time).getOrElse(DateTime.now()).toString("hh:mm:ss.SSS")
-    textWidthShadow(g, text, tx, ty)
+    var text = current.map(_.time).getOrElse(DateTime.now()).toString("HH:mm:ss.SSS")
+    textWidthShadow(g, s"GPS Time: $text", tx, ty, Color.white)
     text = "another line"
-    textWidthShadow(g, text, tx, ty + fh)
+    textWidthShadow(g, text, tx, ty + fh, Color.white)
     text = "and another"
-    textWidthShadow(g, text, tx, ty + 2 * fh)
+    textWidthShadow(g, text, tx, ty + 2 * fh, Color.white)
   }
 }
