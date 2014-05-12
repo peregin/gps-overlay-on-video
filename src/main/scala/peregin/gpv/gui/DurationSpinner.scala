@@ -4,9 +4,10 @@ import javax.swing.{SpinnerDateModel, JSpinner}
 import java.util.Calendar
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import peregin.gpv.util.Logging
 
 
-class DurationSpinner extends JSpinner(new SpinnerDateModel()) {
+class DurationSpinner extends JSpinner(new SpinnerDateModel()) with Logging {
 
   val timeEditor = new JSpinner.DateEditor(this, "HH:mm:ss.SSS")
   setEditor(timeEditor)
@@ -16,10 +17,19 @@ class DurationSpinner extends JSpinner(new SpinnerDateModel()) {
 
   def duration_= (millis: Long) {
     val d = Duration(millis, TimeUnit.MILLISECONDS)
-    cal.set(Calendar.HOUR_OF_DAY, d.toHours.toInt)
-    cal.set(Calendar.MINUTE, d.toMinutes.toInt)
-    cal.set(Calendar.SECOND, d.toSeconds.toInt)
-    cal.set(Calendar.MILLISECOND, d.toMillis.toInt)
+    var t = millis
+    val hours = d.toHours.toInt
+    t -= TimeUnit.HOURS.toMillis(hours)
+    cal.set(Calendar.HOUR_OF_DAY, hours)
+    val minutes = d.toMinutes.toInt
+    t -= TimeUnit.MINUTES.toMillis(minutes)
+    cal.set(Calendar.MINUTE, minutes)
+    val seconds = d.toSeconds.toInt
+    t -= TimeUnit.SECONDS.toMillis(seconds)
+    val ms = t
+    cal.set(Calendar.SECOND, seconds)
+    cal.set(Calendar.MILLISECOND, ms.toInt)
+    debug(s"hour=$hours min=$minutes sec=$seconds mill=$ms")
     setValue(cal.getTime)
   }
 

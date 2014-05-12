@@ -23,6 +23,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   val videoPanel = new VideoPanel(openVideoData, showVideoProgress)
   val telemetryPanel = new TelemetryPanel(openGpsData)
+  val statusLabel = new JXLabel("Ready")
 
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
@@ -43,7 +44,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
       add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
-      statusPanel.add(new JXLabel("Ready"))
+      statusPanel.add(statusLabel)
       add(statusPanel, "pushx, growx")
       val link = new JXHyperlink()
       link.setURI(new URI("www.peregin.com"))
@@ -78,14 +79,20 @@ object App extends SimpleSwingApplication with Logging with Timed {
     chooser.title = "Open project:"
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
-      log.debug(s"opening ${file.getAbsolutePath}")
+      debug(s"opening ${file.getAbsolutePath}")
       Goodies.showBusy(frame) {
-        setup = Setup.loadFile(file.getAbsolutePath)
-        val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
-        Swing.onEDT {
-          val tm = telemetry.getOrElse(Telemetry.empty)
-          videoPanel.refresh(setup, tm)
-          telemetryPanel.refresh(setup, tm)
+        try {
+          setup = Setup.loadFile(file.getAbsolutePath)
+          debug(s"setup $setup")
+          val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
+          Swing.onEDT {
+            val tm = telemetry.getOrElse(Telemetry.empty)
+            videoPanel.refresh(setup, tm)
+            telemetryPanel.refresh(setup, tm)
+          }
+        } catch { case any: Throwable =>
+          error(s"failed to open $file", any)
+          statusLabel.setText(any.getMessage)
         }
       }
     }
@@ -98,6 +105,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"saving ${file.getAbsolutePath}")
+      setup.shift = telemetryPanel.getShift
       setup.saveFile(file.getAbsolutePath)
     }
   }

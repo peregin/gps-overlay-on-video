@@ -22,16 +22,16 @@ object Setup {
     load(json)
   }
 
-  def empty = new Setup(None, None, 0L)
+  def empty = new Setup(None, None, None)
 }
 
 case class Setup(var videoPath: Option[String],
                  var gpsPath: Option[String],
-                 var shiftTimestamp: Long) {
+                 var shiftTimestamp: Option[Long]) {
 
   def save = Setup.save(this)
   def saveFile(path: String) = Setup.saveFile(path, this)
 
-  def shiftForward = shiftTimestamp >= 0L
-  def shiftValue = shiftTimestamp
+  def shift = shiftTimestamp.getOrElse(0L)
+  def shift_= (value: Long) = shiftTimestamp = Some(value)
 }
