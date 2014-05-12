@@ -10,11 +10,25 @@ class VideoController(timeHandler: (Long, Int) => Unit, durationInMillis: Long) 
   var firstVideoTs: Option[Long] = None
   var firstClockTs = 0L
   var sleep = 0L
+  var enabled = true
+
+  def reset() {
+    firstVideoTs = None
+    firstClockTs = 0L
+    sleep = 0
+  }
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
     val tsInMillis = event.getTimeUnit.toMillis(event.getTimeStamp)
     val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
     timeHandler(tsInMillis, percentage.toInt)
+
+    if (enabled) waitIfNeeded(tsInMillis)
+
+    super.onVideoPicture(event)
+  }
+
+  private def waitIfNeeded(tsInMillis: Long) {
     if (firstVideoTs.isEmpty) {
       firstVideoTs = Some(tsInMillis) // micro
       firstClockTs = System.currentTimeMillis()
@@ -27,10 +41,8 @@ class VideoController(timeHandler: (Long, Int) => Unit, durationInMillis: Long) 
     }
 
     if (sleep > 0) {
-      //log.info(s"sleep = $sleep millis")
+      //info(s"sleep = $sleep millis, firstVideoTs = $firstVideoTs, firstClockTs = $firstClockTs")
       Thread.sleep(sleep)
     }
-
-    super.onVideoPicture(event)
   }
 }

@@ -46,11 +46,16 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit)
   add(imagePanel, "grow, pushy, wrap")
 
   val slider = new JSlider(0, 100, 0)
+  var sliderChangeFromApi = true
+  slider.setPaintTrack(true)
+  slider.setPaintTicks(true)
+  slider.setMajorTickSpacing(10)
+  slider.setMinorTickSpacing(1)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = {
-      debug(s"slider ${slider.getValueIsAdjusting} event $e")
-      if (!slider.getValueIsAdjusting) {
-        //player.foreach(_.seek(slider.getValue))
+      if (!slider.getValueIsAdjusting && !sliderChangeFromApi) {
+        debug(s"slider ${slider.getValue} event")
+        player.foreach(_.seek(slider.getValue))
       }
     }
   })
@@ -74,7 +79,11 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit)
 
   private def controllerTimeHandler(videoTs: Long, percentage: Int) {
     videoTimeHandler(videoTs)
-    slider.setValue(percentage)
+    Swing.onEDT{
+      sliderChangeFromApi = true
+      slider.setValue(percentage)
+      sliderChangeFromApi = false
+    }
   }
 
   def playOrPauseVideo() {

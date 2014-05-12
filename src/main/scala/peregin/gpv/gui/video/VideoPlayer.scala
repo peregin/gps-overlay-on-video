@@ -5,8 +5,9 @@ import java.awt.Image
 import java.awt.image.BufferedImage
 import peregin.gpv.model.Telemetry
 import scala.concurrent._
-import com.xuggle.xuggler.IContainer
+import com.xuggle.xuggler.{ICodec, IContainer}
 import peregin.gpv.util.{DurationPrinter, Logging}
+import ICodec.Type._
 
 
 class VideoPlayer(url: String, telemetry: Telemetry,
@@ -23,7 +24,15 @@ class VideoPlayer(url: String, telemetry: Telemetry,
   val container = reader.getContainer
   val durationInMillis = container.getDuration / 1000
   val bitRate = container.getBitRate
+  val (videoCoder, videoStreamIx) = (0 until container.getNumStreams).
+    map(container.getStream(_).getStreamCoder).
+    zipWithIndex.filter(_._1.getCodecType == CODEC_TYPE_VIDEO).
+    head
+  val frameRate = videoCoder.getFrameRate.getDouble
   info(s"duration: ${DurationPrinter.print(durationInMillis)}")
+  info(s"bit rate: $bitRate")
+  info(s"video stream: $videoStreamIx")
+  info(f"frame rate: $frameRate%5.2f")
 
   val overlay = new VideoOverlay(telemetry, imageHandler, true)
   reader.addListener(overlay)
@@ -44,17 +53,10 @@ class VideoPlayer(url: String, telemetry: Telemetry,
       case b if b < 0d => 0d
       case c => percentage
     }
-
-    val container = reader.getContainer
-    val f = p * durationInMillis / 100
-    val fInMicro = f.toLong * 1000
-
-    // TODO: retrieve video stream index
-    val stream = 0
-    //val frameRate = container.getStream(stream).getStreamCoder.getFrameRate().getDouble()
-    //val jumpTo = durationInMillis * frameRate * f
-
-    container.seekKeyFrame(stream, fInMicro, IContainer.SEEK_FLAG_FRAME)
+    val frames = durationInMillis / 1000 * frameRate
+    val jumpToFrame = frames * p / 100
+    container.seekKeyFrame(videoStreamIx, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+    controller.reset()
   }
 
   def close() {
