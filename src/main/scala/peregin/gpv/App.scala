@@ -21,7 +21,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData, showVideoProgress)
+  val videoPanel = new VideoPanel(openVideoData, showVideoProgress, telemetryPanel.getShift)
   val telemetryPanel = new TelemetryPanel(openGpsData)
   val statusLabel = new JXLabel("Ready")
 

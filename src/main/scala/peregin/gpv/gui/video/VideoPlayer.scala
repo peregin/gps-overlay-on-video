@@ -11,8 +11,8 @@ import ICodec.Type._
 
 
 class VideoPlayer(url: String, telemetry: Telemetry,
-                  imageHandler: Image => Unit,
-                  timeHandler: (Long, Int) => Unit) extends Logging {
+                  imageHandler: Image => Unit, shiftHandler: => Long,
+                  timeHandler: (Long, Int) => Unit, debug: Boolean) extends Logging {
 
   @volatile var running = true
 
@@ -34,7 +34,7 @@ class VideoPlayer(url: String, telemetry: Telemetry,
   info(s"video stream: $videoStreamIx")
   info(f"frame rate: $frameRate%5.2f")
 
-  val overlay = new VideoOverlay(telemetry, imageHandler, true)
+  val overlay = new VideoOverlay(telemetry, imageHandler, shiftHandler, debug)
   reader.addListener(overlay)
 
   val controller = new VideoController(timeHandler, durationInMillis)

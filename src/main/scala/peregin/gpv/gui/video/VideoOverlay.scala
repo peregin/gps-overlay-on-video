@@ -8,7 +8,8 @@ import peregin.gpv.gui.gauge._
 import peregin.gpv.util.Logging
 
 
-class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, debug: Boolean) extends MediaToolAdapter with Logging {
+class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandler: => Long,
+                   debug: Boolean) extends MediaToolAdapter with Logging {
 
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
@@ -29,7 +30,7 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, debug: Boo
     g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
 
     // TODO: apply the shift between video and gps streams
-    telemetry.sonda(tsInMillis).foreach{sonda =>
+    telemetry.sonda(tsInMillis + shiftHandler).foreach{sonda =>
       if (debugGauge.isDefined) sonda.videoProgress = tsInMillis
       val stash = g.getTransform
 

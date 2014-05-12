@@ -12,7 +12,7 @@ import peregin.gpv.gui.video.VideoPlayer
 import javax.swing.event.{ChangeEvent, ChangeListener}
 
 
-class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit, shiftHandler: => Long) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   var telemetry = Telemetry.empty
 
@@ -73,7 +73,9 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit)
 
     setup.videoPath.foreach{path =>
       player.foreach(_.close)
-      player = Some(new VideoPlayer(path, telemetry, (image: Image) => Swing.onEDT(imagePanel.show(image)), controllerTimeHandler))
+      player = Some(new VideoPlayer(path, telemetry,
+        (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler,
+        controllerTimeHandler, debug = true))
     }
   }
 
