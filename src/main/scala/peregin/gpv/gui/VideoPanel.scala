@@ -48,9 +48,9 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit)
   val slider = new JSlider(0, 100, 0)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = {
-      debug(s"slider event $e")
+      debug(s"slider ${slider.getValueIsAdjusting} event $e")
       if (!slider.getValueIsAdjusting) {
-        player.foreach(_.seek(slider.getValue))
+        //player.foreach(_.seek(slider.getValue))
       }
     }
   })
@@ -74,10 +74,10 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit)
 
   private def controllerTimeHandler(videoTs: Long, percentage: Int) {
     videoTimeHandler(videoTs)
-    //slider.setValue(percentage)
+    slider.setValue(percentage)
   }
 
   def playOrPauseVideo() {
-    log.info("play video...")
+    info("play video...")
   }
 }

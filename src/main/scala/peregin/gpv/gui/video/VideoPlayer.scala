@@ -22,7 +22,7 @@ class VideoPlayer(url: String, telemetry: Telemetry,
 
   val container = reader.getContainer
   val durationInMillis = container.getDuration / 1000
-  val bitRate = container.getBitRateextract
+  val bitRate = container.getBitRate
   info(s"duration: ${DurationPrinter.print(durationInMillis)}")
 
   val overlay = new VideoOverlay(telemetry, imageHandler, true)
