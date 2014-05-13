@@ -12,7 +12,7 @@ import peregin.gpv.gui.video.VideoPlayer
 import javax.swing.event.{ChangeEvent, ChangeListener}
 
 
-class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit, shiftHandler: => Long) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: => Long) extends MigPanel("ins 2", "", "[fill]") with Logging {
 
   var telemetry = Telemetry.empty
 
@@ -75,12 +75,12 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeHandler: Long => Unit,
       player.foreach(_.close)
       player = Some(new VideoPlayer(path, telemetry,
         (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler,
-        controllerTimeHandler, debug = true))
+        controllerTimeUpdater, debug = true))
     }
   }
 
-  private def controllerTimeHandler(videoTs: Long, percentage: Int) {
-    videoTimeHandler(videoTs)
+  private def controllerTimeUpdater(videoTs: Long, percentage: Int) {
+    videoTimeUpdater(videoTs)
     Swing.onEDT{
       sliderChangeFromApi = true
       slider.setValue(percentage)

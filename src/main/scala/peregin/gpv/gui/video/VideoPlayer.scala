@@ -12,7 +12,7 @@ import ICodec.Type._
 
 class VideoPlayer(url: String, telemetry: Telemetry,
                   imageHandler: Image => Unit, shiftHandler: => Long,
-                  timeHandler: (Long, Int) => Unit, debug: Boolean) extends Logging {
+                  timeUpdater: (Long, Int) => Unit, debug: Boolean) extends Logging {
 
   @volatile var running = true
 
@@ -37,7 +37,7 @@ class VideoPlayer(url: String, telemetry: Telemetry,
   val overlay = new VideoOverlay(telemetry, imageHandler, shiftHandler, debug)
   reader.addListener(overlay)
 
-  val controller = new VideoController(timeHandler, durationInMillis)
+  val controller = new VideoController(timeUpdater, durationInMillis)
   overlay.addListener(controller)
 
   import ExecutionContext.Implicits.global

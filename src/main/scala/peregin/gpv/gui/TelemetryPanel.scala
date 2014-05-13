@@ -271,7 +271,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   def getShift: Long = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
 
   // dispatched by the video controller, invoked from EDT
-  def showVideoProgress(videoTimeInMillis: Long) {
+  def updateVideoProgress(videoTimeInMillis: Long) {
     val sonda = telemetry.sonda(videoTimeInMillis + getShift)
     altitude.refreshProgress(sonda)
     mapKit.refreshProgress(sonda.map(_.location))
