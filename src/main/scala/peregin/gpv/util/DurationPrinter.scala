@@ -17,7 +17,7 @@ object DurationPrinter {
     .appendSuffix("s")
     .toFormatter
 
-  def print(elapsed: Option[Long]): String = print(elapsed.getOrElse(0L))
+  def print(elapsedInMillis: Option[Long]): String = print(elapsedInMillis.getOrElse(0L))
 
-  def print(elapsed: Long) = formatter.print(new Duration(elapsed).toPeriod)
+  def print(elapsedInMillis: Long) = formatter.print(new Duration(elapsedInMillis).toPeriod)
 }

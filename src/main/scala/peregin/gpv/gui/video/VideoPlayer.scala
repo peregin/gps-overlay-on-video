@@ -37,7 +37,7 @@ class VideoPlayer(url: String, telemetry: Telemetry,
   val overlay = new VideoOverlay(telemetry, imageHandler, shiftHandler, debug)
   reader.addListener(overlay)
 
-  val controller = new VideoController(timeUpdater, durationInMillis)
+  val controller = new VideoController(timeUpdater, durationInMillis, realTime = true)
   overlay.addListener(controller)
 
   import ExecutionContext.Implicits.global

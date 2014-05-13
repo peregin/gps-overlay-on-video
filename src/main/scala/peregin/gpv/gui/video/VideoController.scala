@@ -5,12 +5,11 @@ import com.xuggle.mediatool.event.IVideoPictureEvent
 import peregin.gpv.util.Logging
 
 
-class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long) extends MediaToolAdapter with Logging {
+class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, realTime: Boolean) extends MediaToolAdapter with Logging {
   
   var firstVideoTs: Option[Long] = None
   var firstClockTs = 0L
   var sleep = 0L
-  var enabled = true
 
   def reset() {
     firstVideoTs = None
@@ -23,7 +22,7 @@ class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long) 
     val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
     timeUpdater(tsInMillis, percentage.toInt)
 
-    if (enabled) waitIfNeeded(tsInMillis)
+    if (realTime) waitIfNeeded(tsInMillis)
 
     super.onVideoPicture(event)
   }
