@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import org.jdesktop.swingx.painter.Painter
 import java.awt.{Font, BasicStroke, RenderingHints, Color}
 import peregin.gpv.Setup
-import peregin.gpv.gui.map.MapQuestTileFactory
+import peregin.gpv.gui.map.{KnobPainter, MapQuestTileFactory}
 import scala.swing.Font
 import org.joda.time.DateTime
 import scala.swing.event.MouseClicked
@@ -17,7 +17,8 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import java.awt.event.{MouseEvent, MouseAdapter}
 
 
-class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
+class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]")
+  with KnobPainter with Logging with Timed {
 
   var telemetry = Telemetry.empty
 
@@ -71,18 +72,9 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
           lastY = pt.getY.toInt
         }
 
-        // poi
-        poi.foreach{gp =>
-          g.setColor(Color.blue)
-          val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
-          g.fillOval(pt.getX.toInt - 5, pt.getY.toInt - 5, 10, 10)
-        }
-        // progress
-        progress.foreach{gp =>
-          g.setColor(Color.orange)
-          val pt = getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom)
-          g.fillOval(pt.getX.toInt - 5, pt.getY.toInt - 5, 10, 10)
-        }
+        poi.foreach(gp => paintKnob(g, getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom), Color.blue))
+        progress.foreach(gp => paintKnob(g, getMainMap.getTileFactory.geoToPixel(gp, getMainMap.getZoom), Color.orange))
+
         g.dispose()
       }
     }
@@ -177,8 +169,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         val x = (gridLeft + p * pxWidth / 100).toInt
         g.setColor(Color.blue)
         g.drawLine(x, 10, x, gridBottom)
-        g.fillOval(x - 5, 5, 10, 10)
-        //g.fillOval(x - 5, gridBottom - 5, 10, 10)
+        paintKnob(g, x, 10, Color.blue)
 
         // draw data; time, speed, distance
         g.setColor(Color.blue)
@@ -194,7 +185,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         val x = (gridLeft + p * pxWidth / 100).toInt
         g.setColor(Color.orange)
         g.drawLine(x, 10, x, gridBottom)
-        g.fillOval(x - 5, 5, 10, 10)
+        paintKnob(g, x, 10, Color.orange)
       }
     }
 
