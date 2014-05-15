@@ -37,6 +37,10 @@ Useful links and information
 Thought that it is a good idea to make some screenshots from time to time to see how the development evolves.
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
+The first videos generated with the software:
+[![Zugerberg Classic 2014](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/youtube.png)](http://www.youtube.com/watch?v=N74yLpdebJ8)
+[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/0.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
+
 ## Gauge ideas
 Drafts on the paper
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
