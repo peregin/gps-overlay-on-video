@@ -8,15 +8,13 @@ import peregin.gpv.gui.gauge._
 import peregin.gpv.util.Logging
 
 
-class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandler: => Long,
-                   debug: Boolean) extends MediaToolAdapter with Logging {
+class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandler: => Long) extends MediaToolAdapter with Logging {
 
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
   val elevationGauge = new IconicElevationGauge {}
   val distanceGauge = new IconicDistanceGauge {}
   val heartRateGauge = new IconicHeartRateGauge {}
-  val debugGauge = if (debug) Some(new DebugGauge {}) else None
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
     val ts = event.getTimeStamp
@@ -29,9 +27,7 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandl
     // set transparency
     g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
 
-    // TODO: apply the shift between video and gps streams
     telemetry.sonda(tsInMillis + shiftHandler).foreach{sonda =>
-      if (debugGauge.isDefined) sonda.videoProgress = tsInMillis
       val stash = g.getTransform
 
       speedGauge.paint(g, 75, 75, sonda)
@@ -50,15 +46,6 @@ class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandl
 
       // restore any kind of transformations until this point
       g.setTransform(stash)
-      debugGauge.foreach{gauge =>
-        // paint to bottom/right
-        val w = image.getWidth
-        val h = image.getHeight
-        val debugBoxW = 250
-        val debugBoxH = 150
-        g.translate(w - debugBoxW, h - debugBoxH)
-        gauge.paint(g, debugBoxW, debugBoxH, sonda)
-      }
     }
 
     g.dispose()
