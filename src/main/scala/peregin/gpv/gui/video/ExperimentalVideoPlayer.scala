@@ -8,7 +8,7 @@ import peregin.gpv.util.{DurationPrinter, Logging}
 
 
 // migration of the xuggler sample
-class SimpleVideoPlayer(url: String, telemetry: Telemetry,
+class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                         imageHandler: Image => Unit, shiftHandler: => Long,
                         timeUpdater: (Long, Int) => Unit) extends Logging {
 

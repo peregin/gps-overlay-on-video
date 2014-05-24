@@ -33,6 +33,7 @@ class VideoPlayer(url: String, telemetry: Telemetry,
   info(s"bit rate: $bitRate")
   info(s"video stream: $videoStreamIx")
   info(f"frame rate: $frameRate%5.2f")
+  info(s"size [${videoCoder.getWidth}, ${videoCoder.getHeight}")
 
   val overlay = new VideoOverlay(telemetry, imageHandler, shiftHandler)
   reader.addListener(overlay)

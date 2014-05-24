@@ -28,17 +28,24 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
     }
 
     override def paint(g: Graphics) = {
-      g.setColor(Color.black)
       val width = getWidth
       val height = getHeight
+      g.setColor(Color.black)
       g.fillRect(0, 0, width, height)
 
       if (image != null) {
-        val w = image.getWidth(null)
-        val h = image.getHeight(null)
+        val iw = image.getWidth(null)
+        val ih = image.getHeight(null)
+
+        //g.drawImage(image, 0, 0, width, height, 0, 0, iw, ih, null)
+        // the image needs to be scaled to fit to the display area
+        val (w, h) = if (iw > width || ih > height) {
+          val scale = math.min(width.toDouble / iw, height.toDouble / ih)
+          ((iw.toDouble * scale).toInt, (ih.toDouble * scale).toInt)
+        } else (iw, ih)
         val x = (width - w) / 2
         val y = (height - h) / 2
-        g.drawImage(image, x, y, w, h, null)
+        g.drawImage(image, x, y, x + w, x + h, 0, 0, iw, ih, null)
       }
     }
   }
