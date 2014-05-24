@@ -37,7 +37,6 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
         val iw = image.getWidth(null)
         val ih = image.getHeight(null)
 
-        //g.drawImage(image, 0, 0, width, height, 0, 0, iw, ih, null)
         // the image needs to be scaled to fit to the display area
         val (w, h) = if (iw > width || ih > height) {
           val scale = math.min(width.toDouble / iw, height.toDouble / ih)
@@ -45,7 +44,8 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
         } else (iw, ih)
         val x = (width - w) / 2
         val y = (height - h) / 2
-        g.drawImage(image, x, y, x + w, x + h, 0, 0, iw, ih, null)
+        //debug(s"(w, h) = ($w, $h)")
+        g.drawImage(image, x, y, x + w, y + h, 0, 0, iw, ih, null)
       }
     }
   }
