@@ -10,7 +10,7 @@ import peregin.gpv.util.{DurationPrinter, Logging}
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                         imageHandler: Image => Unit, shiftHandler: => Long,
-                        timeUpdater: (Long, Int) => Unit) extends Logging {
+                        timeUpdater: (Long, Int) => Unit) extends VideoPlayer with Logging {
 
 
   // Let's make sure that we can actually convert video pixel formats.
@@ -32,6 +32,8 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
   // and iterate through the streams to find the first video stream
   var videoStreamId = -1
+  var frameRate = 0d
+
   var videoCoder: IStreamCoder = null
   for (i <- 0 until numStreams) {
     // Find the stream object
@@ -42,7 +44,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
       videoStreamId = i
       videoCoder = coder
-      val frameRate = videoCoder.getFrameRate.getDouble
+      frameRate = videoCoder.getFrameRate.getDouble
       info(f"frame rate: $frameRate%5.2f")
     }
   }
@@ -151,22 +153,21 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
               val systemClockCurrentTime = System.currentTimeMillis();
               val millisecondsClockTimeSinceStartofVideo =
                 systemClockCurrentTime - systemClockStartTime;
-              // compute how long for this frame since the first frame in the
-              // stream.
-              // remember that IVideoPicture and IAudioSamples timestamps are
-              // always in MICROSECONDS,
+              // compute how long for this frame since the first frame in the stream.
+              // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
               // so we divide by 1000 to get milliseconds.
-              val millisecondsStreamTimeSinceStartOfVideo =
-                (picture.getTimeStamp() - firstTimestampInStream) / 1000;
+              val millisecondsStreamTimeSinceStartOfVideo = (picture.getTimeStamp() - firstTimestampInStream) / 1000
               val millisecondsTolerance = 50L // and we give ourselfs 50 ms of tolerance
-              val millisecondsToSleep =
-                (millisecondsStreamTimeSinceStartOfVideo -
-                  (millisecondsClockTimeSinceStartofVideo +
-                    millisecondsTolerance));
+              val millisecondsToSleep = (millisecondsStreamTimeSinceStartOfVideo -
+                  (millisecondsClockTimeSinceStartofVideo + millisecondsTolerance))
               if (millisecondsToSleep > 0) {
-                Thread.sleep(millisecondsToSleep);
+                Thread.sleep(millisecondsToSleep)
               }
             }
+
+            val tsInMillis = picture.getTimeStamp / 1000
+            val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
+            timeUpdater(tsInMillis, percentage.toInt)
 
             // And finally, convert the BGR24 to an Java buffered image
             val javaImage = Utils.videoPictureToImage(newPic)
@@ -185,16 +186,28 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       }
 
     }
-    /*
-   * Technically since we're exiting anyway, these will be cleaned up by
-   * the garbage collector... but because we're nice people and want
-   * to be invited places for Christmas, we're going to show how to clean up.
-   */
+
+    close()
+  }
+
+  override def seek(percentage: Double) {
+    log.info(f"seek to $percentage%2.2f")
+    val p = percentage match {
+      case a if a > 100d => 100d
+      case b if b < 0d => 0d
+      case c => percentage
+    }
+    val frames = durationInMillis / 1000 * frameRate
+    val jumpToFrame = frames * p / 100
+    container.seekKeyFrame(videoStreamId, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+  }
+
+  override def close() {
     if (videoCoder != null) {
-      videoCoder.close();
+      videoCoder.close()
     }
     if (container != null) {
-      container.close();
+      container.close()
     }
   }
 }
