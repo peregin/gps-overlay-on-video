@@ -80,10 +80,10 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
 
     setup.videoPath.foreach{path =>
       player.foreach(_.close)
-      //player = Some(new SimpleVideoPlayer(path, telemetry,
-      //  (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler, controllerTimeUpdater))
-      player = Some(new ExperimentalVideoPlayer(path, telemetry,
+      player = Some(new SimpleVideoPlayer(path, telemetry,
         (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler, controllerTimeUpdater))
+      //player = Some(new ExperimentalVideoPlayer(path, telemetry,
+      //  (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler, controllerTimeUpdater))
     }
   }
 
