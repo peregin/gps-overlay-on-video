@@ -12,8 +12,8 @@ import peregin.gpv.util.{DurationPrinter, Logging}
 
 object ConverterManualTest extends App with Logging {
 
-  val file = "/Users/levi/zugerberg.json"
-  val out = "/Users/levi/zugerberg-gps.mp4"
+  val file = "/Users/levi/zimmerberg.json"
+  val out = "/Users/levi/zimmerberg-gps.mp4"
   val setup = Setup.loadFile(file)
   val telemetry = Telemetry.load(new File(setup.gpsPath.getOrElse(sys.error("gps file is not configured"))))
   val reader = ToolFactory.makeReader(setup.videoPath.getOrElse("video file is not configured"))
