@@ -1,3 +1,6 @@
+resolvers += "staged dependency-graph" at "https://oss.sonatype.org/content/repositories/netvirtual-void-1001"
+
+resolvers += "oss snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 // gen-idea plugin for IntelliJ
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
@@ -9,7 +12,7 @@ addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.4.0")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 
 // check latest updates form maven
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.5")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.6")
 
 // xml data binding
 addSbtPlugin("org.scalaxb" % "sbt-scalaxb" % "1.1.2")
