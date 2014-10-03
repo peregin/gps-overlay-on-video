@@ -52,9 +52,9 @@ libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.8"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.0"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.3"
+libraryDependencies += "joda-time" % "joda-time" % "2.4"
 
-libraryDependencies += "org.joda" % "joda-convert" % "1.6"
+libraryDependencies += "org.joda" % "joda-convert" % "1.7"
 
 libraryDependencies += "org.specs2" %% "specs2" % "2.3.13" % "test"
 
