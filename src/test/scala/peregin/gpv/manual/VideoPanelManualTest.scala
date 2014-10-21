@@ -1,7 +1,7 @@
 package peregin.gpv.manual
 
 import info.BuildInfo
-import peregin.gpv.gui.video.ExperimentalVideoPlayerFactory
+import peregin.gpv.gui.video.{AnotherVideoPlayerFactory, ExperimentalVideoPlayerFactory}
 import scala.swing.{MainFrame, SimpleSwingApplication}
 import peregin.gpv.util.Logging
 import peregin.gpv.gui.{VideoPanel, Goodies, MigPanel}
