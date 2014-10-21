@@ -1,18 +1,22 @@
 package peregin.gpv.gui
 
-import java.io.File
-import javax.swing.filechooser.FileNameExtensionFilter
-import javax.swing.{JSlider, JPanel}
 import java.awt.{Color, Graphics, Image}
-import peregin.gpv.Setup
-import peregin.gpv.util.Logging
-import scala.swing.Swing
-import peregin.gpv.model.Telemetry
-import peregin.gpv.gui.video.{ExperimentalVideoPlayer, VideoPlayer, SimpleVideoPlayer}
+import java.io.File
 import javax.swing.event.{ChangeEvent, ChangeListener}
+import javax.swing.filechooser.FileNameExtensionFilter
+import javax.swing.{JPanel, JSlider}
+
+import peregin.gpv.Setup
+import peregin.gpv.gui.video.{VideoPlayer, VideoPlayerFactory}
+import peregin.gpv.model.Telemetry
+import peregin.gpv.util.Logging
+
+import scala.swing.Swing
 
 
-class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: => Long) extends MigPanel("ins 2", "", "[fill]") with Logging {
+class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: => Long)
+  extends MigPanel("ins 2", "", "[fill]") with Logging {
+  self: VideoPlayerFactory =>
 
   var telemetry = Telemetry.empty
 
@@ -80,10 +84,11 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
 
     setup.videoPath.foreach{path =>
       player.foreach(_.close)
-      player = Some(new SimpleVideoPlayer(path, telemetry,
-        (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler, controllerTimeUpdater))
-      //player = Some(new ExperimentalVideoPlayer(path, telemetry,
-      //  (image: Image) => Swing.onEDT(imagePanel.show(image)), shiftHandler, controllerTimeUpdater))
+      player = Some(createPlayer(
+        path, telemetry,
+        (image: Image) => Swing.onEDT(imagePanel.show(image)),
+        shiftHandler, controllerTimeUpdater
+      ))
     }
   }
 

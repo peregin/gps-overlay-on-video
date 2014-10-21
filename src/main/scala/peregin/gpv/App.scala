@@ -1,16 +1,19 @@
 package peregin.gpv
 
-import info.BuildInfo
-import scala.swing._
 import java.awt.Dimension
-import peregin.gpv.gui._
-import javax.swing._
-import org.jdesktop.swingx._
-import peregin.gpv.util.{Io, Timed, Logging}
-import peregin.gpv.model.Telemetry
-import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.File
 import java.net.URI
+import javax.swing._
+import javax.swing.filechooser.FileNameExtensionFilter
+
+import info.BuildInfo
+import org.jdesktop.swingx._
+import peregin.gpv.gui._
+import peregin.gpv.gui.video.SimpleVideoPlayerFactory
+import peregin.gpv.model.Telemetry
+import peregin.gpv.util.{Io, Logging, Timed}
+
+import scala.swing._
 
 
 object App extends SimpleSwingApplication with Logging with Timed {
@@ -21,7 +24,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData, updateVideoProgress, telemetryPanel.getShift)
+  val videoPanel = new VideoPanel(openVideoData, updateVideoProgress, telemetryPanel.getShift) with SimpleVideoPlayerFactory
   val telemetryPanel = new TelemetryPanel(openGpsData)
   val statusLabel = new JXLabel("Ready")
 

@@ -1,6 +1,7 @@
 package peregin.gpv.manual
 
 import info.BuildInfo
+import peregin.gpv.gui.video.ExperimentalVideoPlayerFactory
 import scala.swing.{MainFrame, SimpleSwingApplication}
 import peregin.gpv.util.Logging
 import peregin.gpv.gui.{VideoPanel, Goodies, MigPanel}
@@ -14,7 +15,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
   Goodies.initLookAndFeel()
 
-  val video = new VideoPanel(openVideoFile, (Long) => {}, 0L)
+  val video = new VideoPanel(openVideoFile, (Long) => {}, 0L) with ExperimentalVideoPlayerFactory
   val frame = new MainFrame {
     title = s"Video Test - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {

@@ -14,17 +14,19 @@ trait VideoPlayer {
   def close()
 }
 
-object VideoPlayer {
+trait VideoPlayerFactory {
+  def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+             shiftHandler: => Long, timeUpdater: (Long, Int) => Unit): VideoPlayer
+}
 
-  type inputType = (String, Telemetry, (Image) => Unit, () => Long, (Long, Int) => Unit)
-
-  //def create(t: inputType) = new ExperimentalVideoPlayer()
-
-  def createSimple(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-             shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
+  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
     new SimpleVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+}
 
-  def createExperimental(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                         shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
+  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
     new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
 }
