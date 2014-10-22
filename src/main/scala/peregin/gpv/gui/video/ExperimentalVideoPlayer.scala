@@ -108,17 +108,17 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
             offset += bytesDecoded
 
             /*
-         * Some decoders will consume data in a packet, but will not be able to construct
-         * a full video picture yet.  Therefore you should always check if you
-         * got a complete picture from the decoder
-         */
+             * Some decoders will consume data in a packet, but will not be able to construct
+             * a full video picture yet.  Therefore you should always check if you
+             * got a complete picture from the decoder
+             */
             if (picture.isComplete()) {
               var newPic: IVideoPicture = picture
               /*
-           * If the resampler is not null, that means we didn't get the
-           * video in BGR24 format and
-           * need to convert it into BGR24 format.
-           */
+               * If the resampler is not null, that means we didn't get the
+               * video in BGR24 format and
+               * need to convert it into BGR24 format.
+               */
               if (resampler != null) {
                 // we must resample
                 newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight())
@@ -128,7 +128,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
               if (newPic.getPixelType() != IPixelFormat.Type.BGR24)
                 throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
 
-              /**
+              /*
                * We could just display the images as quickly as we decode them,
                * but it turns out we can decode a lot faster than you think.
                *
@@ -160,6 +160,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                 val millisecondsToSleep = (millisecondsStreamTimeSinceStartOfVideo -
                     (millisecondsClockTimeSinceStartofVideo + millisecondsTolerance))
                 if (millisecondsToSleep > 0) {
+                  debug(s"wait for: ${DurationPrinter.print(millisecondsToSleep)}")
                   Thread.sleep(millisecondsToSleep)
                 }
               }
@@ -173,17 +174,9 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
               // and display it on the Java Swing window
               imageHandler(javaImage)
-            }
+            } // if picture is complete
           }
-        } else {
-          /*
-       * This packet isn't part of our video stream, so we just
-       * silently drop it.
-       */
-          do {} while (false)
         }
-
-
     } // while
 
     close()

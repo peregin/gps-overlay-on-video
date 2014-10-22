@@ -15,6 +15,8 @@ object DurationPrinter {
     .appendSuffix("m")
     .appendSeconds()
     .appendSuffix("s")
+    .appendMillis3Digit()
+    .appendSuffix("millis")
     .toFormatter
 
   def print(elapsedInMillis: Option[Long]): String = print(elapsedInMillis.getOrElse(0L))
