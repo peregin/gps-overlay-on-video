@@ -4,7 +4,7 @@ import com.xuggle.xuggler._
 
 import peregin.gpv.model.Telemetry
 import java.awt.Image
-import peregin.gpv.util.{DurationPrinter, Logging}
+import peregin.gpv.util.{TimePrinter, Logging}
 
 
 trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
@@ -31,7 +31,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     throw new IllegalArgumentException(s"could not open file: $url")
 
   val durationInMillis = container.getDuration / 1000
-  info(s"duration: ${DurationPrinter.print(durationInMillis)}")
+  info(s"duration: ${TimePrinter.printDuration(durationInMillis)}")
 
   // query how many streams the call to open found
   val numStreams = container.getNumStreams()
@@ -160,7 +160,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                 val millisecondsToSleep = (millisecondsStreamTimeSinceStartOfVideo -
                     (millisecondsClockTimeSinceStartofVideo + millisecondsTolerance))
                 if (millisecondsToSleep > 0) {
-                  debug(s"wait for: ${DurationPrinter.print(millisecondsToSleep)}")
+                  //debug(s"wait for: ${DurationPrinter.print(millisecondsToSleep)}")
                   Thread.sleep(millisecondsToSleep)
                 }
               }

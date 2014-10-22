@@ -2,7 +2,7 @@ package peregin.gpv.gui.video
 
 import com.xuggle.mediatool.MediaToolAdapter
 import com.xuggle.mediatool.event.IVideoPictureEvent
-import peregin.gpv.util.Logging
+import peregin.gpv.util.{TimePrinter, Logging}
 
 
 class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, realTime: Boolean) extends MediaToolAdapter with Logging {
@@ -29,7 +29,7 @@ class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, 
 
   private def waitIfNeeded(tsInMillis: Long) {
     if (firstVideoTs.isEmpty) {
-      firstVideoTs = Some(tsInMillis) // micro
+      firstVideoTs = Some(tsInMillis)
       firstClockTs = System.currentTimeMillis()
       sleep = 0
     } else {
@@ -40,7 +40,8 @@ class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, 
     }
 
     if (sleep > 0) {
-      //info(s"sleep = $sleep millis, firstVideoTs = $firstVideoTs, firstClockTs = $firstClockTs")
+      debug(s"ts = ${TimePrinter.printDuration(tsInMillis)}, firstVideoTs = $firstVideoTs, firstClockTs = ${TimePrinter.printTime(firstClockTs)}")
+      debug(s"wait for: ${TimePrinter.printDuration(sleep)}")
       Thread.sleep(sleep)
     }
   }

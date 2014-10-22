@@ -3,7 +3,7 @@ package peregin.gpv.gui.gauge
 import peregin.gpv.model.{Sonda, InputValue}
 import java.awt._
 import org.joda.time.DateTime
-import peregin.gpv.util.{DurationPrinter, Io}
+import peregin.gpv.util.{TimePrinter, Io}
 
 
 trait DebugGauge extends GaugePainter {
@@ -38,10 +38,10 @@ trait DebugGauge extends GaugePainter {
     // start drawing debug info
     var text = current.map(_.time).getOrElse(DateTime.now()).toString("HH:mm:ss.SSS")
     textWidthShadow(g, s"GPS Time: $text", tx, ty, Color.white)
-    import DurationPrinter._
-    text = print(current.map(_.elapsedTime.current.toLong))
+    import TimePrinter._
+    text = printDuration(current.map(_.elapsedTime.current.toLong))
     textWidthShadow(g, s"GPS Elapsed: $text", tx, ty + fh, Color.white)
-    text = print(current.map(_.videoProgress))
+    text = printDuration(current.map(_.videoProgress))
     textWidthShadow(g, s"VID Elapsed: $text", tx, ty + 2 * fh, Color.white)
   }
 }

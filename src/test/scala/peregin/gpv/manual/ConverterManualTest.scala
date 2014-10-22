@@ -7,7 +7,7 @@ import com.xuggle.mediatool.ToolFactory
 import java.awt.image.BufferedImage
 import peregin.gpv.gui.video.{VideoController, VideoOverlay}
 import java.awt.Image
-import peregin.gpv.util.{DurationPrinter, Logging}
+import peregin.gpv.util.{TimePrinter, Logging}
 
 
 object ConverterManualTest extends App with Logging {
@@ -21,7 +21,7 @@ object ConverterManualTest extends App with Logging {
   reader.open()
   val container = reader.getContainer
   val durationInMillis = container.getDuration / 1000
-  info(s"duration: ${DurationPrinter.print(durationInMillis)}")
+  info(s"duration: ${TimePrinter.printDuration(durationInMillis)}")
   var mark = 0L
 
 
@@ -41,7 +41,7 @@ object ConverterManualTest extends App with Logging {
   def timeHandler(videoTsInMillis: Long, percentage: Int) {
     val tick = System.currentTimeMillis
     if (tick - mark > 2000) {
-      info(s"% = $percentage videoTs = ${DurationPrinter.print(videoTsInMillis)}")
+      info(s"% = $percentage videoTs = ${TimePrinter.printDuration(videoTsInMillis)}")
       mark = tick
     }
   }
