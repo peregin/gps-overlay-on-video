@@ -10,6 +10,12 @@ import peregin.gpv.util.{DurationPrinter, Logging}
 import ICodec.Type._
 
 
+trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
+  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+    new SimpleVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+}
+
 class SimpleVideoPlayer(url: String, telemetry: Telemetry,
                   imageHandler: Image => Unit, shiftHandler: => Long,
                   timeUpdater: (Long, Int) => Unit) extends VideoPlayer with Logging {

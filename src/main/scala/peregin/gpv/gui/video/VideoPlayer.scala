@@ -18,21 +18,3 @@ trait VideoPlayerFactory {
   def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
              shiftHandler: => Long, timeUpdater: (Long, Int) => Unit): VideoPlayer
 }
-
-trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
-  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
-    new SimpleVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
-}
-
-trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
-  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
-    new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
-}
-
-trait AnotherVideoPlayerFactory extends VideoPlayerFactory {
-  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
-    new AnotherVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
-}

@@ -7,6 +7,12 @@ import java.awt.Image
 import peregin.gpv.util.{DurationPrinter, Logging}
 
 
+trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
+  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+    new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+}
+
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                         imageHandler: Image => Unit, shiftHandler: => Long,

@@ -9,6 +9,13 @@ import peregin.gpv.model.Telemetry
 import scala.actors.{TIMEOUT, DaemonActor}
 
 
+trait AnotherVideoPlayerFactory extends VideoPlayerFactory {
+  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
+                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+    new AnotherVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+}
+
+
 case class Seek(source: AnyRef, secs: Double)
 case object Play
 case object Stop
