@@ -7,14 +7,13 @@ import peregin.gpv.util.{TimePrinter, Logging}
 
 class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, realTime: Boolean) extends MediaToolAdapter with Logging {
   
-  var firstVideoTs: Option[Long] = None
-  var firstClockTs = 0L
-  var sleep = 0L
+  @volatile private var prevVideoTs: Option[Long] = None
+  @volatile private var prevClockTs: Option[Long] = None
 
   def reset() {
-    firstVideoTs = None
-    firstClockTs = 0L
-    sleep = 0
+    prevVideoTs = None
+    prevClockTs = None
+    debug("reset")
   }
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
@@ -27,22 +26,22 @@ class VideoController(timeUpdater: (Long, Int) => Unit, durationInMillis: Long, 
     super.onVideoPicture(event)
   }
 
-  private def waitIfNeeded(tsInMillis: Long) {
-    if (firstVideoTs.isEmpty) {
-      firstVideoTs = Some(tsInMillis)
-      firstClockTs = System.currentTimeMillis()
-      sleep = 0
-    } else {
-      val now = System.currentTimeMillis()
-      val elapsedClock = now - firstClockTs
-      val elapsedVideo = tsInMillis - firstVideoTs.get
-      sleep = elapsedVideo - elapsedClock
+  private def waitIfNeeded(videoTsInMillis: Long) {
+    val now = System.currentTimeMillis()
+    (prevVideoTs, prevClockTs) match {
+      case (Some(prevVideoTsInMillis), Some(prevClockTsInMillis)) =>
+        val elapsedVideo = videoTsInMillis - prevVideoTsInMillis
+        val elapsedClock = now - prevClockTsInMillis
+        val delayInMillis = elapsedVideo - elapsedClock
+        if (delayInMillis > 0) {
+          debug(s"ts = ${TimePrinter.printDuration(videoTsInMillis)}, prevVideoTs = ${TimePrinter.printDuration(prevVideoTs)}, prevClockTs = ${TimePrinter.printTime(prevClockTs)}")
+          debug(s"wait for: ${TimePrinter.printDuration(delayInMillis)}")
+          Thread.sleep(delayInMillis)
+        }
+      case _ => // ignore not initialized state
     }
 
-    if (sleep > 0) {
-      debug(s"ts = ${TimePrinter.printDuration(tsInMillis)}, firstVideoTs = $firstVideoTs, firstClockTs = ${TimePrinter.printTime(firstClockTs)}")
-      debug(s"wait for: ${TimePrinter.printDuration(sleep)}")
-      Thread.sleep(sleep)
-    }
+    prevVideoTs = Some(videoTsInMillis)
+    prevClockTs = Some(now)
   }
 }

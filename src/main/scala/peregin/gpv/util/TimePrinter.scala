@@ -22,9 +22,9 @@ object TimePrinter {
 
   lazy val timeFormatter = DateTimeFormat.forPattern("hh:mm:ss.SSS")
 
-  def printDuration(elapsedInMillis: Option[Long]): String = printDuration(elapsedInMillis.getOrElse(0L))
-
+  def printDuration(elapsedInMillisOption: Option[Long]): String = elapsedInMillisOption.map(printDuration).getOrElse("")
   def printDuration(elapsedInMillis: Long) = durationFormatter.print(new Duration(elapsedInMillis).toPeriod)
 
+  def printTime(timeInMillisOption: Option[Long]): String = timeInMillisOption.map(printTime).getOrElse("")
   def printTime(timeInMillis: Long) = timeFormatter.print(timeInMillis)
 }
