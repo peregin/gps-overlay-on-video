@@ -63,7 +63,7 @@ class SimpleVideoPlayer(url: String, telemetry: Telemetry,
     val frames = durationInMillis / 1000 * frameRate
     val jumpToFrame = frames * p / 100
     container.seekKeyFrame(videoStreamIx, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
-    //controller.reset()
+    controller.reset()
   }
 
   override def close() {
