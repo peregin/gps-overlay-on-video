@@ -14,6 +14,17 @@ trait VideoPlayer {
   def close()
 }
 
+trait VideoNotifier {
+
+  def getTelemetry: Telemetry
+
+  def getGpsShiftInMillis: Long
+
+  def newFrameEvent(img: Image)
+
+  def updatePlayProgress(timestampInMillis: Long, percentage: Int)
+}
+
 trait VideoPlayerFactory {
   def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
              shiftHandler: => Long, timeUpdater: (Long, Int) => Unit): VideoPlayer
