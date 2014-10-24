@@ -16,7 +16,7 @@ trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                         imageHandler: Image => Unit, shiftHandler: => Long,
-                        timeUpdater: (Long, Int) => Unit) extends VideoPlayer with Logging {
+                        timeUpdater: (Long, Int) => Unit) extends VideoPlayer with DelayController with Logging {
 
 
   // Let's make sure that we can actually convert video pixel formats.
@@ -128,44 +128,12 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
               if (newPic.getPixelType() != IPixelFormat.Type.BGR24)
                 throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
 
-              /*
-               * We could just display the images as quickly as we decode them,
-               * but it turns out we can decode a lot faster than you think.
-               *
-               * So instead, the following code does a poor-man's version of
-               * trying to match up the frame-rate requested for each
-               * IVideoPicture with the system clock time on your computer.
-               *
-               * Remember that all Xuggler IAudioSamples and IVideoPicture objects
-               * always give timestamps in Microseconds, relative to the first
-               * decoded item. If instead you used the packet timestamps, they can
-               * be in different units depending on your IContainer, and IStream
-               * and things can get hairy quickly.
-               */
-              if (firstTimestampInStream == Global.NO_PTS) {
-                // This is our first time through
-                firstTimestampInStream = picture.getTimeStamp()
-                // get the starting clock time so we can hold up frames
-                // until the right time.
-                systemClockStartTime = System.currentTimeMillis()
-              } else {
-                val systemClockCurrentTime = System.currentTimeMillis()
-                val millisecondsClockTimeSinceStartofVideo =
-                  systemClockCurrentTime - systemClockStartTime
-                // compute how long for this frame since the first frame in the stream.
-                // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
-                // so we divide by 1000 to get milliseconds.
-                val millisecondsStreamTimeSinceStartOfVideo = (picture.getTimeStamp() - firstTimestampInStream) / 1000
-                val millisecondsTolerance = 50L // and we give ourselfs 50 ms of tolerance
-                val millisecondsToSleep = (millisecondsStreamTimeSinceStartOfVideo -
-                    (millisecondsClockTimeSinceStartofVideo + millisecondsTolerance))
-                if (millisecondsToSleep > 0) {
-                  //debug(s"wait for: ${DurationPrinter.print(millisecondsToSleep)}")
-                  Thread.sleep(millisecondsToSleep)
-                }
-              }
-
+              // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
+              // so we divide by 1000 to get milliseconds.
               val tsInMillis = picture.getTimeStamp / 1000
+
+              if (tsInMillis > 0) waitIfNeeded(tsInMillis)
+
               val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
               timeUpdater(tsInMillis, percentage.toInt)
 
