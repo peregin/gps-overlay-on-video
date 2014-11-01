@@ -34,6 +34,8 @@ buildInfoPackage := "info"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.4"
+
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
 libraryDependencies += "org.swinglabs" % "swingx-ws" % "1.0"
