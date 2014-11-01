@@ -78,80 +78,69 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
   sealed trait PacketInfo
   case object ReadInProgress extends PacketInfo
-  case class EndOfStream(url: String) extends PacketInfo
+  case object EndOfStream extends PacketInfo
   case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketInfo
 
-  private def readFrame: Option[PacketInfo] = {
+  def readPacket: Stream[PacketInfo] = {
+    if (container.readNextPacket(packet) >= 0) {
+      if (packet.getStreamIndex() == videoStreamId) Stream.cons(readPicture, readPacket)
+      else Stream.cons(ReadInProgress, readPacket)
+    } else Stream.cons(EndOfStream, Stream.empty)
+  }
 
-    while (container.readNextPacket(packet) >= 0) {
+  private def readPicture: PacketInfo = {
+    // We allocate a new picture to get the data out of Xuggler
+    val picture = IVideoPicture.make(videoCoder.getPixelType(), videoCoder.getWidth(), videoCoder.getHeight())
+    var offset = 0
+    while (offset < packet.getSize() && !picture.isComplete) {
       /*
-       * Now we have a packet, let's see if it belongs to our video stream
+       * Now, we decode the video, checking for any errors.
        */
-      if (packet.getStreamIndex() == videoStreamId) {
-        /*
-         * We allocate a new picture to get the data out of Xuggler
-         */
-        val picture = IVideoPicture.make(videoCoder.getPixelType(), videoCoder.getWidth(), videoCoder.getHeight())
+      val bytesDecoded = videoCoder.decodeVideo(picture, packet, offset)
+      if (bytesDecoded < 0) throw new RuntimeException(s"got error decoding video in: $url")
+      offset += bytesDecoded
+    } // offset less than packet size
 
-        var offset = 0
-        while (offset < packet.getSize()) {
-          /*
-           * Now, we decode the video, checking for any errors.
-           *
-           */
-          val bytesDecoded = videoCoder.decodeVideo(picture, packet, offset)
-          if (bytesDecoded < 0) throw new RuntimeException(s"got error decoding video in: $url")
-          offset += bytesDecoded
+    /*
+     * Some decoders will consume data in a packet, but will not be able to construct
+     * a full video picture yet.  Therefore you should always check if you
+     * got a complete picture from the decoder
+     */
+    if (picture.isComplete()) {
+      var newPic: IVideoPicture = picture
+      /*
+       * If the resampler is not null, that means we didn't get the
+       * video in BGR24 format and
+       * need to convert it into BGR24 format.
+       */
+      if (resampler != null) {
+        // we must resample
+        newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight())
+        if (resampler.resample(newPic, picture) < 0) throw new RuntimeException(s"could not resample video from: $url")
+      }
+      if (newPic.getPixelType() != IPixelFormat.Type.BGR24) throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
 
-          /*
-           * Some decoders will consume data in a packet, but will not be able to construct
-           * a full video picture yet.  Therefore you should always check if you
-           * got a complete picture from the decoder
-           */
-          if (picture.isComplete()) {
-            var newPic: IVideoPicture = picture
-            /*
-             * If the resampler is not null, that means we didn't get the
-             * video in BGR24 format and
-             * need to convert it into BGR24 format.
-             */
-            if (resampler != null) {
-              // we must resample
-              newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight())
-              if (resampler.resample(newPic, picture) < 0)
-                throw new RuntimeException(s"could not resample video from: $url")
-            }
-            if (newPic.getPixelType() != IPixelFormat.Type.BGR24)
-              throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
+      // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
+      // so we divide by 1000 to get milliseconds.
+      val tsInMillis = picture.getTimeStamp / 1000
+      val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
+      // And finally, convert the BGR24 to an Java buffered image
+      val javaImage = Utils.videoPictureToImage(newPic)
 
-            // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
-            // so we divide by 1000 to get milliseconds.
-            val tsInMillis = picture.getTimeStamp / 1000
-            val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
-            // And finally, convert the BGR24 to an Java buffered image
-            val javaImage = Utils.videoPictureToImage(newPic)
-
-            return Some(FrameIsReady(tsInMillis, percentage.toInt, javaImage))
-          } // if picture is complete
-        } // offset less than packet size
-      } // is video stream
-    } // while
-
-    None
+      return FrameIsReady(tsInMillis, percentage.toInt, javaImage)
+    } else ReadInProgress
   }
 
   def run() {
-    var frameInfo: Option[PacketInfo] = None
-    do {
-      frameInfo = readFrame
-      frameInfo match {
-        case Some(FrameIsReady(tsInMillis, percentage, image)) =>
+    for (packet <- readPacket) {
+      packet match {
+        case FrameIsReady(tsInMillis, percentage, image) =>
           if (tsInMillis > 0) waitIfNeeded(tsInMillis)
           timeUpdater(tsInMillis, percentage)
           imageHandler(image)
         case _ => // ignore
       }
-    } while (frameInfo.isDefined)
+    }
 
     close()
   }
