@@ -76,7 +76,10 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
   val packet = IPacket.make()
 
 
-  case class FrameInfo(tsInMillis: Long, percentage: Int, frame: Image)
+  sealed trait PacketInfo
+  // ProcessingInfo
+  // EofInfo
+  case class FrameInfo(tsInMillis: Long, percentage: Int, frame: Image) extends PacketInfo
 
   private def readFrame: Option[FrameInfo] = {
     var frameInfo: Option[FrameInfo] = None
