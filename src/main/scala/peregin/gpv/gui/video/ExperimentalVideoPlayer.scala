@@ -77,14 +77,13 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
 
   sealed trait PacketInfo
-  // ProcessingInfo
-  // EofInfo
-  case class FrameInfo(tsInMillis: Long, percentage: Int, frame: Image) extends PacketInfo
+  case object ReadInProgress extends PacketInfo
+  case class EndOfStream(url: String) extends PacketInfo
+  case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketInfo
 
-  private def readFrame: Option[FrameInfo] = {
-    var frameInfo: Option[FrameInfo] = None
+  private def readFrame: Option[PacketInfo] = {
 
-    while (container.readNextPacket(packet) >= 0 && frameInfo.isEmpty) {
+    while (container.readNextPacket(packet) >= 0) {
       /*
        * Now we have a packet, let's see if it belongs to our video stream
        */
@@ -132,23 +131,25 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
             // And finally, convert the BGR24 to an Java buffered image
             val javaImage = Utils.videoPictureToImage(newPic)
 
-            return Some(FrameInfo(tsInMillis, percentage.toInt, javaImage))
+            return Some(FrameIsReady(tsInMillis, percentage.toInt, javaImage))
           } // if picture is complete
         } // offset less than packet size
       } // is video stream
     } // while
 
-    frameInfo
+    None
   }
 
   def run() {
-    var frameInfo: Option[FrameInfo] = None
+    var frameInfo: Option[PacketInfo] = None
     do {
       frameInfo = readFrame
-      frameInfo.foreach{ fi =>
-        if (fi.tsInMillis > 0) waitIfNeeded(fi.tsInMillis)
-        timeUpdater(fi.tsInMillis, fi.percentage)
-        imageHandler(fi.frame)
+      frameInfo match {
+        case Some(FrameIsReady(tsInMillis, percentage, image)) =>
+          if (tsInMillis > 0) waitIfNeeded(tsInMillis)
+          timeUpdater(tsInMillis, percentage)
+          imageHandler(image)
+        case _ => // ignore
       }
     } while (frameInfo.isDefined)
 
