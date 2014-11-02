@@ -147,11 +147,14 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       case b if b < 0d => 0d
       case c => percentage
     }
-    log.info(f"seek to $p%2.2f percentage")
     // frame based
-    val frames = durationInMillis / 1000 * frameRate
-    val jumpToFrame = frames * p / 100
-    container.seekKeyFrame(videoStreamId, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+    val frames = (durationInMillis / 1000) * frameRate
+    log.info(f"seek to $p%2.2f percentage in $frames frames")
+    val jumpToFrame = (frames * p / 100).toLong
+    log.info(f"seek to $p%2.2f percentage, jump = $jumpToFrame in $frames frames")
+    container.seekKeyFrame(videoStreamId, 0, jumpToFrame, container.getDuration, IContainer.SEEK_FLAG_FRAME)
+    //val x = container.getFileSize * p / 100
+    //container.seekKeyFrame(videoStreamId, 0, x.toLong, container.getDuration, IContainer.SEEK_FLAG_BYTE)
 
     // loop to the next key frame
     var stop = false
@@ -194,6 +197,7 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
         if (tsInMillis > 0) player.waitIfNeeded(tsInMillis)
         player.timeUpdater(tsInMillis, percentage)
         player.imageHandler(image)
+        //self ! Play
       case EndOfStream => context.stop(self)
       case ReadInProgress => self ! Play
       case _ => // ignore
