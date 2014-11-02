@@ -14,10 +14,15 @@ trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
     new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
 }
 
+sealed trait PacketReply
+case object ReadInProgress extends PacketReply
+case object EndOfStream extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketReply
+
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
-                        imageHandler: Image => Unit, shiftHandler: => Long,
-                        timeUpdater: (Long, Int) => Unit) extends VideoPlayer with DelayController with Logging {
+                        val imageHandler: Image => Unit, shiftHandler: => Long,
+                        val timeUpdater: (Long, Int) => Unit) extends VideoPlayer with DelayController with Logging {
 
 
   // Let's make sure that we can actually convert video pixel formats.
@@ -76,12 +81,6 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
   val packet = IPacket.make()
 
-
-  sealed trait PacketReply
-  case object ReadInProgress extends PacketReply
-  case object EndOfStream extends PacketReply
-  case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketReply
-
   def readPacket: Stream[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
       if (packet.getStreamIndex() == videoStreamId) Stream.cons(readPicture, readPacket)
@@ -132,13 +131,23 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     } else ReadInProgress
   }
 
+  override def play() {
+    playerActor ! Play
+  }
+
+  override def pause() = sys.error("not supported")
+
   override def seek(percentage: Double) {
-    log.info(f"seek to $percentage%2.2f")
+    playerActor ! Seek(percentage)
+  }
+
+  private[video] def doSeek(percentage: Double): Unit = {
     val p = percentage match {
       case a if a > 100d => 100d
       case b if b < 0d => 0d
       case c => percentage
     }
+    log.info(f"seek to $p%2.2f percentage")
     val frames = durationInMillis / 1000 * frameRate
     val jumpToFrame = frames * p / 100
     container.seekKeyFrame(videoStreamId, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
@@ -153,33 +162,31 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     }
   }
 
-  // form the future
-  def run() {
-    for (packet <- readPacket) {
-      packet match {
-        case FrameIsReady(tsInMillis, percentage, image) =>
-          if (tsInMillis > 0) waitIfNeeded(tsInMillis)
-          timeUpdater(tsInMillis, percentage)
-          imageHandler(image)
-        case _ => // ignore
-      }
-    }
-
-    close()
-  }
-
   val system = ActorSystem("gpv")
   val playerActor = system.actorOf(Props(new PlayerControllerActor(this)), name = "playerController")
   playerActor ! Play
 }
 
-sealed trait PlayerState
-case object Play extends PlayerState
+sealed trait PlayerCommand
+case object Play extends PlayerCommand
+case class Seek(percentage: Double) extends PlayerCommand
 
-class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor {
+class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with Logging {
 
   override def receive = {
-    case Play => player.run()
+    case Play => player.readPacket.head match {
+      case FrameIsReady(tsInMillis, percentage, image) =>
+        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%1.2f")
+        if (tsInMillis > 0) player.waitIfNeeded(tsInMillis)
+        player.timeUpdater(tsInMillis, percentage)
+        player.imageHandler(image)
+      case EndOfStream => context.stop(self)
+      case ReadInProgress => self ! Play
+      case _ => // ignore
+    }
+    case Seek(percentage) =>
+      player.reset()
+      player.doSeek(percentage)
     case _ => // do nothing
   }
 }

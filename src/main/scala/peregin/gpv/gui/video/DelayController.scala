@@ -19,8 +19,8 @@ trait DelayController extends Logging {
       case (Some(prevVideoTsInMillis), Some(prevClockTsInMillis)) =>
         val elapsedVideo = videoTsInMillis - prevVideoTsInMillis
         val elapsedClock = now - prevClockTsInMillis
-        // TODO: val millisecondsTolerance = 50L // and we give ourselfs 50 ms of tolerance
-        val delayInMillis = elapsedVideo - elapsedClock
+        // and we give ourselves 50 ms of tolerance
+        val delayInMillis = elapsedVideo - elapsedClock + 50l
         if (delayInMillis > 0) {
           debug(s"ts = ${TimePrinter.printDuration(videoTsInMillis)}, prevVideoTs = ${TimePrinter.printDuration(prevVideoTs)}, prevClockTs = ${TimePrinter.printTime(prevClockTs)}")
           debug(s"wait for: ${TimePrinter.printDuration(delayInMillis)}")

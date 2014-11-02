@@ -9,6 +9,10 @@ import peregin.gpv.model.Telemetry
 // implementation can be easily replaced (media vs tool based from xuggler)
 trait VideoPlayer {
 
+  def play()
+
+  def pause()
+
   def seek(percentage: Double)
 
   def close()

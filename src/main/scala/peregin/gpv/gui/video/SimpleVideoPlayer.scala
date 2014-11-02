@@ -1,13 +1,14 @@
 package peregin.gpv.gui.video
 
-import com.xuggle.mediatool.ToolFactory
 import java.awt.Image
 import java.awt.image.BufferedImage
+
+import com.xuggle.mediatool.ToolFactory
+import com.xuggle.xuggler.ICodec.Type._
 import peregin.gpv.model.Telemetry
+import peregin.gpv.util.{Logging, TimePrinter}
+
 import scala.concurrent._
-import com.xuggle.xuggler.{ICodec, IContainer}
-import peregin.gpv.util.{TimePrinter, Logging}
-import ICodec.Type._
 
 
 trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
@@ -47,26 +48,18 @@ class SimpleVideoPlayer(url: String, telemetry: Telemetry,
   val controller = new VideoController(timeUpdater, durationInMillis, realTime = true)
   overlay.addListener(controller)
 
-  import ExecutionContext.Implicits.global
+  import scala.concurrent.ExecutionContext.Implicits.global
   future {
     while(running && reader.readPacket() == null) {
       // runs in a loop until the end
     }
   }
 
-  override def seek(percentage: Double) {
-    val p = percentage match {
-      case a if a > 100d => 100d
-      case b if b < 0d => 0d
-      case c => percentage
-    }
-    val frames = durationInMillis / 1000 * frameRate
-    val jumpToFrame = frames * p / 100
+  override def play() = sys.error("not supported")
 
-    //container.flushPackets()
-    container.seekKeyFrame(videoStreamIx, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
-    controller.reset()
-  }
+  override def pause() = sys.error("not supported")
+
+  override def seek(percentage: Double) = sys.error("not supported")
 
   override def close() {
     running = false

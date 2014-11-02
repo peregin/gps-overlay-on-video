@@ -102,6 +102,6 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
   }
 
   def playOrPauseVideo() {
-    info("play video...")
+    player.foreach(_.play())
   }
 }
