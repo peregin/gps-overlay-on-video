@@ -1,5 +1,6 @@
 package peregin.gpv.gui.video
 
+import akka.actor.{Props, ActorSystem, Actor}
 import com.xuggle.xuggler._
 
 import peregin.gpv.model.Telemetry
@@ -76,19 +77,19 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
   val packet = IPacket.make()
 
 
-  sealed trait PacketInfo
-  case object ReadInProgress extends PacketInfo
-  case object EndOfStream extends PacketInfo
-  case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketInfo
+  sealed trait PacketReply
+  case object ReadInProgress extends PacketReply
+  case object EndOfStream extends PacketReply
+  case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketReply
 
-  def readPacket: Stream[PacketInfo] = {
+  def readPacket: Stream[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
       if (packet.getStreamIndex() == videoStreamId) Stream.cons(readPicture, readPacket)
       else Stream.cons(ReadInProgress, readPacket)
     } else Stream.cons(EndOfStream, Stream.empty)
   }
 
-  private def readPicture: PacketInfo = {
+  private def readPicture: PacketReply = {
     // We allocate a new picture to get the data out of Xuggler
     val picture = IVideoPicture.make(videoCoder.getPixelType(), videoCoder.getWidth(), videoCoder.getHeight())
     var offset = 0
@@ -131,20 +132,6 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     } else ReadInProgress
   }
 
-  def run() {
-    for (packet <- readPacket) {
-      packet match {
-        case FrameIsReady(tsInMillis, percentage, image) =>
-          if (tsInMillis > 0) waitIfNeeded(tsInMillis)
-          timeUpdater(tsInMillis, percentage)
-          imageHandler(image)
-        case _ => // ignore
-      }
-    }
-
-    close()
-  }
-
   override def seek(percentage: Double) {
     log.info(f"seek to $percentage%2.2f")
     val p = percentage match {
@@ -166,9 +153,41 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     }
   }
 
+  // form the future
+  def run() {
+    for (packet <- readPacket) {
+      packet match {
+        case FrameIsReady(tsInMillis, percentage, image) =>
+          if (tsInMillis > 0) waitIfNeeded(tsInMillis)
+          timeUpdater(tsInMillis, percentage)
+          imageHandler(image)
+        case _ => // ignore
+      }
+    }
+
+    close()
+  }
+
+  /*
   import scala.concurrent._
   import ExecutionContext.Implicits.global
   future {
     run()
+  }
+  */
+
+  val system = ActorSystem("gpv")
+  val playerActor = system.actorOf(Props(new PlayerControllerActor(this)), name = "playerController")
+  playerActor ! Play
+}
+
+sealed trait PlayerState
+case object Play extends PlayerState
+
+class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor {
+
+  override def receive = {
+    case Play => player.run()
+    case _ => // do nothing
   }
 }

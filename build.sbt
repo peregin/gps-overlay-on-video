@@ -13,7 +13,8 @@ scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation", "-language
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 
 resolvers ++= Seq(
-  "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/"
+  "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
@@ -34,7 +35,7 @@ buildInfoPackage := "info"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
-libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.4"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.4"
 
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
