@@ -148,9 +148,24 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       case c => percentage
     }
     log.info(f"seek to $p%2.2f percentage")
+    // frame based
     val frames = durationInMillis / 1000 * frameRate
     val jumpToFrame = frames * p / 100
-    container.seekKeyFrame(videoStreamId, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+    for (i <- 0 until  container.getNumStreams()) {
+      container.seekKeyFrame(i, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+    }
+
+    // byte based
+    //val seekByte = ((container.getFileSize() * p) / 100).toLong
+    //val seekTime = (((container.getDuration()/videoCoder.getFrameRate().getNumerator())*p)/100)
+    //for (i <- 0 until  container.getNumStreams()) {
+    //  container.seekKeyFrame(i, seekByte, seekByte, seekByte, IContainer.SEEK_FLAG_BYTE)
+    //}
+    //info("Jump to " + p + "% byte=" + seekByte + " time=" + seekTime);
+
+    // time based
+    //val timeInMillis = (durationInMillis * percentage / 100).toLong
+    //container.seekKeyFrame(videoStreamId, timeInMillis * 1000, IContainer.SEEK_FLAG_BACKWARDS)
   }
 
   override def close() {
