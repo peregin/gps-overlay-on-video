@@ -17,7 +17,7 @@ trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
 sealed trait PacketReply
 case object ReadInProgress extends PacketReply
 case object EndOfStream extends PacketReply
-case class FrameIsReady(tsInMillis: Long, percentage: Int, frame: Image) extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Int, keyFrame: Boolean, frame: Image) extends PacketReply
 
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
@@ -127,7 +127,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       // And finally, convert the BGR24 to an Java buffered image
       val javaImage = Utils.videoPictureToImage(newPic)
 
-      return FrameIsReady(tsInMillis, percentage.toInt, javaImage)
+      return FrameIsReady(tsInMillis, percentage.toInt, picture.isKeyFrame, javaImage)
     } else ReadInProgress
   }
 
@@ -151,21 +151,20 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     // frame based
     val frames = durationInMillis / 1000 * frameRate
     val jumpToFrame = frames * p / 100
-    for (i <- 0 until  container.getNumStreams()) {
-      container.seekKeyFrame(i, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+    container.seekKeyFrame(videoStreamId, jumpToFrame.toLong, IContainer.SEEK_FLAG_FRAME)
+
+    // loop to the next key frame
+    var stop = false
+    while (!stop) {
+      readPacket.head match {
+        case FrameIsReady(_, _, true, _) => stop = true
+        case EndOfStream => stop = true
+        case _ => // ignore
+      }
     }
 
-    // byte based
-    //val seekByte = ((container.getFileSize() * p) / 100).toLong
-    //val seekTime = (((container.getDuration()/videoCoder.getFrameRate().getNumerator())*p)/100)
-    //for (i <- 0 until  container.getNumStreams()) {
-    //  container.seekKeyFrame(i, seekByte, seekByte, seekByte, IContainer.SEEK_FLAG_BYTE)
-    //}
-    //info("Jump to " + p + "% byte=" + seekByte + " time=" + seekTime);
-
-    // time based
-    //val timeInMillis = (durationInMillis * percentage / 100).toLong
-    //container.seekKeyFrame(videoStreamId, timeInMillis * 1000, IContainer.SEEK_FLAG_BACKWARDS)
+    // reset timer
+    reset()
   }
 
   override def close() {
@@ -190,8 +189,8 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
 
   override def receive = {
     case Play => player.readPacket.head match {
-      case FrameIsReady(tsInMillis, percentage, image) =>
-        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%1.2f")
+      case FrameIsReady(tsInMillis, percentage, keyFrame, image) =>
+        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%1.2f, keyFrame=$keyFrame")
         if (tsInMillis > 0) player.waitIfNeeded(tsInMillis)
         player.timeUpdater(tsInMillis, percentage)
         player.imageHandler(image)
@@ -200,7 +199,6 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
       case _ => // ignore
     }
     case Seek(percentage) =>
-      player.reset()
       player.doSeek(percentage)
     case _ => // do nothing
   }
