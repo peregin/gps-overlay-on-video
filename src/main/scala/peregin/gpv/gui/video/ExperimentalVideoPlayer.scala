@@ -168,14 +168,6 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     close()
   }
 
-  /*
-  import scala.concurrent._
-  import ExecutionContext.Implicits.global
-  future {
-    run()
-  }
-  */
-
   val system = ActorSystem("gpv")
   val playerActor = system.actorOf(Props(new PlayerControllerActor(this)), name = "playerController")
   playerActor ! Play
