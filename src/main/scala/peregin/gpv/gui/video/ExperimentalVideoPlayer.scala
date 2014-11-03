@@ -163,8 +163,10 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
 
     val pos = seconds2Timebase(jumpToSecond)
-    container.seekKeyFrame(videoStreamId, pos - 10, pos, pos + 10, IContainer.SEEK_FLAG_FRAME)
+    container.seekKeyFrame(videoStreamId, pos - 100, pos, pos, IContainer.SEEK_FLAG_FRAME)
     val keyFrameOption = readNextKeyFrame
+    // TODO: fine loop to the given timestamp !!!
+    // TODO: check slider values, not accurate
 
     // reset timer
     reset()
