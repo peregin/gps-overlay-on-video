@@ -125,7 +125,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       // And finally, convert the BGR24 to an Java buffered image
       val javaImage = Utils.videoPictureToImage(newPic)
 
-      return FrameIsReady(tsInMillis, percentage.toInt, picture.isKeyFrame, javaImage)
+      FrameIsReady(tsInMillis, percentage.toInt, picture.isKeyFrame, javaImage)
     } else ReadInProgress
   }
 
@@ -162,10 +162,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     val jumpToSecond = p * 10000 / durationInMillis
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
 
-    container.seekKeyFrame(videoStreamId, seconds2Timebase(jumpToSecond), IContainer.SEEK_FLAG_FRAME) match {
-      case ok if ok >= 0 => log.info(s"seek succeeded with $ok")
-      case failed => log.warn(s"seek failed with $failed")
-    }
+    container.seekKeyFrame(videoStreamId, seconds2Timebase(jumpToSecond), IContainer.SEEK_FLAG_FRAME)
     val keyFrameOption = readNextKeyFrame
 
     // reset timer
