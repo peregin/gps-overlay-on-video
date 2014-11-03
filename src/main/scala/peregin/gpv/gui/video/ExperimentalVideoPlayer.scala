@@ -205,7 +205,7 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
     }
     case Seek(percentage) =>
       player.doSeek(percentage).foreach{ keyFrame =>
-        info(f"key frame received, ts=${TimePrinter.printDuration(keyFrame.tsInMillis)}, @=$keyFrame.percentage%1.2f")
+        info(f"key frame received, ts=${TimePrinter.printDuration(keyFrame.tsInMillis)}, @=${keyFrame.percentage%1.2f}")
         player.timeUpdater(keyFrame.tsInMillis, keyFrame.percentage)
         player.imageHandler(keyFrame.image)
       }
