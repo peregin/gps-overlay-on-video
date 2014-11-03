@@ -56,17 +56,18 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
   val imagePanel = new ImagePanel
   add(imagePanel, "grow, pushy, wrap")
 
-  val slider = new JSlider(0, 100, 0)
+  val slider = new JSlider(0, 10000, 0)
   var sliderChangeFromApi = true
   slider.setPaintTrack(true)
   slider.setPaintTicks(true)
-  slider.setMajorTickSpacing(10)
-  slider.setMinorTickSpacing(1)
+  slider.setMajorTickSpacing(1000)
+  slider.setMinorTickSpacing(100)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = {
       if (!slider.getValueIsAdjusting && !sliderChangeFromApi) {
-        debug(s"slider ${slider.getValue} event")
-        player.foreach(_.seek(slider.getValue))
+        val percentage = slider.getValue.toDouble / 100
+        debug(s"slider $percentage event")
+        player.foreach(_.seek(percentage))
       }
     }
   })
@@ -92,11 +93,11 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
     }
   }
 
-  private def controllerTimeUpdater(videoTs: Long, percentage: Int) {
+  private def controllerTimeUpdater(videoTs: Long, percentage: Double) {
     videoTimeUpdater(videoTs)
     Swing.onEDT{
       sliderChangeFromApi = true
-      slider.setValue(percentage)
+      slider.setValue((percentage * 100).toInt)
       sliderChangeFromApi = false
     }
   }

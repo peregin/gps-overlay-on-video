@@ -31,5 +31,5 @@ trait VideoNotifier {
 
 trait VideoPlayerFactory {
   def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-             shiftHandler: => Long, timeUpdater: (Long, Int) => Unit): VideoPlayer
+             shiftHandler: => Long, timeUpdater: (Long, Double) => Unit): VideoPlayer
 }

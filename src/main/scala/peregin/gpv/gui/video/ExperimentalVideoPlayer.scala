@@ -12,19 +12,19 @@ import scala.annotation.tailrec
 
 trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
   override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Int) => Unit) =
+                            shiftHandler: => Long, timeUpdater: (Long, Double) => Unit) =
     new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
 }
 
 sealed trait PacketReply
 case object ReadInProgress extends PacketReply
 case object EndOfStream extends PacketReply
-case class FrameIsReady(tsInMillis: Long, percentage: Int, keyFrame: Boolean, image: Image) extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Double, keyFrame: Boolean, image: Image) extends PacketReply
 
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
                         val imageHandler: Image => Unit, shiftHandler: => Long,
-                        val timeUpdater: (Long, Int) => Unit) extends VideoPlayer with DelayController with Logging {
+                        val timeUpdater: (Long, Double) => Unit) extends VideoPlayer with DelayController with Logging {
 
 
   // Let's make sure that we can actually convert video pixel formats.
@@ -121,11 +121,11 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
       // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS, so we divide by 1000 to get milliseconds.
       val tsInMillis = picture.getTimeStamp / 1000
-      val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
+      val percentage = if (durationInMillis > 0) (tsInMillis * 100).toDouble / durationInMillis else 0
       // And finally, convert the BGR24 to an Java buffered image
       val javaImage = Utils.videoPictureToImage(newPic)
 
-      FrameIsReady(tsInMillis, percentage.toInt, picture.isKeyFrame, javaImage)
+      FrameIsReady(tsInMillis, percentage, picture.isKeyFrame, javaImage)
     } else ReadInProgress
   }
 
@@ -152,6 +152,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
   private def seconds2Timebase(s: Double): Long = (s * timeBase).toLong
 
   private[video] def doSeek(percentage: Double): Option[FrameIsReady] = {
+    log.info(s"seek @ $percentage")
     val p = percentage match {
       case a if a > 100d => 100d
       case b if b < 0d => 0d
@@ -161,12 +162,12 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     // time based
     val jumpToSecond = p * 10000 / durationInMillis
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
+    log.info(s"jump to percentage = ${(jumpToSecond * 100000) / durationInMillis }")
 
     val pos = seconds2Timebase(jumpToSecond)
     container.seekKeyFrame(videoStreamId, pos - 100, pos, pos, IContainer.SEEK_FLAG_FRAME)
     val keyFrameOption = readNextKeyFrame
     // TODO: fine loop to the given timestamp !!!
-    // TODO: check slider values, not accurate
 
     // reset timer
     reset()
@@ -197,7 +198,7 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
   override def receive = {
     case Play => player.readPacket.head match {
       case FrameIsReady(tsInMillis, percentage, keyFrame, image) =>
-        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%1.2f, keyFrame=$keyFrame")
+        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%2.2f, keyFrame=$keyFrame")
         if (tsInMillis > 0) player.waitIfNeeded(tsInMillis)
         player.timeUpdater(tsInMillis, percentage)
         player.imageHandler(image)
@@ -207,10 +208,10 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
       case _ => // ignore
     }
     case Seek(percentage) =>
-      player.doSeek(percentage).foreach{ keyFrame =>
-        info(f"key frame received, ts=${TimePrinter.printDuration(keyFrame.tsInMillis)}, @=${keyFrame.percentage%1.2f}")
-        player.timeUpdater(keyFrame.tsInMillis, keyFrame.percentage)
-        player.imageHandler(keyFrame.image)
+      player.doSeek(percentage).foreach{ seekFrame =>
+        info(f"seek frame received, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
+        player.timeUpdater(seekFrame.tsInMillis, seekFrame.percentage)
+        player.imageHandler(seekFrame.image)
       }
     case _ => // do nothing
   }
