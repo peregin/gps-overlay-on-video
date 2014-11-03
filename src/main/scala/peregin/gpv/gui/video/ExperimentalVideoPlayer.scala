@@ -106,8 +106,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
     /*
      * Some decoders will consume data in a packet, but will not be able to construct
-     * a full video picture yet.  Therefore you should always check if you
-     * got a complete picture from the decoder
+     * a full video picture yet.  Therefore you should always check if you got a complete picture from the decoder
      */
     if (picture.isComplete()) {
       var newPic: IVideoPicture = picture
@@ -138,6 +137,15 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     }
   }
 
+  @tailrec
+  private def readFrameUntilTimestamp(maxTsInMillis: Long): Option[FrameIsReady] = {
+    readPacket.head match {
+      case frame @ FrameIsReady(frameTsInMillis, _, _, _) if frameTsInMillis >= maxTsInMillis => Some(frame)
+      case EndOfStream => None
+      case _ => readFrameUntilTimestamp(maxTsInMillis)
+    }
+  }
+
   override def play() {
     playerActor ! Play
   }
@@ -158,19 +166,22 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       case c => percentage
     }
 
-    val jumpToSecond = p * durationInMillis / 100000
+    val jumpToMillis = p * durationInMillis / 100
+    val jumpToSecond = jumpToMillis / 1000
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
-    log.info(s"jump to percentage = ${(jumpToSecond * 100000) / durationInMillis }")
-
     val pos = seconds2Timebase(jumpToSecond)
     container.seekKeyFrame(videoStreamId, pos - 100, pos, pos, IContainer.SEEK_FLAG_FRAME)
+
+    // jump to closest key fame
     val keyFrameOption = readNextKeyFrame
-    // TODO: fine loop to the given timestamp !!!
+
+    // loop to closest timestamp
+    val closestFrameOption = readFrameUntilTimestamp(jumpToMillis.toLong)
 
     // reset timer
     reset()
 
-    keyFrameOption
+    closestFrameOption orElse keyFrameOption
   }
 
   override def close() {

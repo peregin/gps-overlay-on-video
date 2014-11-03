@@ -66,7 +66,7 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
     override def stateChanged(e: ChangeEvent) = {
       if (!slider.getValueIsAdjusting && !sliderChangeFromApi) {
         val percentage = slider.getValue.toDouble / 100
-        debug(s"slider $percentage event")
+        //debug(s"slider $percentage event")
         player.foreach(_.seek(percentage))
       }
     }
