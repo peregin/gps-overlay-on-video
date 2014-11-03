@@ -7,6 +7,8 @@ import peregin.gpv.model.Telemetry
 import java.awt.Image
 import peregin.gpv.util.{TimePrinter, Logging}
 
+import scala.annotation.tailrec
+
 
 trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
   override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
@@ -17,7 +19,7 @@ trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
 sealed trait PacketReply
 case object ReadInProgress extends PacketReply
 case object EndOfStream extends PacketReply
-case class FrameIsReady(tsInMillis: Long, percentage: Int, keyFrame: Boolean, frame: Image) extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Int, keyFrame: Boolean, image: Image) extends PacketReply
 
 // migration of the xuggler sample
 class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
@@ -45,6 +47,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
   // and iterate through the streams to find the first video stream
   var videoStreamId = -1
   var frameRate = 0d
+  var timeBase = 1d
 
   var videoCoder: IStreamCoder = null
   for (i <- 0 until numStreams) {
@@ -58,6 +61,8 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       videoCoder = coder
       frameRate = videoCoder.getFrameRate.getDouble
       info(f"frame rate: $frameRate%5.2f")
+      timeBase = 1d / stream.getTimeBase.getDouble
+      info(f"time base: $timeBase%10.2f")
     }
   }
   if (videoStreamId == -1) throw new RuntimeException(s"could not find video stream in container: $url")
@@ -83,19 +88,17 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
   def readPacket: Stream[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
-      if (packet.getStreamIndex() == videoStreamId) Stream.cons(readPicture, readPacket)
+      if (packet.getStreamIndex() == videoStreamId) Stream.cons(readVideo, readPacket)
       else Stream.cons(ReadInProgress, readPacket)
     } else Stream.cons(EndOfStream, Stream.empty)
   }
 
-  private def readPicture: PacketReply = {
+  private def readVideo: PacketReply = {
     // We allocate a new picture to get the data out of Xuggler
     val picture = IVideoPicture.make(videoCoder.getPixelType(), videoCoder.getWidth(), videoCoder.getHeight())
     var offset = 0
     while (offset < packet.getSize() && !picture.isComplete) {
-      /*
-       * Now, we decode the video, checking for any errors.
-       */
+      // Now, we decode the video, checking for any errors.
       val bytesDecoded = videoCoder.decodeVideo(picture, packet, offset)
       if (bytesDecoded < 0) throw new RuntimeException(s"got error decoding video in: $url")
       offset += bytesDecoded
@@ -108,11 +111,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
      */
     if (picture.isComplete()) {
       var newPic: IVideoPicture = picture
-      /*
-       * If the resampler is not null, that means we didn't get the
-       * video in BGR24 format and
-       * need to convert it into BGR24 format.
-       */
+      // If the resampler is not null, that means we didn't get the video in BGR24 format and  need to convert it into BGR24 format.
       if (resampler != null) {
         // we must resample
         newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight())
@@ -120,8 +119,7 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
       }
       if (newPic.getPixelType() != IPixelFormat.Type.BGR24) throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
 
-      // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS,
-      // so we divide by 1000 to get milliseconds.
+      // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS, so we divide by 1000 to get milliseconds.
       val tsInMillis = picture.getTimeStamp / 1000
       val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
       // And finally, convert the BGR24 to an Java buffered image
@@ -129,6 +127,15 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
 
       return FrameIsReady(tsInMillis, percentage.toInt, picture.isKeyFrame, javaImage)
     } else ReadInProgress
+  }
+
+  @tailrec
+  private def readNextKeyFrame: Option[FrameIsReady] = {
+    readPacket.head match {
+      case keyFrame @ FrameIsReady(_, _, true, _) => Some(keyFrame)
+      case EndOfStream => None
+      case _ => readNextKeyFrame
+    }
   }
 
   override def play() {
@@ -141,33 +148,30 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     playerActor ! Seek(percentage)
   }
 
-  private[video] def doSeek(percentage: Double): Unit = {
+  // See: http://wiki.xuggle.com/Concepts#Time_Bases
+  private def seconds2Timebase(s: Double): Long = (s * timeBase).toLong
+
+  private[video] def doSeek(percentage: Double): Option[FrameIsReady] = {
     val p = percentage match {
       case a if a > 100d => 100d
       case b if b < 0d => 0d
       case c => percentage
     }
-    // frame based
-    val frames = (durationInMillis / 1000) * frameRate
-    log.info(f"seek to $p%2.2f percentage in $frames frames")
-    val jumpToFrame = (frames * p / 100).toLong
-    log.info(f"seek to $p%2.2f percentage, jump = $jumpToFrame in $frames frames")
-    container.seekKeyFrame(videoStreamId, 0, jumpToFrame, container.getDuration, IContainer.SEEK_FLAG_FRAME)
-    //val x = container.getFileSize * p / 100
-    //container.seekKeyFrame(videoStreamId, 0, x.toLong, container.getDuration, IContainer.SEEK_FLAG_BYTE)
 
-    // loop to the next key frame
-    var stop = false
-    while (!stop) {
-      readPacket.head match {
-        case FrameIsReady(_, _, true, _) => stop = true
-        case EndOfStream => stop = true
-        case _ => // ignore
-      }
+    // time based
+    val jumpToSecond = p * 10000 / durationInMillis
+    log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
+
+    container.seekKeyFrame(videoStreamId, seconds2Timebase(jumpToSecond), IContainer.SEEK_FLAG_FRAME) match {
+      case ok if ok >= 0 => log.info(s"seek succeeded with $ok")
+      case failed => log.warn(s"seek failed with $failed")
     }
+    val keyFrameOption = readNextKeyFrame
 
     // reset timer
     reset()
+
+    keyFrameOption
   }
 
   override def close() {
@@ -203,7 +207,10 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
       case _ => // ignore
     }
     case Seek(percentage) =>
-      player.doSeek(percentage)
+      player.doSeek(percentage).foreach{ keyFrame =>
+        player.timeUpdater(keyFrame.tsInMillis, keyFrame.percentage)
+        player.imageHandler(keyFrame.image)
+      }
     case _ => // do nothing
   }
 }
