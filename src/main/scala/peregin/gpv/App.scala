@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
-import peregin.gpv.gui.video.SimpleVideoPlayerFactory
+import peregin.gpv.gui.video._
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 
@@ -24,7 +24,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData, updateVideoProgress, telemetryPanel.getShift) with SimpleVideoPlayerFactory
+  val videoPanel = new VideoPanel(openVideoData, updateVideoProgress, telemetryPanel.getShift) with SeekableVideoPlayerFactory
   val telemetryPanel = new TelemetryPanel(openGpsData)
   val statusLabel = new JXLabel("Ready")
 

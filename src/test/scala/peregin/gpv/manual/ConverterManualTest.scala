@@ -38,7 +38,7 @@ object ConverterManualTest extends App with Logging {
     // running in a loop
   }
 
-  def timeHandler(videoTsInMillis: Long, percentage: Int) {
+  def timeHandler(videoTsInMillis: Long, percentage: Double) {
     val tick = System.currentTimeMillis
     if (tick - mark > 2000) {
       info(s"% = $percentage videoTs = ${TimePrinter.printDuration(videoTsInMillis)}")

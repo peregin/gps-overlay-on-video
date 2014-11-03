@@ -13,12 +13,12 @@ import scala.concurrent._
 
 trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
   override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Double) => Unit) =
+                            shiftHandler: () => Long, timeUpdater: (Long, Double) => Unit) =
     new SimpleVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
 }
 
 class SimpleVideoPlayer(url: String, telemetry: Telemetry,
-                  imageHandler: Image => Unit, shiftHandler: => Long,
+                  imageHandler: Image => Unit, shiftHandler: () => Long,
                   timeUpdater: (Long, Double) => Unit) extends VideoPlayer with Logging {
 
   @volatile var running = true

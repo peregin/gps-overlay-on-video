@@ -1,5 +1,7 @@
 package peregin.gpv.gui.video
 
+import java.awt.image.BufferedImage
+
 import akka.actor.{Props, ActorSystem, Actor}
 import com.xuggle.xuggler._
 
@@ -10,20 +12,19 @@ import peregin.gpv.util.{TimePrinter, Logging}
 import scala.annotation.tailrec
 
 
-trait ExperimentalVideoPlayerFactory extends VideoPlayerFactory {
+trait SeekableVideoPlayerFactory extends VideoPlayerFactory {
   override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: => Long, timeUpdater: (Long, Double) => Unit) =
-    new ExperimentalVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+                            shiftHandler: () => Long, timeUpdater: (Long, Double) => Unit) =
+    new SeekableVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
 }
 
 sealed trait PacketReply
 case object ReadInProgress extends PacketReply
 case object EndOfStream extends PacketReply
-case class FrameIsReady(tsInMillis: Long, percentage: Double, keyFrame: Boolean, image: Image) extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Double, keyFrame: Boolean, image: BufferedImage) extends PacketReply
 
-// migration of the xuggler sample
-class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
-                        val imageHandler: Image => Unit, shiftHandler: => Long,
+class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
+                        val imageHandler: Image => Unit, val shiftHandler: () => Long,
                         val timeUpdater: (Long, Double) => Unit) extends VideoPlayer with DelayController with Logging {
 
 
@@ -202,15 +203,14 @@ sealed trait PlayerCommand
 case object Play extends PlayerCommand
 case class Seek(percentage: Double) extends PlayerCommand
 
-class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with Logging {
+class PlayerControllerActor(player: SeekableVideoPlayer) extends Actor with Logging with OverlayPainter {
 
   override def receive = {
     case Play => player.readPacket.head match {
-      case FrameIsReady(tsInMillis, percentage, keyFrame, image) =>
+      case frame @ FrameIsReady(tsInMillis, percentage, keyFrame, image) =>
         info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%2.2f, keyFrame=$keyFrame")
         if (tsInMillis > 0) player.waitIfNeeded(tsInMillis)
-        player.timeUpdater(tsInMillis, percentage)
-        player.imageHandler(image)
+        handleFrame(frame)
         //self ! Play
       case EndOfStream => context.stop(self)
       case ReadInProgress => self ! Play
@@ -219,9 +219,14 @@ class PlayerControllerActor(player: ExperimentalVideoPlayer) extends Actor with 
     case Seek(percentage) =>
       player.doSeek(percentage).foreach{ seekFrame =>
         info(f"seek frame received, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
-        player.timeUpdater(seekFrame.tsInMillis, seekFrame.percentage)
-        player.imageHandler(seekFrame.image)
+        handleFrame(seekFrame)
       }
     case _ => // do nothing
+  }
+
+  def handleFrame(frame: FrameIsReady) {
+    paintGauges(player.telemetry, frame.tsInMillis, frame.image, player.shiftHandler())
+    player.timeUpdater(frame.tsInMillis, frame.percentage)
+    player.imageHandler(frame.image)
   }
 }
