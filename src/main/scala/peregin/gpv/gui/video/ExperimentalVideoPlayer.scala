@@ -162,7 +162,8 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
     val jumpToSecond = p * 10000 / durationInMillis
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
 
-    container.seekKeyFrame(videoStreamId, seconds2Timebase(jumpToSecond), IContainer.SEEK_FLAG_FRAME)
+    val pos = seconds2Timebase(jumpToSecond)
+    container.seekKeyFrame(videoStreamId, pos - 10, pos, pos + 10, IContainer.SEEK_FLAG_FRAME)
     val keyFrameOption = readNextKeyFrame
 
     // reset timer
