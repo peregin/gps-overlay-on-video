@@ -10,7 +10,6 @@ trait DelayController extends Logging {
   def reset() {
     prevVideoTs = None
     prevClockTs = None
-    debug("reset")
   }
 
   def waitIfNeeded(videoTsInMillis: Long) {
