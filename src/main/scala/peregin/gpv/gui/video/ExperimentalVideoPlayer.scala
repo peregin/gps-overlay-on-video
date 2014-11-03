@@ -152,15 +152,13 @@ class ExperimentalVideoPlayer(url: String, telemetry: Telemetry,
   private def seconds2Timebase(s: Double): Long = (s * timeBase).toLong
 
   private[video] def doSeek(percentage: Double): Option[FrameIsReady] = {
-    log.info(s"seek @ $percentage")
     val p = percentage match {
       case a if a > 100d => 100d
       case b if b < 0d => 0d
       case c => percentage
     }
 
-    // time based
-    val jumpToSecond = p * 10000 / durationInMillis
+    val jumpToSecond = p * durationInMillis / 100000
     log.info(f"seek to $p%2.2f percentage, jumpToSecond = ${TimePrinter.printDuration((jumpToSecond * 1000).toLong)} out of ${TimePrinter.printDuration(durationInMillis)}")
     log.info(s"jump to percentage = ${(jumpToSecond * 100000) / durationInMillis }")
 
