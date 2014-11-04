@@ -2,22 +2,20 @@ package peregin.gpv.util
 
 
 import org.joda.time.Duration
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter, PeriodFormatterBuilder}
+import org.joda.time.format.{DateTimeFormat, PeriodFormatterBuilder}
 
 
 object TimePrinter {
 
   lazy val durationFormatter = new PeriodFormatterBuilder()
-    .appendDays()
-    .appendSuffix("d")
+    .printZeroAlways().minimumPrintedDigits(2)
     .appendHours()
-    .appendSuffix("h")
+    .appendSuffix(":")
     .appendMinutes()
-    .appendSuffix("m")
+    .appendSuffix(":")
     .appendSeconds()
-    .appendSuffix("s")
+    .appendSuffix(".")
     .appendMillis3Digit()
-    .appendSuffix("millis")
     .toFormatter
 
   lazy val timeFormatter = DateTimeFormat.forPattern("hh:mm:ss.SSS")
@@ -27,4 +25,8 @@ object TimePrinter {
 
   def printTime(timeInMillisOption: Option[Long]): String = timeInMillisOption.map(printTime).getOrElse("")
   def printTime(timeInMillis: Long) = timeFormatter.print(timeInMillis)
+
+  def main(args: Array[String]): Unit = {
+    println(s"${printDuration(62001)}")
+  }
 }

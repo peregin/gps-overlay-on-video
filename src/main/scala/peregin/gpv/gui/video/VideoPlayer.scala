@@ -16,6 +16,8 @@ trait VideoPlayer {
   def seek(percentage: Double)
 
   def close()
+
+  def duration: Long // retrieves the duration of the video stream in millis
 }
 
 trait VideoNotifier {

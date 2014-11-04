@@ -8,9 +8,9 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import peregin.gpv.Setup
 import peregin.gpv.gui.video.{VideoPlayer, VideoPlayerFactory}
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.Logging
+import peregin.gpv.util.{Logging, TimePrinter}
 
-import scala.swing.Swing
+import scala.swing.{Label, Swing}
 import scala.swing.event.ValueChanged
 
 
@@ -56,18 +56,24 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
   val imagePanel = new ImagePanel
   add(imagePanel, "grow, pushy, wrap")
 
+  val elapsed = new Label(s"${TimePrinter.printDuration(0)}")
+  val duration = new Label(s"${TimePrinter.printDuration(0)}")
   val slider = new PercentageSlider
+  val controlPanel = new MigPanel("ins 0", "", "") {
+    val progress = new MigPanel("ins 0", "", "") {
+      add(elapsed, "pushy, wrap")
+      add(duration, "pushy")
+    }
+    add(progress, "pushy")
+    add(slider, "pushx, growx")
+    add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
+  }
+  add(controlPanel, "growx")
 
   listenTo(slider)
   reactions += {
     case ValueChanged(`slider`) => player.foreach(_.seek(slider.percentage))
   }
-
-  val controlPanel = new MigPanel("ins 0", "", "") {
-    add(slider, "pushx, growx")
-    add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
-  }
-  add(controlPanel, "growx")
 
   @volatile var player: Option[VideoPlayer] = None
 
@@ -87,7 +93,11 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
 
   private def controllerTimeUpdater(videoTs: Long, percentage: Double) {
     videoTimeUpdater(videoTs)
-    Swing.onEDT(slider.percentage = percentage)
+    Swing.onEDT{
+      slider.percentage = percentage
+      elapsed.text = s"${TimePrinter.printDuration(videoTs)}"
+      duration.text = s"${TimePrinter.printDuration(player.map(_.duration))}"
+    }
   }
 
   def playOrPauseVideo() {

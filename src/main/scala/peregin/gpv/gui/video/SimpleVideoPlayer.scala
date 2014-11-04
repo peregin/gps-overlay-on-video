@@ -65,4 +65,6 @@ class SimpleVideoPlayer(url: String, telemetry: Telemetry,
     running = false
     reader.close()
   }
+
+  override def duration = durationInMillis
 }

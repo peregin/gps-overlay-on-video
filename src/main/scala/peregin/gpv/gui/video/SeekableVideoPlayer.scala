@@ -33,6 +33,9 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
     video.close()
   }
 
+
+  override def duration = video.durationInMillis
+
   // notifier from the actor
   private[video] def handleFrame(frame: FrameIsReady): Unit = {
     paintGauges(telemetry, frame.tsInMillis, frame.image, shiftHandler())
