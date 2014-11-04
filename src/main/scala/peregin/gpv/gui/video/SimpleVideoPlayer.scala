@@ -57,6 +57,8 @@ class SimpleVideoPlayer(url: String, telemetry: Telemetry,
 
   override def play() = sys.error("not supported")
 
+  override def step() = sys.error("not supported")
+
   override def pause() = sys.error("not supported")
 
   override def seek(percentage: Double) = sys.error("not supported")

@@ -11,6 +11,8 @@ trait VideoPlayer {
 
   def play()
 
+  def step()
+
   def pause()
 
   def seek(percentage: Double)

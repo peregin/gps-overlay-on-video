@@ -23,6 +23,11 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
     playerActor ! Play
   }
 
+
+  override def step() {
+    playerActor ! Play
+  }
+
   override def pause() = sys.error("not supported")
 
   override def seek(percentage: Double) {

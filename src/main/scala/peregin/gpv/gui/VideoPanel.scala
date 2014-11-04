@@ -67,6 +67,7 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
     add(progress, "pushy")
     add(slider, "pushx, growx")
     add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
+    add(new ImageButton("images/forward.png", "Step", stepForwardVideo()), "align right")
   }
   add(controlPanel, "growx")
 
@@ -102,5 +103,9 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
 
   def playOrPauseVideo() {
     player.foreach(_.play())
+  }
+
+  def stepForwardVideo() {
+    player.foreach(_.step())
   }
 }
