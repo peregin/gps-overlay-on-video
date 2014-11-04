@@ -2,9 +2,8 @@ package peregin.gpv.gui
 
 import java.awt.{Color, Graphics, Image}
 import java.io.File
-import javax.swing.event.{ChangeEvent, ChangeListener}
+import javax.swing.JPanel
 import javax.swing.filechooser.FileNameExtensionFilter
-import javax.swing.{JPanel, JSlider}
 
 import peregin.gpv.Setup
 import peregin.gpv.gui.video.{VideoPlayer, VideoPlayerFactory}
@@ -12,6 +11,7 @@ import peregin.gpv.model.Telemetry
 import peregin.gpv.util.Logging
 
 import scala.swing.Swing
+import scala.swing.event.ValueChanged
 
 
 class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: () => Long)
@@ -56,21 +56,13 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
   val imagePanel = new ImagePanel
   add(imagePanel, "grow, pushy, wrap")
 
-  val slider = new JSlider(0, 10000, 0)
-  var sliderChangeFromApi = true
-  slider.setPaintTrack(true)
-  slider.setPaintTicks(true)
-  slider.setMajorTickSpacing(1000)
-  slider.setMinorTickSpacing(100)
-  slider.addChangeListener(new ChangeListener {
-    override def stateChanged(e: ChangeEvent) = {
-      if (!slider.getValueIsAdjusting && !sliderChangeFromApi) {
-        val percentage = slider.getValue.toDouble / 100
-        //debug(s"slider $percentage event")
-        player.foreach(_.seek(percentage))
-      }
-    }
-  })
+  val slider = new PercentageSlider
+
+  listenTo(slider)
+  reactions += {
+    case ValueChanged(`slider`) => player.foreach(_.seek(slider.percentage))
+  }
+
   val controlPanel = new MigPanel("ins 0", "", "") {
     add(slider, "pushx, growx")
     add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
@@ -95,11 +87,7 @@ class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit,
 
   private def controllerTimeUpdater(videoTs: Long, percentage: Double) {
     videoTimeUpdater(videoTs)
-    Swing.onEDT{
-      sliderChangeFromApi = true
-      slider.setValue((percentage * 100).toInt)
-      sliderChangeFromApi = false
-    }
+    Swing.onEDT(slider.percentage = percentage)
   }
 
   def playOrPauseVideo() {
