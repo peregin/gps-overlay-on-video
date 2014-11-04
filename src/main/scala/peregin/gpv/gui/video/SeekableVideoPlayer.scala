@@ -6,6 +6,8 @@ import peregin.gpv.model.Telemetry
 import java.awt.Image
 import peregin.gpv.util.{TimePrinter, Logging}
 
+import PlayerProtocol._
+
 
 trait SeekableVideoPlayerFactory extends VideoPlayerFactory {
   override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
@@ -54,10 +56,20 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
   playerActor ! PlayCommand
 }
 
-sealed trait ControllerCommand
-case object PlayCommand extends ControllerCommand
-case object PauseCommand extends ControllerCommand
-case class SeekCommand(percentage: Double) extends ControllerCommand
+object PlayerProtocol {
+  sealed trait ControllerCommand
+  case object PlayCommand extends ControllerCommand
+  case object PauseCommand extends ControllerCommand
+  case class SeekCommand(percentage: Double) extends ControllerCommand
+}
+
+object PlayerControllerActor {
+  sealed trait State
+  case object Idle extends State
+  case object Run extends State
+
+  case class Data(command: ControllerCommand)
+}
 
 class PlayerControllerActor(video: SeekableVideoStream, listener: (FrameIsReady) => Unit) extends Actor with Logging {
 
