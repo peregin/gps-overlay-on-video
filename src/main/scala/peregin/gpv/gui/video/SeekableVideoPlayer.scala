@@ -28,7 +28,7 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
     playerActor ! PlayCommand
   }
 
-  override def pause() = sys.error("not supported")
+  override def pause() = playerActor ! PauseCommand
 
   override def seek(percentage: Double) {
     playerActor ! SeekCommand(percentage)
@@ -56,6 +56,7 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
 
 sealed trait ControllerCommand
 case object PlayCommand extends ControllerCommand
+case object PauseCommand extends ControllerCommand
 case class SeekCommand(percentage: Double) extends ControllerCommand
 
 class PlayerControllerActor(video: SeekableVideoStream, listener: (FrameIsReady) => Unit) extends Actor with Logging {
