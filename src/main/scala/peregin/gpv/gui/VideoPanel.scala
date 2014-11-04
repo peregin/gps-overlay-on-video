@@ -14,7 +14,7 @@ import peregin.gpv.util.Logging
 import scala.swing.Swing
 
 
-class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: => Long)
+class VideoPanel(openVideoHandler: File => Unit, videoTimeUpdater: Long => Unit, shiftHandler: () => Long)
   extends MigPanel("ins 2", "", "[fill]") with Logging {
   self: VideoPlayerFactory =>
 

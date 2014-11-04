@@ -26,7 +26,7 @@ object ConverterManualTest extends App with Logging {
 
 
   val writer = ToolFactory.makeWriter(out, reader)
-  val overlay = new VideoOverlay(telemetry, (image: Image) => {}, setup.shift)
+  val overlay = new VideoOverlay(telemetry, (image: Image) => {}, () => setup.shift)
   val controller = new VideoController(timeHandler, durationInMillis, realTime = false)
   reader.addListener(overlay)
   overlay.addListener(controller)

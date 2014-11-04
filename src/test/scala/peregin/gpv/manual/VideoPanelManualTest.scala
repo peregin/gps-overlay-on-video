@@ -15,7 +15,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
   Goodies.initLookAndFeel()
 
-  val video = new VideoPanel(openVideoFile, (Long) => {}, 0L) with SeekableVideoPlayerFactory
+  val video = new VideoPanel(openVideoFile, (Long) => {}, () => 0L) with SeekableVideoPlayerFactory
   val frame = new MainFrame {
     title = s"Video Test - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {

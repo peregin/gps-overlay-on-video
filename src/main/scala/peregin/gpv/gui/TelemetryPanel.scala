@@ -259,7 +259,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     direction.selection.index = if (setup.shift < 0) 1 else 0
   }
 
-  def getShift: Long = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
+  def getShift = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
 
   // dispatched by the video controller, invoked from EDT
   def updateVideoProgress(videoTimeInMillis: Long) {
