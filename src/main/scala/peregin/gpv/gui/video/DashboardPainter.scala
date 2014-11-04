@@ -7,7 +7,7 @@ import peregin.gpv.gui.gauge._
 import peregin.gpv.model.Telemetry
 
 
-trait OverlayPainter {
+trait DashboardPainter {
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
   val elevationGauge = new IconicElevationGauge {}

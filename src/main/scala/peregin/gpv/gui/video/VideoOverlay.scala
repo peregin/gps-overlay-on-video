@@ -9,7 +9,7 @@ import peregin.gpv.util.Logging
 
 
 class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandler: () => Long) extends MediaToolAdapter
-  with Logging with OverlayPainter {
+  with Logging with DashboardPainter {
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
     val ts = event.getTimeStamp

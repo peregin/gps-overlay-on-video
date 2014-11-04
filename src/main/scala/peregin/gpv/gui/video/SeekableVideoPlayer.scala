@@ -43,7 +43,7 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
   info(s"duration: ${TimePrinter.printDuration(durationInMillis)}")
 
   // query how many streams the call to open found
-  val numStreams = container.getNumStreams()
+  val numStreams = container.getNumStreams
 
   // and iterate through the streams to find the first video stream
   var videoStreamId = -1
@@ -55,9 +55,9 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
     // Find the stream object
     val stream = container.getStream(i)
     // Get the pre-configured decoder that can decode this stream
-    val coder = stream.getStreamCoder()
+    val coder = stream.getStreamCoder
 
-    if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
+    if (coder.getCodecType == ICodec.Type.CODEC_TYPE_VIDEO) {
       videoStreamId = i
       videoCoder = coder
       frameRate = videoCoder.getFrameRate.getDouble
@@ -68,20 +68,14 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
   }
   if (videoStreamId == -1) throw new RuntimeException(s"could not find video stream in container: $url")
 
-  /*
-   * Now we have found the video stream in this file.  Let's open up our decoder so it can
-   * do work.
-   */
-  if (videoCoder.open() < 0)
-    throw new RuntimeException(s"could not open video decoder for container: $url")
+  // Now we have found the video stream in this file.  Let's open up our decoder so it can do work.
+  if (videoCoder.open() < 0) throw new RuntimeException(s"could not open video decoder for container: $url")
 
   var resampler: IVideoResampler = null
-  if (videoCoder.getPixelType() != IPixelFormat.Type.BGR24) {
-    // if this stream is not in BGR24, we're going to need to
-    // convert it.  The VideoResampler does that for us.
-    resampler = IVideoResampler.make(videoCoder.getWidth(),
-      videoCoder.getHeight(), IPixelFormat.Type.BGR24,
-      videoCoder.getWidth(), videoCoder.getHeight(), videoCoder.getPixelType())
+  if (videoCoder.getPixelType != IPixelFormat.Type.BGR24) {
+    // if this stream is not in BGR24, we're going to need to convert it. The VideoResampler does that for us.
+    resampler = IVideoResampler.make(videoCoder.getWidth, videoCoder.getHeight, IPixelFormat.Type.BGR24,
+      videoCoder.getWidth, videoCoder.getHeight, videoCoder.getPixelType)
     if (resampler == null) throw new RuntimeException(s"could not create color space resampler for: $url")
   }
 
@@ -89,35 +83,34 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
 
   def readPacket: Stream[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
-      if (packet.getStreamIndex() == videoStreamId) Stream.cons(readVideo, readPacket)
+      if (packet.getStreamIndex == videoStreamId) Stream.cons(readVideo, readPacket)
       else Stream.cons(ReadInProgress, readPacket)
     } else Stream.cons(EndOfStream, Stream.empty)
   }
 
   private def readVideo: PacketReply = {
     // We allocate a new picture to get the data out of Xuggler
-    val picture = IVideoPicture.make(videoCoder.getPixelType(), videoCoder.getWidth(), videoCoder.getHeight())
+    val picture = IVideoPicture.make(videoCoder.getPixelType, videoCoder.getWidth, videoCoder.getHeight)
     var offset = 0
-    while (offset < packet.getSize() && !picture.isComplete) {
+    while (offset < packet.getSize && !picture.isComplete) {
       // Now, we decode the video, checking for any errors.
       val bytesDecoded = videoCoder.decodeVideo(picture, packet, offset)
       if (bytesDecoded < 0) throw new RuntimeException(s"got error decoding video in: $url")
       offset += bytesDecoded
     } // offset less than packet size
 
-    /*
-     * Some decoders will consume data in a packet, but will not be able to construct
-     * a full video picture yet.  Therefore you should always check if you got a complete picture from the decoder
-     */
-    if (picture.isComplete()) {
+
+    // Some decoders will consume data in a packet, but will not be able to construct a full video picture yet.
+    // Therefore you should always check if you got a complete picture from the decoder.
+    if (picture.isComplete) {
       var newPic: IVideoPicture = picture
       // If the resampler is not null, that means we didn't get the video in BGR24 format and  need to convert it into BGR24 format.
       if (resampler != null) {
         // we must resample
-        newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight())
+        newPic = IVideoPicture.make(resampler.getOutputPixelFormat, picture.getWidth, picture.getHeight)
         if (resampler.resample(newPic, picture) < 0) throw new RuntimeException(s"could not resample video from: $url")
       }
-      if (newPic.getPixelType() != IPixelFormat.Type.BGR24) throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
+      if (newPic.getPixelType != IPixelFormat.Type.BGR24) throw new RuntimeException(s"could not decode video as BGR 24 bit data in: $url")
 
       // remember that IVideoPicture and IAudioSamples timestamps are always in MICROSECONDS, so we divide by 1000 to get milliseconds.
       val tsInMillis = picture.getTimeStamp / 1000
@@ -203,7 +196,7 @@ sealed trait PlayerCommand
 case object Play extends PlayerCommand
 case class Seek(percentage: Double) extends PlayerCommand
 
-class PlayerControllerActor(player: SeekableVideoPlayer) extends Actor with Logging with OverlayPainter {
+class PlayerControllerActor(player: SeekableVideoPlayer) extends Actor with Logging with DashboardPainter {
 
   override def receive = {
     case Play => player.readPacket.head match {
