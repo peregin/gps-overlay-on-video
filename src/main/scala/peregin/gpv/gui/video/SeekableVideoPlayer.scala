@@ -76,7 +76,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: (FrameIsReady)
   override def receive = {
     case PlayCommand => video.readPacket.head match {
       case frame @ FrameIsReady(tsInMillis, percentage, keyFrame, image) =>
-        info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%2.2f, keyFrame=$keyFrame")
+        //info(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%2.2f, keyFrame=$keyFrame")
         if (tsInMillis > 0) video.waitIfNeeded(tsInMillis)
         listener(frame)
         //self ! Play
@@ -86,7 +86,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: (FrameIsReady)
     }
     case SeekCommand(percentage) =>
       video.seek(percentage).foreach{ seekFrame =>
-        info(f"seek frame received, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
+        info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
         listener(seekFrame)
       }
       video.reset()
