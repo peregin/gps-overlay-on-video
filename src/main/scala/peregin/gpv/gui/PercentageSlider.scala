@@ -26,6 +26,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   peer.setPaintTicks(true)
   peer.setMajorTickSpacing(1000)
   peer.setMinorTickSpacing(100)
+  peer.setSnapToTicks(false)
 
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e: javax.swing.event.ChangeEvent) {

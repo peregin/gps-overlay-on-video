@@ -75,7 +75,7 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
     } else Stream.cons(EndOfStream, Stream.empty)
   }
 
-  private def readVideo: PacketReply = {
+  private[this] def readVideo: PacketReply = {
     // We allocate a new picture to get the data out of Xuggler
     val picture = IVideoPicture.make(videoCoder.getPixelType, videoCoder.getWidth, videoCoder.getHeight)
     var offset = 0
@@ -110,23 +110,26 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
   }
 
 
+  @tailrec
+  final def readNextFrame: Option[FrameIsReady] = readPacket.head match {
+    case frame @ FrameIsReady(_, _, _, _) => Some(frame)
+    case EndOfStream => None
+    case _ => readNextFrame
+  }
+
 
   @tailrec
-  private def readNextKeyFrame: Option[FrameIsReady] = {
-    readPacket.head match {
-      case keyFrame @ FrameIsReady(_, _, true, _) => Some(keyFrame)
-      case EndOfStream => None
-      case _ => readNextKeyFrame
-    }
+  private def readNextKeyFrame: Option[FrameIsReady] = readPacket.head match {
+    case keyFrame @ FrameIsReady(_, _, true, _) => Some(keyFrame)
+    case EndOfStream => None
+    case _ => readNextKeyFrame
   }
 
   @tailrec
-  private def readFrameUntilTimestamp(maxTsInMillis: Long): Option[FrameIsReady] = {
-    readPacket.head match {
-      case frame @ FrameIsReady(frameTsInMillis, _, _, _) if frameTsInMillis >= maxTsInMillis => Some(frame)
-      case EndOfStream => None
-      case _ => readFrameUntilTimestamp(maxTsInMillis)
-    }
+  private def readFrameUntilTimestamp(maxTsInMillis: Long): Option[FrameIsReady] = readPacket.head match {
+    case frame @ FrameIsReady(frameTsInMillis, _, _, _) if frameTsInMillis >= maxTsInMillis => Some(frame)
+    case EndOfStream => None
+    case _ => readFrameUntilTimestamp(maxTsInMillis)
   }
 
   // See: http://wiki.xuggle.com/Concepts#Time_Bases

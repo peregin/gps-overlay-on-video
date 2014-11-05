@@ -12,23 +12,26 @@ trait DelayController extends Logging {
     prevClockTs = None
   }
 
-  def waitIfNeeded(videoTsInMillis: Long) {
+  def markDelay(videoTsInMillis: Long): Long = {
     val now = System.currentTimeMillis()
+    prevVideoTs = Some(videoTsInMillis)
+    prevClockTs = Some(now)
     (prevVideoTs, prevClockTs) match {
       case (Some(prevVideoTsInMillis), Some(prevClockTsInMillis)) =>
         val elapsedVideo = videoTsInMillis - prevVideoTsInMillis
         val elapsedClock = now - prevClockTsInMillis
         // and we give ourselves 50 ms of tolerance
-        val delayInMillis = elapsedVideo - elapsedClock + 50l
-        if (delayInMillis > 0) {
-          debug(s"ts = ${TimePrinter.printDuration(videoTsInMillis)}, prevVideoTs = ${TimePrinter.printDuration(prevVideoTs)}, prevClockTs = ${TimePrinter.printTime(prevClockTs)}")
-          debug(s"wait for: ${TimePrinter.printDuration(delayInMillis)}")
-          Thread.sleep(delayInMillis)
-        }
-      case _ => // ignore not initialized state
+        elapsedVideo - elapsedClock + 50l
+      case _ => 0 // ignore not initialized state
     }
+  }
 
-    prevVideoTs = Some(videoTsInMillis)
-    prevClockTs = Some(now)
+  def waitIfNeeded(videoTsInMillis: Long) {
+    val delay = markDelay(videoTsInMillis)
+    if (delay > 0) {
+      //debug(s"ts = ${TimePrinter.printDuration(videoTsInMillis)}, prevVideoTs = ${TimePrinter.printDuration(prevVideoTs)}, prevClockTs = ${TimePrinter.printTime(prevClockTs)}")
+      //debug(s"wait for: ${TimePrinter.printDuration(delayInMillis)}")
+      Thread.sleep(delay)
+    }
   }
 }
