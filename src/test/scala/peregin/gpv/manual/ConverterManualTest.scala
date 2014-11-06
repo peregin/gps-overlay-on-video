@@ -1,16 +1,17 @@
 package peregin.gpv.manual
 
-import peregin.gpv.Setup
-import peregin.gpv.model.Telemetry
-import java.io.File
-import com.xuggle.mediatool.ToolFactory
 import java.awt.image.BufferedImage
-import peregin.gpv.gui.video.{VideoController, VideoOverlay}
-import java.awt.Image
-import peregin.gpv.util.{TimePrinter, Logging}
+import java.io.File
+
+import com.xuggle.mediatool.ToolFactory
+import peregin.gpv.Setup
+import peregin.gpv.gui.gauge.DashboardPainter
+import peregin.gpv.gui.video.{VideoOverlay, VideoPlayer}
+import peregin.gpv.model.Telemetry
+import peregin.gpv.util.{Logging, TimePrinter}
 
 
-object ConverterManualTest extends App with Logging {
+object ConverterManualTest extends App with DashboardPainter with VideoPlayer.Listener with Logging {
 
   val file = "/Users/levi/zimmerberg.json"
   val out = "/Users/levi/zimmerberg-gps.mp4"
@@ -26,11 +27,9 @@ object ConverterManualTest extends App with Logging {
 
 
   val writer = ToolFactory.makeWriter(out, reader)
-  val overlay = new VideoOverlay(telemetry, (image: Image) => {}, () => setup.shift)
-  val controller = new VideoController(timeHandler, durationInMillis, realTime = false)
+  val overlay = new VideoOverlay(this, durationInMillis)
   reader.addListener(overlay)
-  overlay.addListener(controller)
-  controller.addListener(writer)
+  overlay.addListener(writer)
   // add a viewer to the writer, to see media modified media
   //writer.addListener(ToolFactory.makeViewer())
 
@@ -38,11 +37,17 @@ object ConverterManualTest extends App with Logging {
     // running in a loop
   }
 
-  def timeHandler(videoTsInMillis: Long, percentage: Double) {
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+    paintGauges(telemetry, tsInMillis, image, setup.shift)
+
     val tick = System.currentTimeMillis
     if (tick - mark > 2000) {
-      info(s"% = $percentage videoTs = ${TimePrinter.printDuration(videoTsInMillis)}")
+      info(s"% = $percentage videoTs = ${TimePrinter.printDuration(tsInMillis)}")
       mark = tick
     }
   }
+
+  override def videoStarted() {}
+
+  override def videoStopped() {}
 }

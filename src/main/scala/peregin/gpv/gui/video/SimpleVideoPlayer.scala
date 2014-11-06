@@ -1,25 +1,20 @@
 package peregin.gpv.gui.video
 
-import java.awt.Image
 import java.awt.image.BufferedImage
 
 import com.xuggle.mediatool.ToolFactory
 import com.xuggle.xuggler.ICodec.Type._
-import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Logging, TimePrinter}
 
 import scala.concurrent._
 
 
 trait SimpleVideoPlayerFactory extends VideoPlayerFactory {
-  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: () => Long, timeUpdater: (Long, Double) => Unit) =
-    new SimpleVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+  override def createPlayer(url: String, listener: VideoPlayer.Listener) =
+    new SimpleVideoPlayer(url, listener)
 }
 
-class SimpleVideoPlayer(url: String, telemetry: Telemetry,
-                  imageHandler: Image => Unit, shiftHandler: () => Long,
-                  timeUpdater: (Long, Double) => Unit) extends VideoPlayer with Logging {
+class SimpleVideoPlayer(url: String, listener: VideoPlayer.Listener) extends VideoPlayer with Logging {
 
   @volatile var running = true
 
@@ -42,10 +37,10 @@ class SimpleVideoPlayer(url: String, telemetry: Telemetry,
   info(f"frame rate: $frameRate%5.2f")
   info(s"size [${videoCoder.getWidth}, ${videoCoder.getHeight}")
 
-  val overlay = new VideoOverlay(telemetry, imageHandler, shiftHandler)
+  val overlay = new VideoOverlay(listener, durationInMillis)
   reader.addListener(overlay)
 
-  val controller = new VideoController(timeUpdater, durationInMillis, realTime = true)
+  val controller = new VideoController()
   overlay.addListener(controller)
 
   import scala.concurrent.ExecutionContext.Implicits.global

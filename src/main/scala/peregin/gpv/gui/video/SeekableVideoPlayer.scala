@@ -1,24 +1,17 @@
 package peregin.gpv.gui.video
 
 import akka.actor._
-import peregin.gpv.gui.video.PlayerControllerActor.{Run, Idle, State}
-
-import peregin.gpv.model.Telemetry
-import java.awt.Image
-import peregin.gpv.util.{TimePrinter, Logging}
-
-import PlayerProtocol._
+import peregin.gpv.gui.video.PlayerControllerActor.{Idle, Run, State}
+import peregin.gpv.gui.video.PlayerProtocol._
+import peregin.gpv.util.{Logging, TimePrinter}
 
 
 trait SeekableVideoPlayerFactory extends VideoPlayerFactory {
-  override def createPlayer(url: String, telemetry: Telemetry, imageHandler: Image => Unit,
-                            shiftHandler: () => Long, timeUpdater: (Long, Double) => Unit) =
-    new SeekableVideoPlayer(url, telemetry, imageHandler, shiftHandler, timeUpdater)
+  override def createPlayer(url: String, listener: VideoPlayer.Listener) =
+    new SeekableVideoPlayer(url, listener: VideoPlayer.Listener)
 }
 
-class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
-                         imageHandler: Image => Unit, shiftHandler: () => Long,
-                         timeUpdater: (Long, Double) => Unit) extends VideoPlayer with DashboardPainter with Logging {
+class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends VideoPlayer with Logging {
 
   val video = new SeekableVideoStream(url)
 
@@ -29,13 +22,10 @@ class SeekableVideoPlayer(url: String, val telemetry: Telemetry,
   override def close() = video.close()
   override def duration = video.durationInMillis
 
-  // callback from the actor
+  // FIXME: callback from the actor, subscribe to events instead of callback
   private[video] def handleFrame(frame: FrameIsReady): Unit = {
-    paintGauges(telemetry, frame.tsInMillis, frame.image, shiftHandler())
-    timeUpdater(frame.tsInMillis, frame.percentage)
-    imageHandler(frame.image)
+    listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
   }
-
 
   val system = ActorSystem("gpv")
   val playerActor = system.actorOf(Props(new PlayerControllerActor(video, handleFrame)), name = "playerController")

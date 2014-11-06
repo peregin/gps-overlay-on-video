@@ -1,26 +1,16 @@
 package peregin.gpv.gui.video
 
-import java.awt.Image
-
 import com.xuggle.mediatool.MediaToolAdapter
 import com.xuggle.mediatool.event.IVideoPictureEvent
-import peregin.gpv.model.Telemetry
-import peregin.gpv.util.Logging
 
 
-class VideoOverlay(telemetry: Telemetry, imageHandler: Image => Unit, shiftHandler: () => Long) extends MediaToolAdapter
-  with Logging with DashboardPainter {
+class VideoOverlay(listener: VideoPlayer.Listener, durationInMillis: Long) extends MediaToolAdapter {
 
   override def onVideoPicture(event: IVideoPictureEvent) = {
-    val ts = event.getTimeStamp
-    val unit = event.getTimeUnit
-    val tsInMillis = unit.toMillis(ts)
-
+    val tsInMillis = event.getTimeUnit.toMillis(event.getTimeStamp)
+    val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
     val image = event.getImage
-
-    paintGauges(telemetry, tsInMillis, image, shiftHandler())
-
-    imageHandler(image)
+    listener.videoEvent(tsInMillis, percentage, image)
 
     super.onVideoPicture(event)
   }

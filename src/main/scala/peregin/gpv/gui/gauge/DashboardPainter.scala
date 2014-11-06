@@ -1,9 +1,8 @@
-package peregin.gpv.gui.video
+package peregin.gpv.gui.gauge
 
 import java.awt.AlphaComposite
 import java.awt.image.BufferedImage
 
-import peregin.gpv.gui.gauge._
 import peregin.gpv.model.Telemetry
 
 

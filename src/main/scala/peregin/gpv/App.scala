@@ -1,6 +1,7 @@
 package peregin.gpv
 
 import java.awt.Dimension
+import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
 import javax.swing._
@@ -9,6 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
+import peregin.gpv.gui.gauge.DashboardPainter
 import peregin.gpv.gui.video._
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
@@ -16,7 +18,7 @@ import peregin.gpv.util.{Io, Logging, Timed}
 import scala.swing._
 
 
-object App extends SimpleSwingApplication with Logging with Timed {
+object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
 
   log.info("initializing...")
 
@@ -24,7 +26,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData, updateVideoProgress, () => telemetryPanel.getShift) with SeekableVideoPlayerFactory
+  val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
   val telemetryPanel = new TelemetryPanel(openGpsData)
   val statusLabel = new JXLabel("Ready")
 
@@ -72,7 +74,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
     log.info("new project")
     setup = Setup.empty
     val tm = Telemetry.empty
-    videoPanel.refresh(setup, tm)
+    videoPanel.refresh(setup)
     telemetryPanel.refresh(setup, tm)
   }
 
@@ -90,7 +92,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
           val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
           Swing.onEDT {
             val tm = telemetry.getOrElse(Telemetry.empty)
-            videoPanel.refresh(setup, tm)
+            videoPanel.refresh(setup)
             telemetryPanel.refresh(setup, tm)
           }
         } catch { case any: Throwable =>
@@ -119,7 +121,7 @@ object App extends SimpleSwingApplication with Logging with Timed {
 
   def openVideoData(file: File) {
     setup.videoPath = Some(file.getAbsolutePath)
-    videoPanel.refresh(setup, telemetryPanel.telemetry)
+    videoPanel.refresh(setup)
   }
 
   def openGpsData(file: File) {
@@ -130,7 +132,12 @@ object App extends SimpleSwingApplication with Logging with Timed {
     }
   }
 
-  def updateVideoProgress(videoTimeInMillis: Long) {
-    Swing.onEDT(telemetryPanel.updateVideoProgress(videoTimeInMillis))
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift)
+    Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
   }
+
+  override def videoStarted() {}
+
+  override def videoStopped() {}
 }
