@@ -1,20 +1,21 @@
 package peregin.gpv.gui
 
-import scala.swing._
-import peregin.gpv.util.{Timed, Logging}
-import org.jdesktop.swingx.{JXMapViewer, JXMapKit}
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.{BasicStroke, Color, Font, RenderingHints}
 import java.io.File
-import peregin.gpv.model.{Sonda, Telemetry}
 import javax.swing.filechooser.FileNameExtensionFilter
+
+import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.jdesktop.swingx.painter.Painter
-import java.awt.{Font, BasicStroke, RenderingHints, Color}
+import org.jdesktop.swingx.{JXMapKit, JXMapViewer}
+import org.joda.time.DateTime
 import peregin.gpv.Setup
 import peregin.gpv.gui.map.{KnobPainter, MapQuestTileFactory}
-import scala.swing.Font
-import org.joda.time.DateTime
+import peregin.gpv.model.{Sonda, Telemetry}
+import peregin.gpv.util.{Logging, Timed}
+
+import scala.swing.{Font, _}
 import scala.swing.event.MouseClicked
-import org.jdesktop.swingx.mapviewer.GeoPosition
-import java.awt.event.{MouseEvent, MouseAdapter}
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]")
@@ -121,7 +122,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       val pxHeight = height - 20 - elevFm.getHeight
 
       // coordinates, only if the track is not empty
-      if (!telemetry.track.isEmpty) {
+      if (telemetry.track.nonEmpty) {
         val mHeight = telemetry.elevationBoundary.diff
 
         // legend
