@@ -25,6 +25,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   val elapsed = new Label(s"${TimePrinter.printDuration(0)}")
   val duration = new Label(s"${TimePrinter.printDuration(0)}")
   val slider = new PercentageSlider
+  val startStopButton = new StartStopButton("images/play.png", "Play", "images/pause.png", "Pause", playOrPauseVideo())
   val controlPanel = new MigPanel("ins 0", "", "") {
     val progress = new MigPanel("ins 0", "", "") {
       add(elapsed, "pushy, wrap")
@@ -32,7 +33,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     }
     add(progress, "pushy")
     add(slider, "pushx, growx")
-    add(new ImageButton("images/play.png", "Play", playOrPauseVideo()), "align right")
+    add(startStopButton, "align right")
     add(new ImageButton("images/forward.png", "Step", stepForwardVideo()), "align right")
   }
   add(controlPanel, "growx")
@@ -53,7 +54,9 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   }
 
   def playOrPauseVideo() {
-    player.foreach(_.play())
+    player.foreach{p =>
+      if (startStopButton.isPlaying) p.pause() else p.play()
+    }
   }
 
   def stepForwardVideo() {
@@ -73,9 +76,13 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
 
   override def videoStopped()  {
     listener.videoStopped()
+    startStopButton.stop()
+    log.info("stopped")
   }
 
   override def videoStarted() {
     listener.videoStopped()
+    startStopButton.play()
+    log.info("started")
   }
 }
