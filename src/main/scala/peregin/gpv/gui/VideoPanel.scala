@@ -74,7 +74,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     }
   }
 
-  override def videoStopped()  {
+  override def videoStopped() {
     listener.videoStopped()
     startStopButton.stop()
     log.info("stopped")
