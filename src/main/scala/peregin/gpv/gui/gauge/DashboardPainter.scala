@@ -23,18 +23,19 @@ trait DashboardPainter {
     telemetry.sonda(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform
 
-      speedGauge.paint(g, 75, 75, sonda)
+      val boxSize = 90
+      speedGauge.paint(g, boxSize, boxSize, sonda)
       if (sonda.cadence.isDefined) {
-        g.translate(75, 0)
-        cadenceGauge.paint(g, 75, 75, sonda)
+        g.translate(boxSize, 0)
+        cadenceGauge.paint(g, boxSize, boxSize, sonda)
       }
-      g.translate(75, 0)
-      elevationGauge.paint(g, 75, 75, sonda)
-      g.translate(75, 0)
-      distanceGauge.paint(g, 75, 75, sonda)
+      g.translate(boxSize, 0)
+      elevationGauge.paint(g, boxSize, boxSize, sonda)
+      g.translate(boxSize, 0)
+      distanceGauge.paint(g, boxSize, boxSize, sonda)
       if (sonda.heartRate.isDefined) {
-        g.translate(75, 0)
-        heartRateGauge.paint(g, 75, 75, sonda)
+        g.translate(boxSize, 0)
+        heartRateGauge.paint(g, boxSize, boxSize, sonda)
       }
 
       // restore any kind of transformations until this point
