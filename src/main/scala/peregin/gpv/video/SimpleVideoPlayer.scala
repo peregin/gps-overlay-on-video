@@ -1,4 +1,4 @@
-package peregin.gpv.gui.video
+package peregin.gpv.video
 
 import java.awt.image.BufferedImage
 

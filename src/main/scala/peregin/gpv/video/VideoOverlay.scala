@@ -1,4 +1,4 @@
-package peregin.gpv.gui.video
+package peregin.gpv.video
 
 import com.xuggle.mediatool.MediaToolAdapter
 import com.xuggle.mediatool.event.IVideoPictureEvent

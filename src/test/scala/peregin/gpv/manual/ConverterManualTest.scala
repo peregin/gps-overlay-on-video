@@ -6,7 +6,7 @@ import java.io.File
 import com.xuggle.mediatool.ToolFactory
 import peregin.gpv.Setup
 import peregin.gpv.gui.gauge.DashboardPainter
-import peregin.gpv.gui.video.{VideoOverlay, VideoPlayer}
+import peregin.gpv.video.{VideoOverlay, VideoPlayer}
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Logging, TimePrinter}
 

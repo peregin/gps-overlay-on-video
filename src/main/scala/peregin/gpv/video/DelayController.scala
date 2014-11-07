@@ -1,4 +1,4 @@
-package peregin.gpv.gui.video
+package peregin.gpv.video
 
 import peregin.gpv.util.{TimePrinter, Logging}
 

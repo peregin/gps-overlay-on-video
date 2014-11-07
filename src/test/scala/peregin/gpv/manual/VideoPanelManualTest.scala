@@ -6,7 +6,7 @@ import java.io.File
 
 import info.BuildInfo
 import peregin.gpv.Setup
-import peregin.gpv.gui.video._
+import peregin.gpv.video._
 import peregin.gpv.gui.{Goodies, MigPanel, VideoPanel}
 import peregin.gpv.util.Logging
 

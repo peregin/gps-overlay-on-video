@@ -5,7 +5,7 @@ import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
 
 import peregin.gpv.Setup
-import peregin.gpv.gui.video.{VideoPlayer, VideoPlayerFactory}
+import peregin.gpv.video.{VideoPlayer, VideoPlayerFactory}
 import peregin.gpv.util.{Logging, TimePrinter}
 
 import scala.swing.event.ValueChanged

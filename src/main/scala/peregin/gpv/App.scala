@@ -11,7 +11,7 @@ import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
 import peregin.gpv.gui.gauge.DashboardPainter
-import peregin.gpv.gui.video._
+import peregin.gpv.video._
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 

@@ -1,8 +1,8 @@
-package peregin.gpv.gui.video
+package peregin.gpv.video
 
 import akka.actor._
-import peregin.gpv.gui.video.PlayerControllerActor.{Idle, Run, State}
-import peregin.gpv.gui.video.PlayerProtocol._
+import peregin.gpv.video.PlayerControllerActor.{Idle, Run, State}
+import peregin.gpv.video.PlayerProtocol._
 import peregin.gpv.util.{Logging, TimePrinter}
 
 
@@ -76,7 +76,9 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         handleFrame(frame)
 
         val delay = video.markDelay(tsInMillis)
+
         import scala.concurrent.duration._
+        import scala.language.postfixOps
         if (delay > 0) setTimer("nextread", PlayCommand, delay millis, repeat = false)
         else self -> PlayCommand
         stay using frame
