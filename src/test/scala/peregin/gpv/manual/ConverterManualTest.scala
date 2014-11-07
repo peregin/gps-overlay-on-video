@@ -13,8 +13,8 @@ import peregin.gpv.util.{Logging, TimePrinter}
 
 object ConverterManualTest extends App with DashboardPainter with VideoPlayer.Listener with Logging {
 
-  val file = "/Users/levi/zimmerberg.json"
-  val out = "/Users/levi/zimmerberg-gps.mp4"
+  val file = "/Users/levi/seefeld.json"
+  val out = "/Users/levi/seefeld-gps.mp4"
   val setup = Setup.loadFile(file)
   val telemetry = Telemetry.load(new File(setup.gpsPath.getOrElse(sys.error("gps file is not configured"))))
   val reader = ToolFactory.makeReader(setup.videoPath.getOrElse("video file is not configured"))
