@@ -18,7 +18,7 @@ trait DashboardPainter {
     val g = image.createGraphics
 
     // set transparency
-    g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
+    g.setComposite(AlphaComposite.SrcOver.derive(0.6f))
 
     telemetry.sonda(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform
