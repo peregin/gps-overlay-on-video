@@ -29,6 +29,8 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
 
   val system = ActorSystem("gpv")
   val playerActor = system.actorOf(Props(new PlayerControllerActor(video, listener)), name = "playerController")
+  // read the first frame
+  playerActor ! StepCommand
 }
 
 object PlayerProtocol {
