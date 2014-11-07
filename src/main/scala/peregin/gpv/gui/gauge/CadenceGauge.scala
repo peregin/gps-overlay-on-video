@@ -65,7 +65,8 @@ trait CadenceGauge extends GaugePainter {
         val tickLength = strokeWidth
         g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
       }
-      if (t % 20 == 0 && t > 0 && t < ticks) {
+      val step = if (ticks > 150) 40 else 20
+      if (t % step == 0 && t > 0 && t < ticks) {
         val text = s"${ticks - t}"
         val tb = g.getFontMetrics.getStringBounds(text, g)
         val tw = tb.getWidth / 2
