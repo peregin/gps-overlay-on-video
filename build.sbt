@@ -35,7 +35,7 @@ buildInfoPackage := "info"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2.4"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.6"
 
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
@@ -61,3 +61,6 @@ libraryDependencies += "org.joda" % "joda-convert" % "1.7"
 
 libraryDependencies += "org.specs2" %% "specs2" % "2.3.13" % "test"
 
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % "2.3.6" % "test"
+
+libraryDependencies += "org.mockito" % "mockito-all" % "1.10.8" % "test"
