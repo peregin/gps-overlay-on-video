@@ -29,7 +29,6 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
 
   val system = ActorSystem("gpv")
   val playerActor = system.actorOf(Props(new PlayerControllerActor(video, listener)), name = "playerController")
-  //playerActor ! PlayCommand
 }
 
 object PlayerProtocol {
@@ -48,6 +47,9 @@ object PlayerControllerActor {
 
 class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] with LoggingFSM[State, PacketReply] {
 
+  import scala.concurrent.duration._
+  import scala.language.postfixOps
+
   when(Idle) {
     case Event(StepCommand, _) => video.readNextFrame match {
       case Some(frame) =>
@@ -63,7 +65,9 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         stay using seekFrame
       case _ => stay using EndOfStream
     }
-    case Event(PlayCommand, data) => goto(Run) using data
+    case Event(PlayCommand, data) =>
+      setTimer("nextread", PlayCommand, 500 millis, repeat = false)
+      goto(Run) using data
   }
 
   when(Run) {
@@ -72,22 +76,18 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       goto(Idle) using data
     case Event(PlayCommand, _) => video.readNextFrame match {
       case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
-        log.debug(f"frame received, ts=${TimePrinter.printDuration(tsInMillis)}, @=$percentage%2.2f, keyFrame=$keyFrame")
         handleFrame(frame)
-
         val delay = video.markDelay(tsInMillis)
-
-        import scala.concurrent.duration._
-        import scala.language.postfixOps
-        if (delay > 0) setTimer("nextread", PlayCommand, delay millis, repeat = false)
-        else self -> PlayCommand
+        setTimer("nextread", PlayCommand, delay millis, repeat = false)
         stay using frame
       case _ => goto(Idle) using EndOfStream
     }
     case Event(sc: SeekCommand, data) =>
       cancelTimer("nextread")
       goto(Idle) using data
-    case Event(PauseCommand, data) => goto(Idle) using data
+    case Event(PauseCommand, data) =>
+      cancelTimer("nextread")
+      goto(Idle) using data
   }
 
   whenUnhandled {
