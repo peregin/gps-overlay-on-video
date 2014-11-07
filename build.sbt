@@ -37,6 +37,8 @@ libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.6"
 
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.3.6"
+
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
 libraryDependencies += "org.swinglabs" % "swingx-ws" % "1.0"

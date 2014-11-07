@@ -32,7 +32,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   }
   override def top = frame
 
-  frame.size = new Dimension(1024, 768)
+  frame.size = new Dimension(800, 600)
   Goodies.center(frame)
 
   def openVideoFile(file: File) {

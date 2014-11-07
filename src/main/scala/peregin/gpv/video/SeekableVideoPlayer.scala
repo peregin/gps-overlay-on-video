@@ -46,7 +46,7 @@ object PlayerControllerActor {
   case object Run extends State
 }
 
-class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] {
+class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] with LoggingFSM[State, PacketReply] {
 
   when(Idle) {
     case Event(StepCommand, _) => video.readNextFrame match {
