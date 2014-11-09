@@ -80,6 +80,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
+        //log.debug(s"delay is $delay millis")
         setTimer("nextread", PlayCommand, delay millis, repeat = false)
         stay using frame
       case _ => goto(Idle) using EndOfStream

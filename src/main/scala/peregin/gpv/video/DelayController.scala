@@ -1,6 +1,6 @@
 package peregin.gpv.video
 
-import peregin.gpv.util.{TimePrinter, Logging}
+import peregin.gpv.util.Logging
 
 trait DelayController extends Logging {
 
@@ -14,16 +14,17 @@ trait DelayController extends Logging {
 
   def markDelay(videoTsInMillis: Long): Long = {
     val now = System.currentTimeMillis()
-    prevVideoTs = Some(videoTsInMillis)
-    prevClockTs = Some(now)
-    (prevVideoTs, prevClockTs) match {
+    val delay = (prevVideoTs, prevClockTs) match {
       case (Some(prevVideoTsInMillis), Some(prevClockTsInMillis)) =>
         val elapsedVideo = videoTsInMillis - prevVideoTsInMillis
         val elapsedClock = now - prevClockTsInMillis
         // and we give ourselves 50 ms of tolerance
-        elapsedVideo - elapsedClock + 50l
+        elapsedVideo - elapsedClock
       case _ => 0 // ignore not initialized state
     }
+    prevVideoTs = Some(videoTsInMillis)
+    prevClockTs = Some(now)
+    delay.max(0)
   }
 
   def waitIfNeeded(videoTsInMillis: Long) {
