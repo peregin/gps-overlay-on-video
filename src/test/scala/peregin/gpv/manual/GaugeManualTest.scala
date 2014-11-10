@@ -1,14 +1,16 @@
 package peregin.gpv.manual
 
-import info.BuildInfo
-import scala.swing._
-import java.awt.{Font, Color}
-import peregin.gpv.gui.{Goodies, MigPanel}
-import peregin.gpv.util.Logging
-import javax.swing.{JSlider, JSpinner}
+import java.awt.{Color, Font}
 import javax.swing.event.{ChangeEvent, ChangeListener}
-import peregin.gpv.model.{MinMax, InputValue}
+import javax.swing.{JSlider, JSpinner}
+
+import info.BuildInfo
 import peregin.gpv.gui.gauge._
+import peregin.gpv.gui.{Goodies, MigPanel}
+import peregin.gpv.model.{InputValue, MinMax}
+import peregin.gpv.util.Logging
+
+import scala.swing._
 
 
 object GaugeManualTest extends SimpleSwingApplication with Logging {
