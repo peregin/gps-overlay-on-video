@@ -1,10 +1,14 @@
 package peregin.gpv.gui
 
-import scala.swing.{Label, Dialog, Window}
+import org.jdesktop.swingx.error.ErrorInfo
+
+import scala.swing.{Component, Label, Dialog, Window}
 import java.awt.{Point, Toolkit}
-import org.jdesktop.swingx.JXBusyLabel
+import org.jdesktop.swingx.{JXErrorPane, JXBusyLabel}
 import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticTheme, PlasticLookAndFeel}
 import javax.swing.UIManager
+
+import scala.util.control.NonFatal
 
 
 object Goodies {
@@ -48,5 +52,13 @@ object Goodies {
     dlg.pack()
     Goodies.center(dlg)
     dlg.visible = true
+  }
+
+  def showPopupOnFailure(w: Window)(body: => Unit) = {
+    try {body}
+    catch {case NonFatal(any) =>
+      val c: Component = Component.wrap(w.peer.getRootPane)
+      Dialog.showMessage(c, any.getMessage, "Error", Dialog.Message.Error)
+    }
   }
 }

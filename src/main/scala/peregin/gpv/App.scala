@@ -16,6 +16,7 @@ import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
+import scala.util.control.NonFatal
 
 
 object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
@@ -91,11 +92,13 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
           debug(s"setup $setup")
           val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
           Swing.onEDT {
-            val tm = telemetry.getOrElse(Telemetry.empty)
-            videoPanel.refresh(setup)
-            telemetryPanel.refresh(setup, tm)
+            Goodies.showPopupOnFailure(frame) {
+              val tm = telemetry.getOrElse(Telemetry.empty)
+              videoPanel.refresh(setup)
+              telemetryPanel.refresh(setup, tm)
+            }
           }
-        } catch { case any: Throwable =>
+        } catch { case NonFatal(any) =>
           error(s"failed to open $file", any)
           statusLabel.setText(any.getMessage)
         }
