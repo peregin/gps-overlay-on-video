@@ -81,6 +81,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
         //log.debug(s"delay is $delay millis")
+        cancelTimer("nextread") // if somthing was piled up, remove it from the queue
         setTimer("nextread", PlayCommand, delay millis, repeat = false)
         stay using frame
       case _ => goto(Idle) using EndOfStream
