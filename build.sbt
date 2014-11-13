@@ -65,4 +65,4 @@ libraryDependencies += "org.specs2" %% "specs2" % "2.4.2" % "test"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % "2.3.7" % "test"
 
-libraryDependencies += "org.mockito" % "mockito-all" % "1.10.8" % "test"
+libraryDependencies += "org.mockito" % "mockito-all" % "1.10.10" % "test"
