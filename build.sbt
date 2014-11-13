@@ -61,7 +61,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.5"
 
 libraryDependencies += "org.joda" % "joda-convert" % "1.7"
 
-libraryDependencies += "org.specs2" %% "specs2" % "2.3.13" % "test"
+libraryDependencies += "org.specs2" %% "specs2" % "2.4.2" % "test"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % "2.3.6" % "test"
 
