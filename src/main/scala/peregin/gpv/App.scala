@@ -99,6 +99,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
               val tm = telemetry.getOrElse(Telemetry.empty)
               videoPanel.refresh(setup)
               telemetryPanel.refresh(setup, tm)
+              message(s"Project ${file.getAbsolutePath} has been loaded")
             }
           }
         } catch { case NonFatal(any) =>
