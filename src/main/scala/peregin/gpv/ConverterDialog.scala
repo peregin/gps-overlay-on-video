@@ -17,7 +17,7 @@ class ConverterDialog(setup: Setup, parent: Window = null) extends Dialog(parent
   preferredSize = new Dimension(400, 300)
 
   private val imagePanel = new ImagePanel
-  private val okButton = new Button("Ok")
+  private val generateButton = new Button("Generate")
   private val cancelButton = new Button("Cancel")
 
   private val chooser = new FileChooserPanel("File name of the new video:", save, ExtensionFilters.video, false)
@@ -28,16 +28,16 @@ class ConverterDialog(setup: Setup, parent: Window = null) extends Dialog(parent
     add(chooser, "wrap")
     add(new Separator(), "growx, wrap")
     add(new MigPanel("ins 5, align center", "[center]", "") {
-      add(okButton, "sg 1, w 80, center")
+      add(generateButton, "sg 1, w 80, center")
       add(cancelButton, "sg 1, w 80, center")
     }, "dock south")
   }
 
   Goodies.mapEscapeTo(this, handleCancel)
 
-  listenTo(okButton, cancelButton)
+  listenTo(generateButton, cancelButton)
   reactions += {
-    case ButtonClicked(`okButton`) => handleOk()
+    case ButtonClicked(`generateButton`) => handleGenerate()
     case ButtonClicked(`cancelButton`) => handleCancel()
   }
 
@@ -46,9 +46,8 @@ class ConverterDialog(setup: Setup, parent: Window = null) extends Dialog(parent
     log.info(s"save to ${file.getAbsolutePath}")
   }
 
-  private def handleOk() {
-    log.info("ok")
-    close()
+  private def handleGenerate() {
+    log.info("generate")
   }
 
   private def handleCancel() {
