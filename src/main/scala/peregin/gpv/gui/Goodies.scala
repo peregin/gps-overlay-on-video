@@ -1,13 +1,13 @@
 package peregin.gpv.gui
 
-import org.jdesktop.swingx.error.ErrorInfo
-
-import scala.swing.{Component, Label, Dialog, Window}
+import java.awt.event.{ActionEvent, KeyEvent}
 import java.awt.{Point, Toolkit}
-import org.jdesktop.swingx.{JXErrorPane, JXBusyLabel}
-import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticTheme, PlasticLookAndFeel}
-import javax.swing.UIManager
+import javax.swing.{KeyStroke, JComponent, UIManager}
 
+import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticLookAndFeel, PlasticTheme}
+import org.jdesktop.swingx.JXBusyLabel
+
+import scala.swing.{Component, Dialog, Label, Window}
 import scala.util.control.NonFatal
 
 
@@ -15,8 +15,9 @@ object Goodies {
 
   // on Mac start with VM parameter -Xdock:name="GSPonVideo"
   def initLookAndFeel() {
-    import PlasticLookAndFeel._
-    import collection.JavaConverters._
+    import com.jgoodies.looks.plastic.PlasticLookAndFeel._
+
+import scala.collection.JavaConverters._
     sys.props += "apple.laf.useScreenMenuBar" -> "true"
     sys.props += "com.apple.mrj.application.apple.menu.about.name" -> "GPSonVideo"
     val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
@@ -42,8 +43,8 @@ object Goodies {
         add(busy, "")
         add(new Label("Loading..."), "")
       }
+      import scala.concurrent.ExecutionContext.Implicits.global
       import scala.concurrent._
-      import ExecutionContext.Implicits.global
       future {
         body
         dispose()
@@ -60,5 +61,12 @@ object Goodies {
       val c: Component = Component.wrap(w.peer.getRootPane)
       Dialog.showMessage(c, any.getMessage, "Error", Dialog.Message.Error)
     }
+  }
+
+  def mapEscapeTo(dialog: Dialog, cancelFunc: () => Unit) {
+    dialog.peer.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelDialog")
+    dialog.peer.getRootPane().getActionMap().put("cancelDialog", new javax.swing.AbstractAction() {
+      def actionPerformed(e: ActionEvent) = cancelFunc()
+    })
   }
 }

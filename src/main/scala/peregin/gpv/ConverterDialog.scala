@@ -1,23 +1,54 @@
 package peregin.gpv
 
+import java.awt.Dimension
 import java.io.File
 
-import peregin.gpv.gui.{FileChooserPanel, MigPanel}
+import peregin.gpv.gui.{ImagePanel, Goodies, FileChooserPanel, MigPanel}
 import peregin.gpv.util.Logging
 
-import scala.swing.{Dialog, Window}
+import scala.swing.event.ButtonClicked
+import scala.swing.{Button, Separator, Dialog, Window}
 
 
 class ConverterDialog(parent: Window = null) extends Dialog(parent) with Logging {
 
   title = "Converter"
   modal = true
+  preferredSize = new Dimension(600, 300)
+
+  private val imagePanel = new ImagePanel
+  private val okButton = new Button("Ok")
+  private val cancelButton = new Button("Cancel")
 
   contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
-    add(new FileChooserPanel("Output", save, null), "")
+    add(imagePanel, "grow, pushy, wrap")
+    add(new FileChooserPanel("Choose a file name for the new video:", save, null), "wrap")
+    add(new Separator(), "growx, wrap")
+    add(new MigPanel("ins 5, align center", "[center]", "") {
+      add(okButton, "sg 1, w 80, center")
+      add(cancelButton, "sg 1, w 80, center")
+    }, "dock south")
   }
 
-  def save(file: File): Unit = {
+  Goodies.mapEscapeTo(this, handleCancel)
+
+  listenTo(okButton, cancelButton)
+  reactions += {
+    case ButtonClicked(`okButton`) => handleOk()
+    case ButtonClicked(`cancelButton`) => handleCancel()
+  }
+
+  def save(file: File) {
     log.info(s"save to ${file.getAbsolutePath}")
+  }
+
+  private def handleOk() {
+    log.info("ok")
+    close()
+  }
+
+  private def handleCancel() {
+    log.info("cancel")
+    close()
   }
 }
