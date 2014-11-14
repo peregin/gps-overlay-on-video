@@ -24,7 +24,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   var telemetry = Telemetry.empty
 
   // file chooser widget
-  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, new FileNameExtensionFilter("GPS files (gpx)", "gpx"))
+  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, ExtensionFilters.gps)
   add(chooser, "pushx, growx, wrap")
 
 

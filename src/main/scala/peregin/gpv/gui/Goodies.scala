@@ -2,6 +2,7 @@ package peregin.gpv.gui
 
 import java.awt.event.{ActionEvent, KeyEvent}
 import java.awt.{Point, Toolkit}
+import javax.swing.filechooser.FileNameExtensionFilter
 import javax.swing.{KeyStroke, JComponent, UIManager}
 
 import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticLookAndFeel, PlasticTheme}

@@ -3,26 +3,29 @@ package peregin.gpv
 import java.awt.Dimension
 import java.io.File
 
-import peregin.gpv.gui.{ImagePanel, Goodies, FileChooserPanel, MigPanel}
+import peregin.gpv.gui._
 import peregin.gpv.util.Logging
 
 import scala.swing.event.ButtonClicked
 import scala.swing.{Button, Separator, Dialog, Window}
 
 
-class ConverterDialog(parent: Window = null) extends Dialog(parent) with Logging {
+class ConverterDialog(setup: Setup, parent: Window = null) extends Dialog(parent) with Logging {
 
   title = "Converter"
   modal = true
-  preferredSize = new Dimension(600, 300)
+  preferredSize = new Dimension(400, 300)
 
   private val imagePanel = new ImagePanel
   private val okButton = new Button("Ok")
   private val cancelButton = new Button("Cancel")
 
+  private val chooser = new FileChooserPanel("File name of the new video:", save, ExtensionFilters.video, false)
+  chooser.fileInput.text = setup.outputPath.getOrElse("")
+
   contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
     add(imagePanel, "grow, pushy, wrap")
-    add(new FileChooserPanel("Choose a file name for the new video:", save, null), "wrap")
+    add(chooser, "wrap")
     add(new Separator(), "growx, wrap")
     add(new MigPanel("ins 5, align center", "[center]", "") {
       add(okButton, "sg 1, w 80, center")
@@ -39,6 +42,7 @@ class ConverterDialog(parent: Window = null) extends Dialog(parent) with Logging
   }
 
   def save(file: File) {
+    setup.outputPath = Some(file.getAbsolutePath)
     log.info(s"save to ${file.getAbsolutePath}")
   }
 

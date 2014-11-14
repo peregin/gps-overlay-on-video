@@ -2,11 +2,10 @@ package peregin.gpv.gui
 
 import java.awt.image.BufferedImage
 import java.io.File
-import javax.swing.filechooser.FileNameExtensionFilter
 
 import peregin.gpv.Setup
-import peregin.gpv.video.{VideoPlayer, VideoPlayerFactory}
 import peregin.gpv.util.{Logging, TimePrinter}
+import peregin.gpv.video.{VideoPlayer, VideoPlayerFactory}
 
 import scala.swing.event.ValueChanged
 import scala.swing.{Label, Swing}
@@ -16,7 +15,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   extends MigPanel("ins 2", "", "[fill]") with VideoPlayer.Listener with Logging {
   self: VideoPlayerFactory =>
 
-  val chooser = new FileChooserPanel("Load video file:", openVideoHandler, new FileNameExtensionFilter("Video files (mp4)", "mp4"))
+  val chooser = new FileChooserPanel("Load video file:", openVideoHandler, ExtensionFilters.video)
   add(chooser, "pushx, growx, wrap")
 
   val imagePanel = new ImagePanel

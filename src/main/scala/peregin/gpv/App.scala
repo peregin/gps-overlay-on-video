@@ -38,7 +38,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
       toolbar.add(new ImageButton("images/open.png", "Open", openProject()))
       toolbar.add(new ImageButton("images/save.png", "Save", saveProject()))
       toolbar.addSeparator()
-      toolbar.add(new ImageButton("images/video.png", "Export", exportProject()))
+      toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
       add(toolbar, "span 2, wrap")
 
       add(titled("Video", videoPanel), "pushy, width 60%")
@@ -84,7 +84,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   def openProject(): Unit = timed("open project") {
     val chooser = new FileChooser()
-    chooser.fileFilter = new FileNameExtensionFilter("project file (json)", "json")
+    chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Open project:"
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
@@ -112,7 +112,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   def saveProject() {
     val chooser = new FileChooser()
-    chooser.fileFilter = new FileNameExtensionFilter("project file (json)", "json")
+    chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Save project:"
     if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
@@ -130,8 +130,11 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     setup.saveFile(file.getAbsolutePath)
   }
 
-  def exportProject() {
-    log.info("export project")
+  def convertProject() {
+    log.debug("convert project")
+    val dialog = new ConverterDialog(setup, frame)
+    Goodies.center(dialog)
+    dialog.open()
   }
 
   def openVideoData(file: File) {

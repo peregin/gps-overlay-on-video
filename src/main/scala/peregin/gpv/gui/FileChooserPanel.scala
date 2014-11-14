@@ -2,13 +2,13 @@ package peregin.gpv.gui
 
 import java.io.File
 import peregin.gpv.util.Logging
-import scala.swing.{FileChooser, TextArea, Button, Label}
+import scala.swing._
 import scala.swing.event.ButtonClicked
 import peregin.gpv.App
 import javax.swing.filechooser.FileNameExtensionFilter
 
 
-class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExtensionFilter) extends MigPanel("ins 0", "", "[grow, fill]") with Logging {
+class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExtensionFilter, openDialog: Boolean = true) extends MigPanel("ins 0", "", "[grow, fill]") with Logging {
   add(new Label(info), "span 2, wrap")
   val browseButton = new Button("Browse")
   add(browseButton, "")
@@ -26,7 +26,8 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
     val chooser = new FileChooser(dir)
     chooser.fileFilter = filter
     chooser.title = info
-    if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
+    val openFunc: (Component) => FileChooser.Result.Value = if (openDialog) chooser.showOpenDialog else chooser.showSaveDialog
+    if (openFunc(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
       action(file)
