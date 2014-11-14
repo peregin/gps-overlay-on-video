@@ -22,11 +22,12 @@ object Setup {
     load(json)
   }
 
-  def empty = new Setup(None, None, None)
+  def empty = new Setup(None, None, None, None)
 }
 
 case class Setup(var videoPath: Option[String],
                  var gpsPath: Option[String],
+                 var outputPath: Option[String],
                  var shiftTimestamp: Option[Long]) {
 
   def save = Setup.save(this)
