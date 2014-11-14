@@ -66,6 +66,8 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   def top = frame
 
+  def message(s: String): Unit = statusLabel.setText(s)
+
   def titled(title: String, c: Component): Component = {
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
@@ -77,6 +79,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     val tm = Telemetry.empty
     videoPanel.refresh(setup)
     telemetryPanel.refresh(setup, tm)
+    message("New project has been created")
   }
 
   def openProject(): Unit = timed("open project") {
@@ -100,7 +103,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
           }
         } catch { case NonFatal(any) =>
           error(s"failed to open $file", any)
-          statusLabel.setText(any.getMessage)
+          message(any.getMessage)
         }
       }
     }
@@ -112,10 +115,18 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     chooser.title = "Save project:"
     if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
-      log.debug(s"saving ${file.getAbsolutePath}")
-      setup.shift = telemetryPanel.getShift
-      setup.saveFile(file.getAbsolutePath)
+      if (!file.exists() ||
+          (file.exists() && Dialog.showConfirmation(frame.contents(0), "Do you want to overwrite the file?", "File already exists", Dialog.Options.YesNo) ==  Dialog.Result.Yes)) {
+        saveProject(file)
+        message(s"Project file has been saved to ${file.getAbsolutePath}")
+      }
     }
+  }
+
+  private def saveProject(file: File) {
+    log.debug(s"saving ${file.getAbsolutePath}")
+    setup.shift = telemetryPanel.getShift
+    setup.saveFile(file.getAbsolutePath)
   }
 
   def exportProject() {
