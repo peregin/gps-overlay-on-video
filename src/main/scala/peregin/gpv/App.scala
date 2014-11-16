@@ -132,7 +132,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   def convertProject() {
     log.debug("convert project")
-    val dialog = new ConverterDialog(setup, frame)
+    val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, frame)
     Goodies.center(dialog)
     dialog.open()
   }
