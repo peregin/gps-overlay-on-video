@@ -1,0 +1,6 @@
+{
+  "videoPath" : "src/test/resources/video/water.mp4",
+  "gpsPath" : "src/test/resources/gps/sihlwald.gpx",
+  "outputPath" : "target/water-with-gps.mp4",
+  "shiftTimestamp" : 4000
+}

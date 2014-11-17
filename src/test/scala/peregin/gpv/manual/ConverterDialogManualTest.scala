@@ -11,7 +11,7 @@ object ConverterDialogManualTest extends App {
 
   Goodies.initLookAndFeel()
 
-  val file = "/Users/levi/water.json"
+  val file = "src/test/resources/project/water.json"
   val setup = Setup.loadFile(file)
   val telemetry = Telemetry.load(new File(setup.gpsPath.getOrElse(sys.error("gps file is not configured"))))
   val dialog = new ConverterDialog(setup, telemetry)
