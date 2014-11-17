@@ -134,7 +134,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
-    paintGauges(telemetry, tsInMillis, image, setup.shift)
+    paintGauges(telemetry, tsInMillis, image, setup.shift, setup.transparency)
 
     val tick = System.currentTimeMillis
     if (tick - mark >= 1000) {

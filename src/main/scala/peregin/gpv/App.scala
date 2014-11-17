@@ -5,18 +5,16 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
 import javax.swing._
-import javax.swing.filechooser.FileNameExtensionFilter
 
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
 import peregin.gpv.gui.gauge.DashboardPainter
-import peregin.gpv.video._
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
+import peregin.gpv.video._
 
 import scala.swing._
-import scala.util.control.NonFatal
 
 
 object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
@@ -30,6 +28,9 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
   val telemetryPanel = new TelemetryPanel(openGpsData)
   val statusLabel = new JXLabel("Ready")
+  val transparencySlider = new PercentageSlider
+  transparencySlider.orientation = Orientation.Vertical
+  transparencySlider.percentage = 50
 
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
@@ -41,7 +42,19 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
       toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
       add(toolbar, "span 2, wrap")
 
-      add(titled("Video", videoPanel), "pushy, width 60%")
+      //add(titled("Video", videoPanel), "pushy, width 60%")
+      add(titled("Video", new MigPanel("ins 0, fill", "[fill]", "[fill]") {
+        add(new MigPanel("ins 40 0 40 0, fill", "[fill]", "[fill]") {
+          add(new JXLabel("Transparency") {
+            setTextRotation(3*Math.PI/2)
+            setVerticalAlignment(SwingConstants.CENTER)
+            setHorizontalAlignment(SwingConstants.CENTER)
+            setMaximumSize(new Dimension(20, 100))
+          }, "")
+          add(transparencySlider, "")
+        }, "align left")
+        add(videoPanel, "grow, push")
+      }), "pushy, width 60%")
       add(titled("Telemetry Data", telemetryPanel), "pushy, width 40%, wrap")
 
       val gaugePanel = new GaugePanel
@@ -79,6 +92,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     val tm = Telemetry.empty
     videoPanel.refresh(setup)
     telemetryPanel.refresh(setup, tm)
+    transparencySlider.percentage = setup.transparency
     message("New project has been created")
   }
 
@@ -88,23 +102,23 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     chooser.title = "Open project:"
     if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
-      debug(s"opening ${file.getAbsolutePath}")
+      val path = file.getAbsolutePath
+      debug(s"opening $path")
       Goodies.showBusy(frame) {
-        try {
-          setup = Setup.loadFile(file.getAbsolutePath)
-          debug(s"setup $setup")
-          val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
-          Swing.onEDT {
-            Goodies.showPopupOnFailure(frame) {
-              val tm = telemetry.getOrElse(Telemetry.empty)
-              videoPanel.refresh(setup)
-              telemetryPanel.refresh(setup, tm)
-              message(s"Project ${file.getAbsolutePath} has been loaded")
-            }
+        Swing.onEDT {
+          Goodies.showPopupOnFailure(frame) {
+            message("Loading...")
+            setup = Setup.loadFile(path)
+            debug(s"setup $setup")
+            message("Analyzing telemetry...")
+            val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
+            val tm = telemetry.getOrElse(Telemetry.empty)
+            message("Updating...")
+            videoPanel.refresh(setup)
+            telemetryPanel.refresh(setup, tm)
+            transparencySlider.percentage = setup.transparency
+            message(s"Project $path has been loaded")
           }
-        } catch { case NonFatal(any) =>
-          error(s"failed to open $file", any)
-          message(any.getMessage)
         }
       }
     }
@@ -127,6 +141,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   private def saveProject(file: File) {
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
+    setup.transparency = transparencySlider.percentage
     setup.saveFile(file.getAbsolutePath)
   }
 
@@ -151,7 +166,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
-    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift)
+    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage)
     Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
   }
 

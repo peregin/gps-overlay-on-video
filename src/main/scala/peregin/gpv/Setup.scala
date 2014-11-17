@@ -22,17 +22,23 @@ object Setup {
     load(json)
   }
 
-  def empty = new Setup(None, None, None, None)
+  def empty = new Setup(None, None, None, None, None)
 }
 
 case class Setup(var videoPath: Option[String],
                  var gpsPath: Option[String],
                  var outputPath: Option[String],
-                 var shiftTimestamp: Option[Long]) {
+                 var shiftTimestamp: Option[Long],
+                 var dashboardTransparency: Option[Double]) {
 
   def save = Setup.save(this)
   def saveFile(path: String) = Setup.saveFile(path, this)
 
+  // in millis
   def shift = shiftTimestamp.getOrElse(0L)
   def shift_= (value: Long) = shiftTimestamp = Some(value)
+
+  // in percentage
+  def transparency = dashboardTransparency.getOrElse(60d)
+  def transparency_=(value: Double) = dashboardTransparency = Some(value)
 }
