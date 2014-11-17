@@ -38,6 +38,7 @@ Thought that it is a good idea to make some screenshots from time to time to see
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
 After synchronizing the video stream with the gps track (through the shift parameter) everything is prepared to generate a new video:
+
 ![converter](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/converter.png "converter dialog")
 
 The first video generated with the software:
