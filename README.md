@@ -48,5 +48,6 @@ And here it is :) the first video generated with the software (Zugerberg Classic
 [![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/0.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 
 ## Gauge ideas
-Drafts on the paper
+The very early drafts on the paper:
+
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
