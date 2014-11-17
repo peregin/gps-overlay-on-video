@@ -27,8 +27,9 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
   private val imagePanel = new ImagePanel
   private val generateButton = new Button("Generate")
   private val closeButton = new Button("Cancel")
-  private val progress = new ProgressBar
-  private val status = new Label
+  private val progressBar = new ProgressBar
+  private val statusLabel = new Label
+  private val durationLabel = new Label
 
   private var mark = 0L // measures the generation time
 
@@ -37,26 +38,34 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
 
   contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
     add(imagePanel, "grow, pushy, wrap")
-    add(progress, "pushx, wrap")
+    add(new MigPanel("ins 0, fill", "[fill]", "") {
+      add(progressBar, "growx, pushx")
+      add(durationLabel, "align right, wrap")
+    }, "wrap")
+    add(new Separator(), "growx, wrap")
     add(chooser, "wrap")
     add(new Separator(), "growx, wrap")
     add(new MigPanel("ins 5, align center", "[center]", "") {
       add(generateButton, "sg 1, w 80, center")
       add(closeButton, "sg 1, w 80, center, wrap")
     }, "wrap")
-    add(status, "span 2, center, growx")
+    add(statusLabel, "span 2, center, growx")
   }
 
-  progress.min = 0
-  progress.max = 100
-  progress.value = 0
+  progressBar.min = 0
+  progressBar.max = 100
+  progressBar.value = 0
+  progressBar.labelPainted = true
+  progressBar.label = s"${TimePrinter.printDuration(0)}"
 
-  status.foreground = Color.white
-  status.background = Color.blue
-  status.opaque = true
-  status.font = status.font.deriveFont(Font.BOLD)
-  status.text = "Ready"
-  status.border = BorderFactory.createBevelBorder(BevelBorder.LOWERED)
+  durationLabel.text = s"${TimePrinter.printDuration(0)}"
+
+  statusLabel.foreground = Color.white
+  statusLabel.background = Color.blue
+  statusLabel.opaque = true
+  statusLabel.font = statusLabel.font.deriveFont(Font.BOLD)
+  statusLabel.text = "Ready"
+  statusLabel.border = BorderFactory.createBevelBorder(BevelBorder.LOWERED)
 
   Goodies.mapEscapeTo(this, handleClose)
 
@@ -79,7 +88,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     reader.open()
     val container = reader.getContainer
     val durationInMillis = container.getDuration / 1000
-    info(s"duration: ${TimePrinter.printDuration(durationInMillis)}")
+    durationLabel.text = s"${TimePrinter.printDuration(durationInMillis)}"
 
     val writer = ToolFactory.makeWriter(setup.outputPath.getOrElse("output file is not provided"), reader)
     val overlay = new VideoOverlay(this, durationInMillis)
@@ -91,7 +100,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     val converterFuture = future {
 
       Swing.onEDT {
-        status.text = "Generating video file..."
+        statusLabel.text = "Generating video file..."
         generateButton.enabled = false
       }
 
@@ -102,16 +111,18 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
 
     converterFuture onSuccess {
       case _ => Swing.onEDT {
-        status.background = Color.green
-        status.text = "Success"
+        statusLabel.background = Color.green
+        statusLabel.text = "Success"
         closeButton.text = "Close"
+        progressBar.value = 100
+        progressBar.label = s"${TimePrinter.printDuration(durationInMillis)}"
       }
     }
 
     converterFuture onFailure {
       case f => Swing.onEDT {
-        status.background = Color.red
-        status.text = s"Failed: ${f.getMessage}"
+        statusLabel.background = Color.red
+        statusLabel.text = s"Failed: ${f.getMessage}"
         closeButton.text = "Close"
       }
     }
@@ -126,11 +137,14 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     paintGauges(telemetry, tsInMillis, image, setup.shift)
 
     val tick = System.currentTimeMillis
-    if (tick - mark > 2000) {
-      progress.value = percentage.toInt
-      imagePanel.show(image)
+    if (tick - mark >= 1000) {
 
-      info(s"% = $percentage videoTs = ${TimePrinter.printDuration(tsInMillis)}")
+      Swing.onEDT {
+        progressBar.value = percentage.toInt
+        imagePanel.show(image)
+        progressBar.label = s"${TimePrinter.printDuration(tsInMillis)}"
+      }
+
       mark = tick
     }
   }
