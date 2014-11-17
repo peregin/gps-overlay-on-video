@@ -1,18 +1,20 @@
 package peregin.gpv
 
-import java.awt.Dimension
 import java.awt.image.BufferedImage
+import java.awt.{Font, Color, Dimension}
 import java.io.File
+import javax.swing.BorderFactory
+import javax.swing.border.{BevelBorder, Border}
 
 import com.xuggle.mediatool.ToolFactory
 import peregin.gpv.gui._
 import peregin.gpv.gui.gauge.DashboardPainter
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{TimePrinter, Logging}
-import peregin.gpv.video.{VideoPlayer, VideoOverlay}
+import peregin.gpv.util.{Logging, TimePrinter}
+import peregin.gpv.video.{VideoOverlay, VideoPlayer}
 
-import scala.swing.event.ButtonClicked
 import scala.swing._
+import scala.swing.event.ButtonClicked
 
 
 class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null) extends Dialog(parent)
@@ -24,11 +26,10 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
 
   private val imagePanel = new ImagePanel
   private val generateButton = new Button("Generate")
-  private val cancelButton = new Button("Cancel")
+  private val closeButton = new Button("Cancel")
   private val progress = new ProgressBar
-  progress.min = 0
-  progress.max = 100
-  progress.value = 0
+  private val status = new Label
+
   private var mark = 0L // measures the generation time
 
   private val chooser = new FileChooserPanel("File name of the new video:", save, ExtensionFilters.video, false)
@@ -41,16 +42,28 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     add(new Separator(), "growx, wrap")
     add(new MigPanel("ins 5, align center", "[center]", "") {
       add(generateButton, "sg 1, w 80, center")
-      add(cancelButton, "sg 1, w 80, center")
-    }, "dock south")
+      add(closeButton, "sg 1, w 80, center, wrap")
+    }, "wrap")
+    add(status, "span 2, center, growx")
   }
 
-  Goodies.mapEscapeTo(this, handleCancel)
+  progress.min = 0
+  progress.max = 100
+  progress.value = 0
 
-  listenTo(generateButton, cancelButton)
+  status.foreground = Color.white
+  status.background = Color.blue
+  status.opaque = true
+  status.font = status.font.deriveFont(Font.BOLD)
+  status.text = "Ready"
+  status.border = BorderFactory.createBevelBorder(BevelBorder.LOWERED)
+
+  Goodies.mapEscapeTo(this, handleClose)
+
+  listenTo(generateButton, closeButton)
   reactions += {
     case ButtonClicked(`generateButton`) => handleGenerate()
-    case ButtonClicked(`cancelButton`) => handleCancel()
+    case ButtonClicked(`closeButton`) => handleClose()
   }
 
   def save(file: File) {
@@ -76,14 +89,36 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
     val converterFuture = future {
+
+      Swing.onEDT {
+        status.text = "Generating video file..."
+        generateButton.enabled = false
+      }
+
       while(reader.readPacket == null) {
         // running in a loop
       }
     }
+
+    converterFuture onSuccess {
+      case _ => Swing.onEDT {
+        status.background = Color.green
+        status.text = "Success"
+        closeButton.text = "Close"
+      }
+    }
+
+    converterFuture onFailure {
+      case f => Swing.onEDT {
+        status.background = Color.red
+        status.text = s"Failed: ${f.getMessage}"
+        closeButton.text = "Close"
+      }
+    }
   }
 
-  private def handleCancel() {
-    log.info("cancel")
+  private def handleClose() {
+    log.info("cancel or close")
     close()
   }
 
