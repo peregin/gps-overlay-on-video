@@ -1,10 +1,10 @@
 package peregin.gpv
 
 import java.awt.image.BufferedImage
-import java.awt.{Font, Color, Dimension}
+import java.awt.{Color, Dimension, Font}
 import java.io.File
 import javax.swing.BorderFactory
-import javax.swing.border.{BevelBorder, Border}
+import javax.swing.border.BevelBorder
 
 import com.xuggle.mediatool.ToolFactory
 import peregin.gpv.gui._
