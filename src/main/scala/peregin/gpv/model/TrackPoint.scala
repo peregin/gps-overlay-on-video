@@ -2,6 +2,7 @@ package peregin.gpv.model
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
+import peregin.gpv.util.TimePrinter
 import peregin.gpv.util.Trigo._
 
 object TrackPoint {
@@ -65,4 +66,6 @@ case class TrackPoint(position: GeoPosition,
     val h = (elevation - that.elevation) / 1000 // km
     pythagoras(d, h)
   }
+
+  override def toString = f"${TimePrinter.printTime(time.getMillis)} - [${position.getLatitude}%1.6f,${position.getLongitude}%1.6f] ->$distance%3.2f ^$elevation%4.1f %%$grade%2.2f"
 }
