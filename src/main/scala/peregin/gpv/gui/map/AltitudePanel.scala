@@ -10,9 +10,16 @@ import scala.swing._
 // altitude widget
 class AltitudePanel extends Panel with KnobPainter {
 
+  sealed trait Mode
+  object Mode {
+    case object TimeBased extends Mode
+    case object DistanceBased extends Mode
+  }
+
   private var telemetry = Telemetry.empty
   private var poi: Option[Sonda] = None
   private var progress: Option[Sonda] = None
+  private var mode = Mode.DistanceBased
 
   val elevFont = new Font("Arial", Font.BOLD, 10)
   lazy val elevFm = peer.getGraphics.getFontMetrics(elevFont)

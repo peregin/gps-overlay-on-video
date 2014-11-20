@@ -80,7 +80,18 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def maxTime = track.last.time
 
   def totalDistance = track.last.distance
-
+  
+  def distanceForProgress(progressInPerc: Double): Option[Double] = {
+    if (progressInPerc <= 0d) track.headOption.map(_.distance)
+    else if (progressInPerc >= 100) track.lastOption.map(_.distance)
+    else (track.headOption, track.lastOption) match {
+      case (Some(first), Some(last)) =>
+        val dist = interpolate(progressInPerc, first.distance, last.distance)
+        Some(dist)
+      case _ => None
+    }
+  }
+  
   /**
    * retrieves the interpolated time for the given progress
    * @param progressInPerc is defined between 0 and 100
@@ -114,9 +125,9 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
   }
 
-  def sonda(tsInMillis: Long): Option[Sonda] = {
+  def sonda(relativeTsInMillis: Long): Option[Sonda] = {
     if (track.isEmpty) None
-    else Some(sonda(track.head.time.plusMillis(tsInMillis.toInt)))
+    else Some(sonda(track.head.time.plusMillis(relativeTsInMillis.toInt)))
   }
 
   def sonda(t: DateTime): Sonda = {
