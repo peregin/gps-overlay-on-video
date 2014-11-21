@@ -25,8 +25,4 @@ object TimePrinter {
 
   def printTime(timeInMillisOption: Option[Long]): String = timeInMillisOption.map(printTime).getOrElse("")
   def printTime(timeInMillis: Long) = timeFormatter.print(timeInMillis)
-
-  def main(args: Array[String]): Unit = {
-    println(s"${printDuration(62001)}")
-  }
 }

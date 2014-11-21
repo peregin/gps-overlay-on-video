@@ -12,6 +12,10 @@ class TelemetrySpec extends Specification {
       TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0), GarminExtension(Some(72), Some(12), Some(110))),
       TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0), GarminExtension(Some(81), Some(14), Some(120)))
     )
+    track(0).distance = 0
+    track(0).segment = 200
+    track(1).distance = 200
+    track(1).segment = 180
     val telemetry = Telemetry(track)
 
     "interpolate time" in {
@@ -21,15 +25,23 @@ class TelemetrySpec extends Specification {
     }
 
     "interpolate elevation" in {
-      val sonda = telemetry.sonda(new DateTime(2014, 6, 1, 10, 30))
+      val sonda = telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 30))
       sonda.time === new DateTime(2014, 6, 1, 10, 30)
       sonda.elevation.current === 150
 
-      telemetry.sonda(new DateTime(2014, 6, 1, 9, 0)).elevation.current === 100
-      telemetry.sonda(new DateTime(2014, 6, 1, 10, 0)).elevation.current === 100
-      telemetry.sonda(new DateTime(2014, 6, 1, 11, 0)).elevation.current === 200
-      telemetry.sonda(new DateTime(2014, 6, 1, 12, 0)).elevation.current === 200
-      telemetry.sonda(new DateTime(2014, 6, 1, 10, 15)).elevation.current === 125
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 9, 0)).elevation.current === 100
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 0)).elevation.current === 100
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 11, 0)).elevation.current === 200
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 12, 0)).elevation.current === 200
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 15)).elevation.current === 125
+    }
+
+    "interpolate distance" in {
+      telemetry.sondaForDistance(-10).distance.current === 0
+      telemetry.sondaForDistance(0).distance.current === 0
+      telemetry.sondaForDistance(100).distance.current === 100
+      telemetry.sondaForDistance(200).distance.current === 200
+      telemetry.sondaForDistance(300).distance.current === 200
     }
   }
 

@@ -5,6 +5,8 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 
 object Sonda {
 
+  def empty = zeroAt(new DateTime(0))
+
   def zeroAt(t: DateTime) = new Sonda(t, InputValue.zero,
     new GeoPosition(0, 0),
     InputValue.zero, InputValue.zero,

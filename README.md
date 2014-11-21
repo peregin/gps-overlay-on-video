@@ -4,12 +4,16 @@ GPS data overlay on videos
 ==========================
 
 The idea came after I bought a [GoPro](http://gopro.com/cameras/hd-hero3-silver-edition) camera and started to record
-some of my rides which were also tracked with a GPS device.
+some of my rides with the bicycle which were also tracked with a GPS device.
 For tracking the rides I was using the [Strava](http://www.strava.com) application on my phone
 or a [Garmin Edge 510](http://www.dcrainmaker.com/2013/01/garmin-edge-510-in-depth-review.html).
-After showing the video to friends I was asked why I'm not showing the speed and altitude information overlaid onto video?
+After watching the videos I was asked why I'm not showing the speed and altitude information overlaid onto video?
 Cool, great idea, I wanted to add all kind of telemetry data acquired via the GPS onto the video, but couldn't find a
 software for it, running on my Mac. So I decided the write one :)
+The generated video is able to show the current speed or the actual elevation information, eventually the grade of the slope when climbing 
+a steeper section or the current heart rate zone. 
+The main focus is on cycling videos, but with small effort, different gauge templates it is easy to create dashboard for different type of 
+activities.
 
 ## Basic requirements
 Small list of wishes to achieve:
@@ -17,7 +21,7 @@ Small list of wishes to achieve:
 * add various gauges (drag'n drop into the video panel) like: speed, cadence, heart rate, altitude, acceleration, temperature, etc.
 * once the gauges were added and adjusted (the size and position) allow to save the configuration as a template, so next time
 it is easier to just load the template and create the new video
-* and the final bit, export to newly created video with the gauges
+* and the final bit, export (or generate) to newly created video with the desired gauges. 
 
 ## Credits
 The application is using libraries and images created by other people or organizations:

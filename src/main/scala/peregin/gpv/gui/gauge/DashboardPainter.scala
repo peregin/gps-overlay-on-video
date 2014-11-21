@@ -21,7 +21,7 @@ trait DashboardPainter {
     val alpha = (transparencyInPercentage / 100).min(1d).max(0d)
     g.setComposite(AlphaComposite.SrcOver.derive(alpha.toFloat))
 
-    telemetry.sonda(tsInMillis + shiftInMillis).foreach{sonda =>
+    telemetry.sondaForRelativeTime(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform
 
       val boxSize = 90

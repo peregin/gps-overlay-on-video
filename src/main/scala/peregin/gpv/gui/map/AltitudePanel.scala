@@ -68,7 +68,7 @@ class AltitudePanel extends Panel with KnobPainter {
       g.setColor(Color.lightGray)
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
-        telemetry.timeForProgress(f).map(telemetry.sonda).foreach{sonda =>
+        telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime).foreach{sonda =>
           val v = sonda.elevation.current - telemetry.elevationBoundary.min
           val x = gridLeft + i
           val y = v * pxHeight / mHeight

@@ -1,13 +1,14 @@
 package peregin.gpv.model
 
-import java.io.{InputStream, File}
-import scala.xml.{Node, XML}
+import java.io.{File, InputStream}
+import javax.xml.datatype.XMLGregorianCalendar
+
 import generated.GpxType
-import peregin.gpv.util.{Logging, Timed}
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
-import javax.xml.datatype.XMLGregorianCalendar
-import scala.language.implicitConversions
+import peregin.gpv.util.{Logging, Timed}
+
+import scala.xml.{Node, XML}
 
 
 object Telemetry extends Timed with Logging {
@@ -80,69 +81,93 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def maxTime = track.last.time
 
   def totalDistance = track.last.distance
-  
+
+  /**
+   * Retrieves the interpolated distance for the given progress.
+   */
   def distanceForProgress(progressInPerc: Double): Option[Double] = {
-    if (progressInPerc <= 0d) track.headOption.map(_.distance)
-    else if (progressInPerc >= 100) track.lastOption.map(_.distance)
-    else (track.headOption, track.lastOption) match {
-      case (Some(first), Some(last)) =>
-        val dist = interpolate(progressInPerc, first.distance, last.distance)
-        Some(dist)
-      case _ => None
-    }
+    valueForProgress(progressInPerc, (tp: TrackPoint) => tp.distance)
   }
   
   /**
-   * retrieves the interpolated time for the given progress
-   * @param progressInPerc is defined between 0 and 100
+   * Retrieves the interpolated time for the given progress.
    */
   def timeForProgress(progressInPerc: Double): Option[DateTime] = {
-    if (progressInPerc <= 0d) track.headOption.map(_.time)
-    else if (progressInPerc >= 100d) track.lastOption.map(_.time)
+    val millis = valueForProgress(progressInPerc, (tp: TrackPoint) => tp.time.getMillis)
+    millis.map(v => new DateTime(v.toLong))
+  }
+
+  /**
+   * Convenience method to find a given value/field belonging to the track point based on the actual progress.
+   * @param progressInPerc is defined between 0 and 100
+   */
+  private def valueForProgress(progressInPerc: Double, convertFunc: (TrackPoint) => Double): Option[Double] = {
+    if (progressInPerc <= 0d) track.headOption.map(convertFunc)
+    else if (progressInPerc >= 100d) track.lastOption.map(convertFunc)
     else (track.headOption, track.lastOption) match {
-      case (Some(first), Some(last)) =>
-        val millis = interpolate(progressInPerc, first.time.getMillis, last.time.getMillis)
-        Some(new DateTime(millis.toLong))
+      case (Some(first), Some(last)) => Some(interpolate(progressInPerc, convertFunc(first), convertFunc(last)))
       case _ => None
     }
   }
 
   /**
-   * retrieves a progress between 0 and 100
+   * Retrieves a progress between 0 and 100.
    */
   def progressForTime(t: DateTime): Double = (track.headOption, track.lastOption) match {
-    case (Some(first), Some(last)) => progressForTime(t, first.time, last.time)
+    case (Some(first), Some(last)) => progressForTime(t, first, last)
     case _ => 0d
   }
 
   // 0 - 100
-  def progressForTime(t: DateTime, first: DateTime, last: DateTime): Double = {
-    val millis = t.getMillis
-    val firstMillis = first.getMillis
-    val lastMillis = last.getMillis
-    if (millis <= firstMillis) 0d
-    else if (millis >= lastMillis) 100d
-    else (millis - firstMillis) * 100 / (lastMillis - firstMillis)
+  def progressForTime(t: DateTime, first: TrackPoint, last: TrackPoint): Double = {
+    progressForValue(t.getMillis, first, last, (tp: TrackPoint) => tp.time.getMillis)
   }
 
-  def sonda(relativeTsInMillis: Long): Option[Sonda] = {
+  // 0 - 100
+  private def progressForValue(v: Double, first: TrackPoint, last: TrackPoint, convertFunc: (TrackPoint) => Double): Double = {
+    val firstV = convertFunc(first)
+    val lastV = convertFunc(last)
+    if (v <= firstV) 0d
+    else if (v >= lastV) 100d
+    else (v - firstV) * 100 / (lastV - firstV)
+  }
+
+
+  // convenience methods to retrieve a point from the track (based on time, distance, gepo position, etc.)
+
+  def sondaForRelativeTime(tsInMillis: Long): Option[Sonda] = {
     if (track.isEmpty) None
-    else Some(sonda(track.head.time.plusMillis(relativeTsInMillis.toInt)))
+    else Some(sondaForAbsoluteTime(track.head.time.plusMillis(tsInMillis.toInt)))
   }
 
-  def sonda(t: DateTime): Sonda = {
+  def sondaForPosition(gp: GeoPosition): Option[Sonda] = {
+    if (track.size < 3) None
+    else {
+      // drop first and last where the distance is incorrect
+      val dList = track.map(t => (t.haversineDistanceTo(gp), t))
+      val tp = dList.minBy(_._1)._2
+      Some(sondaForAbsoluteTime(tp.time))
+    }
+  }
+
+  def sondaForAbsoluteTime(t: DateTime): Sonda = search(t.getMillis, (tp: TrackPoint) => tp.time.getMillis)
+
+  def sondaForDistance(d: Double): Sonda = search(d, (tp: TrackPoint) => tp.distance)
+
+  // binary search then interpolate
+  private def search(t: Double, convertFunc: (TrackPoint) => Double): Sonda = {
     val tn = track.size
-    if (tn < 2) Sonda.zeroAt(t)
+    if (tn < 2) Sonda.empty
     else {
       // find the closest track point with a simple binary search
       // eventually to improve the performance by searching on percentage of time between the endpoints of the list
-      def findNearestIndex(list: Seq[TrackPoint], t: DateTime, ix: Int): Int = {
+      def findNearestIndex(list: Seq[TrackPoint], t: Double, ix: Int): Int = {
         val n = list.size
         if (n < 2) ix
         else {
           val c = n / 2
           val tp = list(c)
-          if (t.isBefore(tp.time)) findNearestIndex(list.slice(0, c), t, ix)
+          if (t < convertFunc(tp)) findNearestIndex(list.slice(0, c), t, ix)
           else findNearestIndex(list.slice(c, n), t, ix + c)
         }
       }
@@ -151,33 +176,24 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       val (left, right) = ix match {
         case 0 => (tr, track(1))
         case last if last >= tn - 1 => (track(tn - 2), tr)
-        case _ if t.isBefore(tr.time) => (tr, track(ix + 1))
+        case _ if t < convertFunc(tr) => (tr, track(ix + 1))
         case _ => (track(ix - 1), tr)
       }
-      interpolate(t, left, right).withTrackIndex(ix)
+      val progress = progressForValue(t, left, right, convertFunc)
+      interpolate(progress, left, right).withTrackIndex(ix)
     }
   }
 
-  def sonda(gp: GeoPosition): Option[Sonda] = {
-    if (track.size < 3) None
-    else {
-      // drop first and last where the distance is incorrect
-      val dList = track.map(t => (t.haversineDistanceTo(gp), t))
-      val tp = dList.minBy(_._1)._2
-      Some(sonda(tp.time))
-    }
-  }
-
-  def interpolate(t: DateTime, left: TrackPoint, right: TrackPoint): Sonda = {
-    val f = progressForTime(t, left.time, right.time)
-    val elevation = interpolate(f, left.elevation, right.elevation)
-    val distance = left.distance + interpolate(f, 0, left.segment)
+  private def interpolate(progress: Double, left: TrackPoint, right: TrackPoint): Sonda = {
+    val t = new DateTime(interpolate(progress, left.time.getMillis, right.time.getMillis).toLong)
+    val elevation = interpolate(progress, left.elevation, right.elevation)
+    val distance = left.distance + interpolate(progress, 0, left.segment)
     val location = new GeoPosition(
-      interpolate(f, left.position.getLatitude, right.position.getLatitude),
-      interpolate(f, left.position.getLongitude, right.position.getLongitude)
+      interpolate(progress, left.position.getLatitude, right.position.getLatitude),
+      interpolate(progress, left.position.getLongitude, right.position.getLongitude)
     )
-    val cadence = interpolate(f, left.extension.cadence, right.extension.cadence)
-    val heartRate = interpolate(f, left.extension.heartRate, right.extension.heartRate)
+    val cadence = interpolate(progress, left.extension.cadence, right.extension.cadence)
+    val heartRate = interpolate(progress, left.extension.heartRate, right.extension.heartRate)
     val firstTs = track.head.time.getMillis
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
