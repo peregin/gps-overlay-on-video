@@ -19,7 +19,7 @@ class AltitudePanel extends Panel with KnobPainter {
   private var telemetry = Telemetry.empty
   private var poi: Option[Sonda] = None
   private var progress: Option[Sonda] = None
-  private var mode = Mode.DistanceBased
+  private var mode: Mode = Mode.DistanceBased
 
   val elevFont = new Font("Arial", Font.BOLD, 10)
   lazy val elevFm = peer.getGraphics.getFontMetrics(elevFont)
@@ -64,11 +64,15 @@ class AltitudePanel extends Panel with KnobPainter {
       g.drawString(f"${telemetry.totalDistance}%1.1f", 10, 10 + metersHalfHeight + 4 * elevFm.getHeight)
       g.drawString("km", 10, 10 + metersHalfHeight + 5 * elevFm.getHeight)
 
-      // elevation
+      // elevation map
       g.setColor(Color.lightGray)
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
-        telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime).foreach{sonda =>
+        val sondaCandidate = mode match {
+          case Mode.DistanceBased => telemetry.distanceForProgress(f).map(telemetry.sondaForDistance)
+          case Mode.TimeBased => telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime)
+        }
+        sondaCandidate.foreach{ sonda =>
           val v = sonda.elevation.current - telemetry.elevationBoundary.min
           val x = gridLeft + i
           val y = v * pxHeight / mHeight
