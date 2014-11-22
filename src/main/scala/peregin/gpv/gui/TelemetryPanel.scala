@@ -1,11 +1,13 @@
 package peregin.gpv.gui
 
+import java.awt.Image
 import java.io.File
+import javax.swing.ImageIcon
 
 import peregin.gpv.Setup
 import peregin.gpv.gui.map.{AltitudePanel, MapPanel}
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{Logging, Timed}
+import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
 import scala.swing.event.MouseClicked
@@ -30,8 +32,16 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
   val elevationMode = new ButtonGroup() {
-    buttons += new RadioButton("Distance") { selected = true }
-    buttons += new RadioButton("Time")
+    buttons += new RadioButton("Distance") {
+      selected = true
+      icon = new ImageIcon(Io.loadImage("images/distance.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH))
+      tooltip = "Distance"
+    }
+    buttons += new RadioButton("Time") {
+      selected = false
+      icon = new ImageIcon(Io.loadImage("images/time.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH))
+      tooltip = "Time"
+    }
   }
   val controlPanel = new MigPanel("ins 0 5 0 5", "", "") {
     add(new Label("Shift"), "")
