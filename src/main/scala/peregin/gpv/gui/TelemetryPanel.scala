@@ -29,10 +29,15 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
-  val controlPanel = new MigPanel("ins 0", "", "") {
+  val elevationMode = new ButtonGroup() {
+    buttons += new RadioButton("Distance") { selected = true }
+    buttons += new RadioButton("Time")
+  }
+  val controlPanel = new MigPanel("ins 0 5 0 5", "", "") {
     add(new Label("Shift"), "")
     add(direction, "")
     add(spinner, "align left")
+    add(new BoxPanel(Orientation.Horizontal) {contents ++= elevationMode.buttons}, "pushx, align right")
   }
   add(controlPanel, "growx")
 
