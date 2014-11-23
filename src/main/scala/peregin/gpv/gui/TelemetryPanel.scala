@@ -10,7 +10,7 @@ import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
-import scala.swing.event.MouseClicked
+import scala.swing.event.{ButtonClicked, MouseClicked}
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
@@ -52,6 +52,8 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   add(controlPanel, "growx")
 
   listenTo(altitude.mouse.clicks, mapKit)
+  elevationMode.buttons.foreach(ab => listenTo(ab))
+
   reactions += {
     case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
       val sonda = altitude.timeForPoint(pt).map(telemetry.sondaForAbsoluteTime)
@@ -66,6 +68,12 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       altitude.refreshPoi(sonda)
       mapKit.refreshPoi(sonda.map(_.location))
     }
+    case ButtonClicked(_: RadioButton) =>
+      val mode = elevationMode.selected.map(_.text).getOrElse(elevationMode.buttons.head.text) match {
+        case "Distance" => altitude.Mode.DistanceBased
+        case "Time" => altitude.Mode.TimeBased
+      }
+      altitude.refresh(mode)
   }
 
   def refresh(setup: Setup, telemetry: Telemetry) {

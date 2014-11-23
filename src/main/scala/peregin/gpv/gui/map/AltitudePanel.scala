@@ -132,6 +132,11 @@ class AltitudePanel extends Panel with KnobPainter {
     this.telemetry = telemetry
   }
 
+  def refresh(mode: Mode) {
+    this.mode = mode
+    repaint()
+  }
+
   def refreshPoi(sonda: Option[Sonda]) {
     poi = sonda
     repaint()

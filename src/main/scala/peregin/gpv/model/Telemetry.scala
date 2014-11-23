@@ -123,6 +123,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     progressForValue(t.getMillis, first, last, (tp: TrackPoint) => tp.time.getMillis)
   }
 
+  // TODO: progressForDistance
+
   // 0 - 100
   private def progressForValue(v: Double, first: TrackPoint, last: TrackPoint, convertFunc: (TrackPoint) => Double): Double = {
     val firstV = convertFunc(first)
