@@ -93,7 +93,10 @@ class AltitudePanel extends Panel with KnobPainter {
 
     // POI marker and data
     poi.foreach{sonda =>
-      val p = telemetry.progressForTime(sonda.time)
+      val p = mode match {
+        case Mode.TimeBased => telemetry.progressForTime(sonda.time)
+        case Mode.DistanceBased => telemetry.progressForDistance(sonda.distance.current)
+      }
       val x = (gridLeft + p * pxWidth / 100).toInt
       g.setColor(Color.blue)
       g.drawLine(x, 10, x, gridBottom)
@@ -109,7 +112,10 @@ class AltitudePanel extends Panel with KnobPainter {
 
     // progress when playing the video
     progress.foreach{sonda =>
-      val p = telemetry.progressForTime(sonda.time)
+      val p = mode match {
+        case Mode.TimeBased => telemetry.progressForTime(sonda.time)
+        case Mode.DistanceBased => telemetry.progressForDistance(sonda.distance.current)
+      }
       val x = (gridLeft + p * pxWidth / 100).toInt
       g.setColor(Color.orange)
       g.drawLine(x, 10, x, gridBottom)

@@ -111,19 +111,20 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   }
 
   /**
-   * Retrieves a progress between 0 and 100.
+   * Retrieves a progress between 0 and 100 according to the time elapsed.
    */
   def progressForTime(t: DateTime): Double = (track.headOption, track.lastOption) match {
-    case (Some(first), Some(last)) => progressForTime(t, first, last)
+    case (Some(first), Some(last)) => progressForValue(t.getMillis, first, last, (tp: TrackPoint) => tp.time.getMillis)
     case _ => 0d
   }
 
-  // 0 - 100
-  def progressForTime(t: DateTime, first: TrackPoint, last: TrackPoint): Double = {
-    progressForValue(t.getMillis, first, last, (tp: TrackPoint) => tp.time.getMillis)
+  /**
+   * Retrieves a progress between 0 and 100 according to the actual distance.
+   */
+  def progressForDistance(d: Double): Double = (track.headOption, track.lastOption) match {
+    case (Some(first), Some(last)) => progressForValue(d, first, last, (tp: TrackPoint) => tp.distance)
+    case _ => 0d
   }
-
-  // TODO: progressForDistance
 
   // 0 - 100
   private def progressForValue(v: Double, first: TrackPoint, last: TrackPoint, convertFunc: (TrackPoint) => Double): Double = {
