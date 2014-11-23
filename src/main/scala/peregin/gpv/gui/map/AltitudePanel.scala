@@ -27,6 +27,8 @@ class AltitudePanel extends Panel with KnobPainter {
   lazy val metersHalfHeight = elevFm.getAscent / 2
   lazy val timeWidth = elevFm.stringWidth("00:00:00")
 
+  def elevationMode = mode
+
   override def paint(g: Graphics2D) = {
     val width = peer.getWidth
     val height = peer.getHeight
@@ -124,15 +126,13 @@ class AltitudePanel extends Panel with KnobPainter {
     }
   }
 
-  def timeForPoint(pt: Point): Option[DateTime] = {
+  def progressForPoint(pt: Point): Double = {
     val x = pt.x
     val width = peer.getWidth
     // constants below are defined in the paint method as well
     val gridLeft = 10 + metersWidth
     val gridRight = width - 10
-    val progressInPerc = (x - gridLeft).toDouble * 100 / (gridRight - gridLeft)
-    //log.info(s"progress $progressInPerc")
-    telemetry.timeForProgress(progressInPerc)
+    (x - gridLeft).toDouble * 100 / (gridRight - gridLeft)
   }
 
   def refresh(telemetry: Telemetry) {
