@@ -2,6 +2,7 @@
 
 GPS data overlay on videos
 ==========================
+_The Ultimate Cycling Software_
 
 The idea came after I bought a [GoPro](http://gopro.com/cameras/hd-hero3-silver-edition) camera and started to record
 some of my rides with the bicycle which were also tracked with a GPS device.
