@@ -1,9 +1,9 @@
 package peregin.gpv.gui.map
 
-import java.awt.{Color, Font}
+import java.awt.{AlphaComposite, Color, Font}
 
 import org.joda.time.DateTime
-import peregin.gpv.model.{Telemetry, Sonda}
+import peregin.gpv.model.{SlopeSegment, Telemetry, Sonda}
 
 import scala.swing._
 
@@ -67,7 +67,7 @@ class AltitudePanel extends Panel with KnobPainter {
       g.drawString("km", 10, 10 + metersHalfHeight + 5 * elevFm.getHeight)
 
       // elevation map
-      g.setColor(Color.lightGray)
+      g.setComposite(AlphaComposite.SrcOver.derive(0.3f)) // transparent because of the different slope segment colors
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
         val sondaCandidate = mode match {
@@ -79,9 +79,14 @@ class AltitudePanel extends Panel with KnobPainter {
           val x = gridLeft + i
           val y = v * pxHeight / mHeight
           //log.info(s"x=$i f=$f elev=${sonda.elevation.current} y=$y")
+          val slope = SlopeSegment.identify(sonda.grade.current)
+          g.setColor(slope.color)
           g.drawLine(x, gridBottom, x, gridBottom - y.toInt)
+          g.setColor(Color.black)
+          g.drawLine(x, gridBottom - y.toInt, x, gridBottom - y.toInt - 1)
         }
       }
+      g.setComposite(AlphaComposite.SrcOver.derive(1f))
     }
 
     // grid

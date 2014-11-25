@@ -7,6 +7,18 @@ class MinMaxSpec extends Specification {
 
   addArguments(stopOnFail)
 
+  "an instance" should {
+    val mm = MinMax(0, 3)
+    "match if value is inside the range" in {
+       mm.includes(-0.1) must beFalse
+       mm.includes(0) must beTrue
+       mm.includes(1.2) must beTrue
+       mm.includes(2.99) must beTrue
+       mm.includes(3) must beFalse
+       mm.includes(32) must beFalse
+    }
+  }
+
   "rounder" should {
     import MinMax._
     "round up to nearest tenth" in {
