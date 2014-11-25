@@ -38,6 +38,10 @@ object TelemetryPanelManualTest extends SimpleSwingApplication with Logging {
   }
 
   // for testing
-  val telemetry = Telemetry.load(Io.getResource("gps/sihlwald.gpx"))
-  Swing.onEDT(panel.refresh(Setup.empty, telemetry))
+  val resource = "gps/sihlwald.gpx"
+  val telemetry = Telemetry.load(Io.getResource(resource))
+  Swing.onEDT{
+    panel.refresh(Setup.empty, telemetry)
+    panel.chooser.fileInput.text = resource
+  }
 }
