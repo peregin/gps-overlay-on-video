@@ -41,7 +41,7 @@ case class TrackPoint(position: GeoPosition,
     next.distance = distance + segment
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
     if (dt != 0d) speed = segment / dt
-    if (segment > 0) grade = (next.elevation - elevation) / (segment * 1000)
+    if (segment > 0) grade = (next.elevation - elevation) / (segment * 10)
   }
 
   // The return value is the distance expressed in kilometers.

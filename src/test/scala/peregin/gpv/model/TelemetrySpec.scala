@@ -61,7 +61,7 @@ class TelemetrySpec extends Specification {
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
       telemetry.totalDistance === 25.969048381307253
       telemetry.speedBoundary === MinMax(0.07879420148031871, 86.28724568098714)
-      //telemetry.gradeBoundary === MinMax(-1.0,0.8300310261101451)
+      telemetry.gradeBoundary === MinMax(-100.00000000000001,83.00310261101451)
       telemetry.cadenceBoundary === MinMax(0, 120)
       telemetry.temperatureBoundary === MinMax(6, 14)
       telemetry.heartRateBoundary === MinMax(104, 175)
@@ -85,7 +85,7 @@ class TelemetrySpec extends Specification {
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
       telemetry.speedBoundary.max === 85.56435201871793
       telemetry.totalDistance === 63.23256444282121
-      //telemetry.gradeBoundary === MinMax(-0.6106372461979528, 0.6174814599643726)
+      telemetry.gradeBoundary === MinMax(-61.06372461979527,61.74814599643726)
     }
   }
 
