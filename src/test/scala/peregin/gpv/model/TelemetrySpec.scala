@@ -2,10 +2,11 @@ package peregin.gpv.model
 
 import org.specs2.mutable.Specification
 import org.joda.time.{DateTimeZone, DateTime}
+import peregin.gpv.util.Logging
 import scala.xml.XML
 
 
-class TelemetrySpec extends Specification {
+class TelemetrySpec extends Specification with Logging {
 
   "telemetry data with 2 track points" should {
     val track = Seq(
@@ -72,6 +73,12 @@ class TelemetrySpec extends Specification {
       first.segment === 0.005317274837638873
       first.speed === 19.142189415499942
       first.grade === 0d
+    }
+
+    "find outliers" in {
+      val outliers = telemetry.track.count(_.grade > 30)
+      log.info(s"found $outliers outliers out of ${telemetry.track.size}")
+      outliers === 48
     }
   }
 

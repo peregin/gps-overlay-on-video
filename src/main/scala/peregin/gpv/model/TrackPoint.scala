@@ -5,6 +5,7 @@ import org.joda.time.DateTime
 import peregin.gpv.util.TimePrinter
 import peregin.gpv.util.Trigo._
 
+
 object TrackPoint {
 
   // Distances from points on the surface to the center range from 6353 km to 6384 km.
