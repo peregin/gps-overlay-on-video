@@ -1,10 +1,16 @@
+
 import ScalaxbKeys._
+import com.typesafe.sbt.SbtNativePackager._
+import NativePackagerKeys._
+import de.johoop.cpd4sbt.CopyPasteDetector._
 
 organization := "peregin.com"
 
 name := "telemetry-on-video"
 
 version := "1.0.0-SNAPSHOT"
+
+mainClass in Compile := Some("peregin.gpv.App")
 
 scalaVersion := "2.10.4"
 
@@ -16,6 +22,8 @@ resolvers ++= Seq(
   "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
+
+cpdSettings
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
@@ -32,6 +40,8 @@ buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, Buil
 })
 
 buildInfoPackage := "info"
+
+packageArchetype.java_application
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 

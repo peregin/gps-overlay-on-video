@@ -19,3 +19,9 @@ addSbtPlugin("org.scalaxb" % "sbt-scalaxb" % "1.1.2")
 
 // generates build information, timestamp
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.1")
+
+// static code analysis
+addSbtPlugin("de.johoop" % "cpd4sbt" % "1.1.5")
+
+// another installer plugin
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "0.8.0-RC1")
