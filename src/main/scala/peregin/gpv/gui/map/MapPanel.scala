@@ -19,8 +19,9 @@ class MapPanel extends JXMapKit with Publisher with KnobPainter {
   private var poi: Option[GeoPosition] = None
   private var progress: Option[GeoPosition] = None
 
-  setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps)
+  setDefaultProvider(JXMapKit.DefaultProviders.Custom)
   //setTileFactory(new NasaTileFactory)
+  //setTileFactory(new MicrosoftTileFactory)
   setTileFactory(new MapQuestTileFactory)
   setDataProviderCreditShown(true)
   setMiniMapVisible(false)
