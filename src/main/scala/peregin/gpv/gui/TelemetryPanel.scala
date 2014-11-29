@@ -4,13 +4,14 @@ import java.awt.Image
 import java.io.File
 import javax.swing.ImageIcon
 
+import org.jdesktop.swingx.mapviewer.DefaultTileFactory
 import peregin.gpv.Setup
-import peregin.gpv.gui.map.{AltitudePanel, MapPanel}
+import peregin.gpv.gui.map.{MicrosoftTileFactory, MapQuestTileFactory, AltitudePanel, MapPanel}
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
-import scala.swing.event.{ButtonClicked, MouseClicked}
+import scala.swing.event.{SelectionChanged, ButtonClicked, MouseClicked}
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
@@ -18,16 +19,28 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   var telemetry = Telemetry.empty
 
   // file chooser widget
-  val chooser = new FileChooserPanel("Load GPS data file:", openGpsData, ExtensionFilters.gps)
-  add(chooser, "pushx, growx, wrap")
-
+  val fileChooser = new FileChooserPanel("Load GPS data file:", openGpsData, ExtensionFilters.gps)
+  add(fileChooser, "pushx, growx")
+  // tile chooser dropdown
+  case class TileOption(name: String, factory: DefaultTileFactory) {
+    override def toString = name
+  }
+  val mapChooser = new ComboBox(Seq(
+    TileOption("Open Street Map", new MapQuestTileFactory),
+    TileOption("Aerial (Microsoft)", new MicrosoftTileFactory)
+  ))
+  val mapType = new MigPanel("ins 0", "", "[grow, fill]") {
+    add(new Label("Map Type"), "wrap")
+    add(mapChooser, "")
+  }
+  add(mapType, "wrap")
 
   val mapKit = new MapPanel
   val mapKitWrapper = Component.wrap(mapKit)
-  add(mapKit, "growx, wrap")
+  add(mapKit, "span 2, growx, wrap")
 
   val altitude = new AltitudePanel
-  add(altitude, "pushy, grow, gaptop 10, wrap")
+  add(altitude, "span 2, pushy, grow, gaptop 10, wrap")
 
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
@@ -51,7 +64,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
   add(controlPanel, "growx")
 
-  listenTo(altitude.mouse.clicks, mapKit)
+  listenTo(altitude.mouse.clicks, mapKit, mapChooser)
   elevationMode.buttons.foreach(ab => listenTo(ab))
 
   reactions += {
@@ -78,10 +91,15 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
         case "Time" => altitude.Mode.TimeBased
       }
       altitude.refresh(mode)
+    case SelectionChanged(`mapChooser`) =>
+      val item = mapChooser.selection.item
+      log.info(s"switching to $item")
+      mapKit.setTileFactory(item.factory)
+      mapKit.repaint()
   }
 
   def refresh(setup: Setup, telemetry: Telemetry) {
-    chooser.fileInput.text = setup.gpsPath.getOrElse("")
+    fileChooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
 
     mapKit.refresh(telemetry)

@@ -42,6 +42,6 @@ object TelemetryPanelManualTest extends SimpleSwingApplication with Logging {
   val telemetry = Telemetry.load(Io.getResource(resource))
   Swing.onEDT{
     panel.refresh(Setup.empty, telemetry)
-    panel.chooser.fileInput.text = resource
+    panel.fileChooser.fileInput.text = resource
   }
 }
