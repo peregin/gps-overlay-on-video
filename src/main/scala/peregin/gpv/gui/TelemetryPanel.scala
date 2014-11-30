@@ -64,7 +64,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
   add(controlPanel, "growx")
 
-  listenTo(altitude.mouse.clicks, mapKit, mapChooser)
+  listenTo(altitude.mouse.clicks, mapKit, mapChooser.selection)
   elevationMode.buttons.foreach(ab => listenTo(ab))
 
   reactions += {
@@ -94,8 +94,9 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     case SelectionChanged(`mapChooser`) =>
       val item = mapChooser.selection.item
       log.info(s"switching to $item")
+      val center = mapKit.getCenterPosition
       mapKit.setTileFactory(item.factory)
-      mapKit.repaint()
+      mapKit.setCenterPosition(center)
   }
 
   def refresh(setup: Setup, telemetry: Telemetry) {
