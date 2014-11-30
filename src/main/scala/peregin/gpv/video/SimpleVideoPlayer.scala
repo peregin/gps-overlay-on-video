@@ -64,4 +64,6 @@ class SimpleVideoPlayer(url: String, listener: VideoPlayer.Listener) extends Vid
   }
 
   override def duration = durationInMillis
+
+  override def playing = running
 }

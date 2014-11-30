@@ -1,9 +1,15 @@
 package peregin.gpv.video
 
 import akka.actor._
-import peregin.gpv.video.PlayerControllerActor.{Idle, Run, State}
+import akka.pattern.ask
+import akka.util.Timeout
+import concurrent.duration._
+import peregin.gpv.video.PlayerControllerActor.{QueryIsRunning, Idle, Running, State}
 import peregin.gpv.video.PlayerProtocol._
 import peregin.gpv.util.{Logging, TimePrinter}
+import scala.language.postfixOps
+
+import scala.concurrent.Await
 
 
 trait SeekableVideoPlayerFactory extends VideoPlayerFactory {
@@ -21,6 +27,11 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
   override def seek(percentage: Double) = playerActor ! SeekCommand(percentage)
   override def close() = video.close()
   override def duration = video.durationInMillis
+  override def playing = {
+    implicit val timeout = Timeout(5 seconds)
+    val future = playerActor ? QueryIsRunning
+    Await.result(future, timeout.duration).asInstanceOf[Boolean]
+  }
 
   // FIXME: callback from the actor, subscribe to events instead of callback
   private[video] def handleFrame(frame: FrameIsReady) {
@@ -44,7 +55,8 @@ object PlayerProtocol {
 object PlayerControllerActor {
   sealed trait State
   case object Idle extends State
-  case object Run extends State
+  case object Running extends State
+  case object QueryIsRunning extends State
 }
 
 class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] with LoggingFSM[State, PacketReply] {
@@ -69,10 +81,10 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
     }
     case Event(PlayCommand, data) =>
       setTimer("nextread", PlayCommand, 500 millis, repeat = false)
-      goto(Run) using data
+      goto(Running) using data
   }
 
-  when(Run) {
+  when(Running) {
     case Event(_, data @ EndOfStream) =>
       log.info("end of the stream has been reached")
       goto(Idle) using data
@@ -95,14 +107,18 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
   }
 
   whenUnhandled {
+    case Event(QueryIsRunning, _) =>
+      // tells whether the player is still running or not
+      sender ! (stateName == Running)
+      stay()
     case any =>
       log.warning(s"unhandled ${any.toString}")
       stay()
   }
 
   onTransition {
-    case Idle -> Run => listener.videoStarted()
-    case Run -> Idle => listener.videoStopped()
+    case Idle -> Running => listener.videoStarted()
+    case Running -> Idle => listener.videoStopped()
   }
 
   startWith(Idle, ReadInProgress)

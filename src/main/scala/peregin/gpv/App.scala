@@ -15,6 +15,7 @@ import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
 
 import scala.swing._
+import scala.swing.event.ValueChanged
 
 
 object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
@@ -69,6 +70,15 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
       link.setURI(new URI("www.peregin.com"))
       add(link, "split, w 150!, align right")
     }
+  }
+
+  listenTo(transparencySlider)
+  reactions += {
+    case ValueChanged(`transparencySlider`) =>
+      if (!videoPanel.player.exists(_.playing)) {
+        log.debug("refreshing dashboard painter, because player is not running")
+        // need to grab the last video ts and image used to repaint the dashboard
+      }
   }
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
