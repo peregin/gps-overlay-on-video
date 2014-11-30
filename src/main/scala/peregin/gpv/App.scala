@@ -77,7 +77,9 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     case ValueChanged(`transparencySlider`) =>
       if (!videoPanel.player.exists(_.playing)) {
         log.debug("refreshing dashboard painter, because player is not running")
-        // need to grab the last video ts and image used to repaint the dashboard
+        // when player is not running and chaging the transparency
+        // need to grab the last video ts and frame image to repaint the dashboard
+        // not implemented yet ...
       }
   }
 
