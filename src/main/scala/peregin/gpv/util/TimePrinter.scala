@@ -22,6 +22,10 @@ object TimePrinter {
 
   def printDuration(elapsedInMillisOption: Option[Long]): String = elapsedInMillisOption.map(printDuration).getOrElse("")
   def printDuration(elapsedInMillis: Long) = durationFormatter.print(new Duration(elapsedInMillis).toPeriod)
+  def text2Duration(text: String): Long = {
+    val parsePeriod = durationFormatter.parsePeriod(text)
+    parsePeriod.toStandardDuration.getMillis
+  }
 
   def printTime(timeInMillisOption: Option[Long]): String = timeInMillisOption.map(printTime).getOrElse("")
   def printTime(timeInMillis: Long) = timeFormatter.print(timeInMillis)
