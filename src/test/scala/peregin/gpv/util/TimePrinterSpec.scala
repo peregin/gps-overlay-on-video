@@ -12,11 +12,11 @@ class TimePrinterSpec extends Specification {
 
   "duration printer" should {
     "show elapsed time formatted as hh:mm:dd.sss" in {
-      printDuration(62001) == "00:01:02.001"
+      printDuration(62001) === "00:01:02.001"
     }
 
     "parse text to elapsed duration" in {
-      text2Duration("00:01:02.001") == 62001
+      text2Duration("00:01:02.001") === 62001
     }
   }
 }
