@@ -74,13 +74,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   listenTo(transparencySlider)
   reactions += {
-    case ValueChanged(`transparencySlider`) =>
-      if (!videoPanel.player.exists(_.playing)) {
-        log.debug("refreshing dashboard painter, because player is not running")
-        // when player is not running and chaging the transparency
-        // need to grab the last video ts and frame image to repaint the dashboard
-        // not implemented yet ...
-      }
+    case ValueChanged(`transparencySlider`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
   }
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"

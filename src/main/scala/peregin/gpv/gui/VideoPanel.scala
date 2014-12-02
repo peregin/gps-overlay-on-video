@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 
 import peregin.gpv.Setup
-import peregin.gpv.util.{Logging, TimePrinter}
+import peregin.gpv.util.{Io, Logging, TimePrinter}
 import peregin.gpv.video.{VideoPlayer, VideoPlayerFactory}
 
 import scala.swing.event.ValueChanged
@@ -42,10 +42,12 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     case ValueChanged(`slider`) => player.foreach(_.seek(slider.percentage))
   }
 
-  @volatile var player: Option[VideoPlayer] = None
+  @volatile private var player: Option[VideoPlayer] = None
+  @volatile private var lastRawImage: Option[BufferedImage] = None // without overlay
 
   def refresh(setup: Setup) {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
+    lastRawImage = None
     setup.videoPath.foreach{path =>
       player.foreach(_.close())
       player = Some(createPlayer(path, this))
@@ -62,7 +64,21 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     player.foreach(_.step())
   }
 
+  def fireLastVideoEventIfNotPlaying() = {
+    if (!player.exists(_.playing)) {
+      log.debug("refreshing dashboard painter, because player is not running")
+      // when player is not running and changing the transparency
+      lastRawImage.foreach { rawImage =>
+        val ts = TimePrinter.text2Duration(elapsed.text)
+        val total = TimePrinter.text2Duration(duration.text)
+        val percentage = (ts * 100).toDouble / total
+        videoEvent(ts, percentage, rawImage)
+      }
+    }
+  }
+
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+    lastRawImage = Some(Io.copy(image))
     // first allow the listeners to modify the image, then show it
     listener.videoEvent(tsInMillis, percentage, image)
     Swing.onEDT{
