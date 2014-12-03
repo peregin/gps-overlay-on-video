@@ -27,7 +27,9 @@ object Telemetry extends Timed with Logging {
         new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0d),
         wyp.time, extension
       )
-    }
+    }.toVector
+    // Important: points are stored in a <b>Vector</b>, allows to efficiently access an element at an arbitrary position
+    // and retrieving the size is O(1)
     log.info(s"found ${points.size} track points")
     val data = new Telemetry(points)
     data.analyze()
