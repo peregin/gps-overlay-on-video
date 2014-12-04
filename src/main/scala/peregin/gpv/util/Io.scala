@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 import javax.swing.{Icon, ImageIcon}
 
 
-object Io {
+object Io extends Logging {
 
   def withCloseable[R](c: Closeable)(body: Closeable => R): R = try {
     body(c)
@@ -24,5 +24,23 @@ object Io {
     val colorModel = src.getColorModel
     val raster = src.copyData(null)
     new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied, null)
+  }
+
+  def compare(im1: BufferedImage, im2: BufferedImage): Boolean = {
+    (im1.getWidth, im2.getWidth, im1.getHeight, im2.getHeight) match {
+      case (w1, w2, _, _) if w1 != w2 =>
+        log.error(s"width mismatch $w1 <> $w2")
+        false
+      case (_, _, h1, h2) if h1 != h2 =>
+        log.error(s"height mismatch $h1 <> $h2")
+        false
+      case (w1, w2, h1, h2) =>
+        val coords = for (x <- 0 until w1; y <- 0 until h1) yield (x, y)
+        coords.find{case (x: Int, y: Int) =>
+          val p1 = im1.getRGB(x, y)
+          val p2 = im2.getRGB(x, y)
+          p1 != p2
+        }.isEmpty
+    }
   }
 }

@@ -1,8 +1,5 @@
 package peregin.gpv.util
 
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
-
 import org.specs2.mutable.Specification
 
 /**
@@ -13,8 +10,12 @@ class IoSpec extends Specification {
   "copy image" in {
     val src = Io.loadImage("images/distance.png")
     val dst = Io.copy(src)
-    val barr = new ByteArrayOutputStream()
-    ImageIO.write(dst, "png", barr)
-    barr.size() === 3676
+    Io.compare(src, dst) must beTrue
+  }
+
+  "compare different images" in {
+    val im1 = Io.loadImage("images/distance.png")
+    val im2 = Io.loadImage("images/time.png")
+    Io.compare(im1, im2) must beFalse
   }
 }
