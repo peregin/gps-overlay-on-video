@@ -14,7 +14,7 @@ object Io extends Logging {
     c.close()
   }
 
-  def getResource(path: String) = classOf[App].getClassLoader.getResourceAsStream(path)
+  def getResource(path: String) = Io.getClass.getClassLoader.getResourceAsStream(path)
 
   def loadImage(path: String): BufferedImage = ImageIO.read(getResource(path))
 
