@@ -5,10 +5,18 @@ import javax.swing.JPanel
 
 
 class ImagePanel extends JPanel {
-  var image: Image = null
+  var image: Option[Image] = None
+  var topImage: Option[Image] = None
 
   def show(im: Image) {
-    image = im
+    show(im, None)
+  }
+
+  // imTop expected to have the same size as im
+  // allows to paint a normal and top layer
+  def show(im: Image, imTop: Option[Image]) {
+    image = Some(im)
+    topImage = imTop
     repaint()
   }
 
@@ -18,9 +26,9 @@ class ImagePanel extends JPanel {
     g.setColor(Color.black)
     g.fillRect(0, 0, width, height)
 
-    if (image != null) {
-      val iw = image.getWidth(null)
-      val ih = image.getHeight(null)
+    image.foreach { normalLayer =>
+      val iw = normalLayer.getWidth(null)
+      val ih = normalLayer.getHeight(null)
 
       // the image needs to be scaled to fit to the display area
       val (w, h) = if (iw > width || ih > height) {
@@ -30,7 +38,11 @@ class ImagePanel extends JPanel {
       val x = (width - w) / 2
       val y = (height - h) / 2
       //debug(s"(w, h) = ($w, $h)")
-      g.drawImage(image, x, y, x + w, y + h, 0, 0, iw, ih, null)
+      g.drawImage(normalLayer, x, y, x + w, y + h, 0, 0, iw, ih, null)
+
+      topImage.foreach{topLayer =>
+        g.drawImage(topLayer, x, y, x + w, y + h, 0, 0, iw, ih, null)
+      }
     }
   }
 }

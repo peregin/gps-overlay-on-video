@@ -15,7 +15,7 @@ import scala.swing.{MainFrame, SimpleSwingApplication}
 
 object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
-  Goodies.initLookAndFeel()
+    Goodies.initLookAndFeel()
 
   val video = new VideoPanel(openVideoFile, new VideoPlayer.Listener() {
     override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {}
