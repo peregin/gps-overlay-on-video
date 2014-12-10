@@ -112,10 +112,10 @@ class AltitudePanel extends Panel with KnobPainter with Logging {
       // draw data; time, speed, distance
       g.setColor(Color.blue)
       g.drawString(sonda.time.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + (timeWidth * 2.9).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.distance.current}%1.1fkm", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.speed.current}%1.1fkm/h", gridLeft + (timeWidth * 4.9).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.grade.current}%1.2f%%", gridLeft + (timeWidth * 6.1).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${sonda.distance.current}%1.1fkm", gridLeft + (timeWidth * 2.9).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${sonda.speed.current}%1.1fkm/h", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + (timeWidth * 5.3).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${sonda.grade.current}%1.2f%%", gridLeft + (timeWidth * 6.2).toInt, height - 10 + metersHalfHeight)
     }
 
     // progress when playing the video
