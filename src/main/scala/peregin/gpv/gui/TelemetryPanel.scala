@@ -69,12 +69,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   reactions += {
     case MouseClicked(`altitude`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
-      val p = altitude.progressForPoint(pt)
-      val sonda = altitude.elevationMode match {
-        case altitude.Mode.TimeBased => telemetry.timeForProgress(p).map(telemetry.sondaForAbsoluteTime)
-        case altitude.Mode.DistanceBased => telemetry.distanceForProgress(p).map(telemetry.sondaForDistance)
-      }
-      log.info(s"track index = ${sonda.map(_.getTrackIndex).getOrElse(0)}")
+      val sonda = altitude.sondaForPoint(pt)
       altitude.refreshPoi(sonda)
       mapKit.refreshPoi(sonda.map(_.location))
     }

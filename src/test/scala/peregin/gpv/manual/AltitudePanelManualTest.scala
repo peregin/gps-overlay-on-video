@@ -6,12 +6,13 @@ import info.BuildInfo
 import peregin.gpv.gui.map.AltitudePanel
 import peregin.gpv.gui.{Goodies, MigPanel}
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{Io, Logging}
+import peregin.gpv.util.{Timed, Io, Logging}
 
+import scala.swing.event.MouseClicked
 import scala.swing.{MainFrame, SimpleSwingApplication, Swing}
 
 
-object AltitudePanelManualTest extends SimpleSwingApplication with Logging {
+object AltitudePanelManualTest extends SimpleSwingApplication with Logging with Timed {
 
   Goodies.initLookAndFeel()
 
@@ -24,6 +25,13 @@ object AltitudePanelManualTest extends SimpleSwingApplication with Logging {
     }
   }
   override def top = frame
+
+  listenTo(panel.mouse.clicks)
+  reactions += {
+    case MouseClicked(`panel`, pt, _, 1, false) => timed(s"time/elevation for x=${pt.x}") {
+      panel.refreshPoi(panel.sondaForPoint(pt))
+    }
+  }
 
   frame.size = new Dimension(800, 300)
   frame.minimumSize = frame.size

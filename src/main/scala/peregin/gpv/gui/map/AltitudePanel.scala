@@ -2,13 +2,13 @@ package peregin.gpv.gui.map
 
 import java.awt.{AlphaComposite, Color, Font}
 
-import org.joda.time.DateTime
 import peregin.gpv.model.{SlopeSegment, Telemetry, Sonda}
+import peregin.gpv.util.Logging
 
 import scala.swing._
 
 // altitude widget
-class AltitudePanel extends Panel with KnobPainter {
+class AltitudePanel extends Panel with KnobPainter with Logging {
 
   sealed trait Mode
   object Mode {
@@ -131,7 +131,17 @@ class AltitudePanel extends Panel with KnobPainter {
     }
   }
 
-  def progressForPoint(pt: Point): Double = {
+  def sondaForPoint(pt: Point): Option[Sonda] = {
+    val p = progressForPoint(pt)
+    val sonda = elevationMode match {
+      case Mode.TimeBased => telemetry.timeForProgress(p).map(telemetry.sondaForAbsoluteTime)
+      case Mode.DistanceBased => telemetry.distanceForProgress(p).map(telemetry.sondaForDistance)
+    }
+    log.info(s"track index = ${sonda.map(_.getTrackIndex).getOrElse(0)}")
+    sonda
+  }
+
+  private def progressForPoint(pt: Point): Double = {
     val x = pt.x
     val width = peer.getWidth
     // constants below are defined in the paint method as well
