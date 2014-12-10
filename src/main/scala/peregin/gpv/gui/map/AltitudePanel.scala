@@ -54,7 +54,7 @@ class AltitudePanel extends Panel with KnobPainter with Logging {
       g.setColor(Color.black)
       g.drawString(s"${telemetry.elevationBoundary.max.toInt} m", 10, 10 + metersHalfHeight)
       g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 - elevFm.getHeight + metersHalfHeight)
-      val distanceTotal = f" ${telemetry.totalDistance}%1.1fkm"
+      val distanceTotal = f"  ${telemetry.totalDistance}%1.1fkm"
       val distanceWidth = elevFm.stringWidth(distanceTotal)
       val timeFirst = telemetry.minTime.toString("HH:mm:ss")
       val timeLast = telemetry.maxTime.toString("HH:mm:ss")
