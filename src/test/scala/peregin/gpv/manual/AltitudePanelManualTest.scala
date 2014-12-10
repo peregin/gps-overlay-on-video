@@ -25,10 +25,18 @@ object AltitudePanelManualTest extends SimpleSwingApplication with Logging {
   }
   override def top = frame
 
-  // for testing
-  val telemetry = Telemetry.load(Io.getResource("gps/sihlwald.gpx"))
-  Swing.onEDT(panel.refresh(telemetry))
-
   frame.size = new Dimension(800, 300)
+  frame.minimumSize = frame.size
   Goodies.center(frame)
+
+  // load test data
+  Swing.onEDT {
+    Goodies.showBusy(frame) {
+      val telemetry = Telemetry.load(Io.getResource("gps/sihlwald.gpx"))
+      Swing.onEDT{
+        panel.refresh(telemetry)
+        panel.repaint()
+      }
+    }
+  }
 }
