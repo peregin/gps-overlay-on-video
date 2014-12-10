@@ -54,17 +54,19 @@ class AltitudePanel extends Panel with KnobPainter with Logging {
       g.setColor(Color.black)
       g.drawString(s"${telemetry.elevationBoundary.max.toInt} m", 10, 10 + metersHalfHeight)
       g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 - elevFm.getHeight + metersHalfHeight)
+      val distanceTotal = f" ${telemetry.totalDistance}%1.1fkm"
+      val distanceWidth = elevFm.stringWidth(distanceTotal)
       val timeFirst = telemetry.minTime.toString("HH:mm:ss")
       val timeLast = telemetry.maxTime.toString("HH:mm:ss")
       g.drawString(timeFirst, gridLeft, height - 10 + metersHalfHeight)
-      g.drawString(timeLast, gridRight - timeWidth, height - 10 + metersHalfHeight)
+      g.drawString(timeLast, gridRight - timeWidth - distanceWidth, height - 10 + metersHalfHeight)
+      g.setColor(Color.red)
+      g.drawString(distanceTotal, gridRight - distanceWidth, height - 10 + metersHalfHeight)
 
-      // max distance and speed
+      // max speed
       g.setColor(Color.red)
       g.drawString(f"${telemetry.speedBoundary.max}%1.1f", 10, 10 + metersHalfHeight + elevFm.getHeight)
       g.drawString("km/h", 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
-      g.drawString(f"${telemetry.totalDistance}%1.1f", 10, 10 + metersHalfHeight + 4 * elevFm.getHeight)
-      g.drawString("km", 10, 10 + metersHalfHeight + 5 * elevFm.getHeight)
 
       // elevation map
       g.setComposite(AlphaComposite.SrcOver.derive(0.3f)) // transparent because of the different slope segment colors
