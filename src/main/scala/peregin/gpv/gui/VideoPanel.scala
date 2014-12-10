@@ -78,11 +78,12 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
-    lastRawImage = Some(Io.copy(image))
+    lastRawImage = Some(image)
+    val topImage = new BufferedImage(image.getWidth, image.getHeight, BufferedImage.TYPE_INT_ARGB)
     // first allow the listeners to modify the image, then show it
-    listener.videoEvent(tsInMillis, percentage, image)
+    listener.videoEvent(tsInMillis, percentage, topImage)
     Swing.onEDT{
-      imagePanel.show(image)
+      imagePanel.show(image, Some(topImage))
       slider.percentage = percentage
       elapsed.text = s"${TimePrinter.printDuration(tsInMillis)}"
       duration.text = s"${TimePrinter.printDuration(player.map(_.duration))}"
