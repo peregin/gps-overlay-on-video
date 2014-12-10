@@ -3,7 +3,7 @@ package peregin.gpv.gui
 import java.awt.{Component, Font}
 import javax.swing._
 
-import org.jdesktop.swingx.{JXLabel, JXList}
+import org.jdesktop.swingx.JXList
 import peregin.gpv.util.Io
 
 // save/load/use templates (set of already selected and aligned gauges)
