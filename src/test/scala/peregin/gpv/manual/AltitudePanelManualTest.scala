@@ -34,7 +34,6 @@ object AltitudePanelManualTest extends SimpleSwingApplication with Logging with 
   }
 
   frame.size = new Dimension(800, 300)
-  frame.minimumSize = frame.size
   Goodies.center(frame)
 
   // load test data
