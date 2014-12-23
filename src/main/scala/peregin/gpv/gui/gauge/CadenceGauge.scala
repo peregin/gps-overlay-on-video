@@ -90,9 +90,9 @@ trait CadenceGauge extends GaugePainter {
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
     // draw unit
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 1).toFloat))
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
     val utext = "rpm"
     val utb = g.getFontMetrics.getStringBounds(utext, g)
-    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 6)
+    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 2.5)
   }
 }
