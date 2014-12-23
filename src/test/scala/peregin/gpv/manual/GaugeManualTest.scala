@@ -17,7 +17,7 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
 
   Goodies.initLookAndFeel()
 
-  val gauges = List.fill(4)(new GaugeComponent with CadenceGauge)
+  val gauges = List.fill(4)(new GaugeComponent with RadialSpeedGauge)
   gauges.foreach(_.debug = true)
 
   val minSpinner = new JSpinner

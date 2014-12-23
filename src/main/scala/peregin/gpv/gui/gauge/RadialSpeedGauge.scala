@@ -85,7 +85,7 @@ trait RadialSpeedGauge extends GaugePainter {
     g.draw(arc)
 
     // draw current speed
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4).toFloat))
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
     val text = f"${input.current}%2.1f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
