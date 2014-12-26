@@ -97,8 +97,6 @@ class TelemetrySpec extends Specification with Logging {
   }
 
   "telemetry running data from Tuefi track collected with Strava" in {
-    // activity tracked:
-    // http://app.strava.com/activities/78985204 - exact data
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/track-run.gpx")))
 
     "calculate min max" in {
@@ -106,6 +104,18 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.elevationBoundary === MinMax(442.0, 447.0)
       telemetry.speedBoundary.max === 23.656438316953857
       telemetry.totalDistance === 4.234620202017025
+    }
+  }
+
+  "telemetry cycling data along Sihl river collected with Garmin 510" in {
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/sample.gpx")))
+
+    "calculate min max" in {
+      telemetry.track must haveSize(674)
+      telemetry.elevationBoundary === MinMax(452.6, 513.2)
+      telemetry.speedBoundary.max === 33.471772761781544
+      telemetry.totalDistance === 12.492226904069824
+      telemetry.gradeBoundary === MinMax(-44.24623780354664, 33.245252966131574)
     }
   }
 }
