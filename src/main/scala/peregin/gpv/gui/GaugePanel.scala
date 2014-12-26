@@ -19,19 +19,17 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
     () => new GaugeComponent with LinearElevationGauge,
     () => new GaugeComponent with IconicHeartRateGauge,
     () => new GaugeComponent with DigitalSpeedGauge,
-    () => new GaugeComponent with DigitalElevationGauge
+    () => new GaugeComponent with DigitalElevationGauge,
+    () => new GaugeComponent with ElevationChart
   )
 
-  val sample = timed("load sample gps data") {
+  lazy val sample = timed("load sample gps data") {
     Try(Telemetry.load(Io.getResource("gps/sample.gpx"))).toOption.getOrElse(Telemetry.empty)
   }
 
-  gaugeFactories.foreach{ fac =>
+  gaugeFactories.foreach { fac =>
     // create the component
-    val comp = fac()
-
-    // initialize with default telemetry if needed
-    if (comp.isInstanceOf[ChartPainter]) comp.asInstanceOf[ChartPainter].telemetry = sample
+    val comp = withTelemetryForCharts(fac())
 
     // react on mouse clicks
     listenTo(comp.mouse.clicks)
@@ -40,7 +38,7 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
         val dlg = new Dialog() {
           modal = true
           peer.setUndecorated(false)
-          contents = new GaugeTestPanel(fac())
+          contents = new GaugeTestPanel(withTelemetryForCharts(fac()))
         }
         Goodies.mapEscapeTo(dlg, () => dlg.close())
         dlg.pack()
@@ -48,5 +46,12 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
         dlg.visible = true
     }
     contents += comp
+  }
+
+  def withTelemetryForCharts(fac: GaugeComponent with GaugePainter) = fac match {
+    case chart: ChartPainter =>
+      chart.telemetry = sample
+      chart
+    case gauge => gauge
   }
 }

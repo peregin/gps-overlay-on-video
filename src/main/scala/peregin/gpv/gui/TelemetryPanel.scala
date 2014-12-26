@@ -7,7 +7,7 @@ import javax.swing.ImageIcon
 import org.jdesktop.swingx.mapviewer.DefaultTileFactory
 import peregin.gpv.Setup
 import peregin.gpv.gui.map.{MicrosoftTileFactory, MapQuestTileFactory, AltitudePanel, MapPanel}
-import peregin.gpv.model.Telemetry
+import peregin.gpv.model.{Mode, Telemetry}
 import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
@@ -82,8 +82,8 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     }
     case ButtonClicked(_: RadioButton) =>
       val mode = elevationMode.selected.map(_.text).getOrElse(elevationMode.buttons.head.text) match {
-        case "Distance" => altitude.Mode.DistanceBased
-        case "Time" => altitude.Mode.TimeBased
+        case "Distance" => Mode.DistanceBased
+        case "Time" => Mode.TimeBased
       }
       altitude.refresh(mode)
     case SelectionChanged(`mapChooser`) =>

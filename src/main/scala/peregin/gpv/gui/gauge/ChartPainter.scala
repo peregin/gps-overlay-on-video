@@ -8,7 +8,7 @@ import peregin.gpv.model.Telemetry
  */
 trait ChartPainter extends GaugePainter {
 
-  private var data: Option[Telemetry] = None
+  protected var data: Option[Telemetry] = None
 
   def telemetry = data.getOrElse(Telemetry.empty)
   def telemetry_= (on: Telemetry) = data = Some(on)
