@@ -9,8 +9,7 @@ import peregin.gpv.model.Telemetry
 trait DashboardPainter {
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
-  val elevationGauge = new IconicElevationGauge {}
-  val distanceGauge = new IconicDistanceGauge {}
+  val elevationChart = new ElevationChart {}
   val heartRateGauge = new IconicHeartRateGauge {}
 
   def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double) {
@@ -26,17 +25,20 @@ trait DashboardPainter {
 
       // adjusted to the size of the image proportionally
       val boxSize = image.getWidth.min(image.getHeight) / 5
+      // shift to the bottom
+      g.translate(0, image.getHeight - boxSize)
+
+      // paint gauges and charts
       speedGauge.paint(g, boxSize, boxSize, sonda)
       if (sonda.cadence.isDefined) {
         g.translate(boxSize, 0)
         cadenceGauge.paint(g, boxSize, boxSize, sonda)
       }
       g.translate(boxSize, 0)
-      elevationGauge.paint(g, boxSize, boxSize, sonda)
-      g.translate(boxSize, 0)
-      distanceGauge.paint(g, boxSize, boxSize, sonda)
+      elevationChart.telemetry = telemetry
+      elevationChart.paint(g, boxSize * 3, boxSize)
+      g.translate(boxSize * 3, 0)
       if (sonda.heartRate.isDefined) {
-        g.translate(boxSize, 0)
         heartRateGauge.paint(g, boxSize, boxSize, sonda)
       }
 
