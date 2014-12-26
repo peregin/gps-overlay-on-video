@@ -36,7 +36,7 @@ trait DashboardPainter {
       }
       g.translate(boxSize, 0)
       elevationChart.telemetry = telemetry
-      elevationChart.paint(g, boxSize * 3, boxSize)
+      elevationChart.paint(g, boxSize * 3, boxSize, sonda)
       g.translate(boxSize * 3, 0)
       if (sonda.heartRate.isDefined) {
         heartRateGauge.paint(g, boxSize, boxSize, sonda)

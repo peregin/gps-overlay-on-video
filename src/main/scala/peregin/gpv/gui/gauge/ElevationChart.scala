@@ -23,7 +23,9 @@ trait ElevationChart extends ChartPainter with KnobPainter {
   def elevationMode = mode
 
   // extract the data needed
-  override def sample(sonda: Sonda) {}
+  override def sample(sonda: Sonda) {
+    progress = Some(sonda)
+  }
 
   // default value to be shown
   override def defaultInput = InputValue(30, MinMax(0, 100))
