@@ -69,6 +69,7 @@ class AltitudePanel extends Panel with KnobPainter with Logging {
       g.drawString("km/h", 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
 
       // elevation map
+      val compositeStash = g.getComposite
       g.setComposite(AlphaComposite.SrcOver.derive(0.3f)) // transparent because of the different slope segment colors
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
@@ -88,7 +89,7 @@ class AltitudePanel extends Panel with KnobPainter with Logging {
           g.drawLine(x, gridBottom - y.toInt, x, gridBottom - y.toInt - 1)
         }
       }
-      g.setComposite(AlphaComposite.SrcOver.derive(1f))
+      g.setComposite(compositeStash)
     }
 
     // grid
