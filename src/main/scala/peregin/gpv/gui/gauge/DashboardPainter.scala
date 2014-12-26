@@ -24,7 +24,8 @@ trait DashboardPainter {
     telemetry.sondaForRelativeTime(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform
 
-      val boxSize = 90
+      // adjusted to the size of the image proportionally
+      val boxSize = image.getWidth.min(image.getHeight) / 5
       speedGauge.paint(g, boxSize, boxSize, sonda)
       if (sonda.cadence.isDefined) {
         g.translate(boxSize, 0)
