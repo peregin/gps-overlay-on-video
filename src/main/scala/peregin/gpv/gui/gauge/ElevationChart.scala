@@ -103,18 +103,6 @@ trait ElevationChart extends ChartPainter with KnobPainter {
     }
 
 
-    // progress when playing the video
-    progress.foreach{sonda =>
-      val p = mode match {
-        case Mode.TimeBased => telemetry.progressForTime(sonda.time)
-        case Mode.DistanceBased => telemetry.progressForDistance(sonda.distance.current)
-      }
-      val x = (gridLeft + p * pxWidth / 100).toInt
-      g.setColor(Color.orange)
-      g.drawLine(x, 10, x, gridBottom)
-      paintKnob(g, x, 10, Color.orange)
-    }
-
     // POI marker and data
     poi.foreach{sonda =>
       val p = mode match {
@@ -135,5 +123,29 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       g.drawString(f"${sonda.grade.current}%1.2f%%", gridLeft + (timeWidth * 6.2).toInt, height - 10 + metersHalfHeight)
     }
 
+    // progress when playing the video
+    progress.foreach{sonda =>
+      // position
+      val p = mode match {
+        case Mode.TimeBased => telemetry.progressForTime(sonda.time)
+        case Mode.DistanceBased => telemetry.progressForDistance(sonda.distance.current)
+      }
+      val x = (gridLeft + p * pxWidth / 100).toInt
+      g.setColor(Color.orange)
+      g.drawLine(x, 10, x, gridBottom)
+      paintKnob(g, x, 10, Color.orange)
+
+      // altitude
+      val alt = sonda.elevation.current
+      g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
+      val atext = f"$alt%2.0f m"
+      val atb = g.getFontMetrics.getStringBounds(atext, g)
+      textWidthShadow(g, atext, gridLeft + (pxWidth - atb.getWidth) / 2, atb.getHeight * 2.1)
+      // slope grade
+      val slope = sonda.grade.current
+      val stext = f"$slope%2.0f %%"
+      val stb = g.getFontMetrics.getStringBounds(stext, g)
+      textWidthShadow(g, stext, gridLeft + (pxWidth - stb.getWidth) / 2, atb.getHeight * 2.1 + stb.getHeight)
+    }
   }
 }
