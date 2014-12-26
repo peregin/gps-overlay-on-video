@@ -2,10 +2,9 @@ package peregin.gpv.gui
 
 import java.awt.event.{ActionEvent, KeyEvent}
 import java.awt.{Point, Toolkit}
-import javax.swing.filechooser.FileNameExtensionFilter
-import javax.swing.{KeyStroke, JComponent, UIManager}
+import javax.swing.{JComponent, KeyStroke, UIManager}
 
-import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticLookAndFeel, PlasticTheme}
+import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticTheme}
 import org.jdesktop.swingx.JXBusyLabel
 
 import scala.swing.{Component, Dialog, Label, Window}
@@ -65,8 +64,8 @@ import scala.collection.JavaConverters._
   }
 
   def mapEscapeTo(dialog: Dialog, cancelFunc: () => Unit) {
-    dialog.peer.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelDialog")
-    dialog.peer.getRootPane().getActionMap().put("cancelDialog", new javax.swing.AbstractAction() {
+    dialog.peer.getRootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelDialog")
+    dialog.peer.getRootPane.getActionMap.put("cancelDialog", new javax.swing.AbstractAction() {
       def actionPerformed(e: ActionEvent) = cancelFunc()
     })
   }
