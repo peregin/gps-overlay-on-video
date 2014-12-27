@@ -72,9 +72,11 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     }
   }
 
-  listenTo(transparencySlider)
+  val spinnerWrap = Component.wrap(telemetryPanel.spinner)
+  listenTo(transparencySlider, telemetryPanel.spinner)
   reactions += {
     case ValueChanged(`transparencySlider`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
+    case ValueChanged(`spinnerWrap`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
   }
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"

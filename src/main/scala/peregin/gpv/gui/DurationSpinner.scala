@@ -1,17 +1,27 @@
 package peregin.gpv.gui
 
+import javax.swing.event.{ChangeEvent, ChangeListener}
 import javax.swing.{SpinnerDateModel, JSpinner}
 import java.util.Calendar
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import peregin.gpv.util.Logging
 
+import scala.swing.{Component, Publisher}
+import scala.swing.event.ValueChanged
 
-class DurationSpinner extends JSpinner(new SpinnerDateModel()) with Logging {
+
+class DurationSpinner extends JSpinner(new SpinnerDateModel()) with Publisher with Logging {
 
   val timeEditor = new JSpinner.DateEditor(this, "HH:mm:ss.SSS")
   setEditor(timeEditor)
   val cal = Calendar.getInstance()
+
+  addChangeListener(new ChangeListener {
+    override def stateChanged(e: ChangeEvent) {
+      publish(new ValueChanged(Component.wrap(DurationSpinner.this)))
+    }
+  })
 
   duration = 0L
 
