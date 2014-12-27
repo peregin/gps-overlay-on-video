@@ -19,6 +19,9 @@ trait ElevationChart extends ChartPainter with KnobPainter {
   protected var metersHalfHeight = 0
   protected var timeWidth = 0
 
+  // shows the current elevation and grade on the middle of the chart
+  protected var showCurrentValuesOnChart = true
+
 
   def elevationMode = mode
 
@@ -141,17 +144,19 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       g.drawLine(x, 10, x, gridBottom)
       paintKnob(g, x, 10, Color.orange)
 
-      // altitude
-      val alt = sonda.elevation.current
-      g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
-      val atext = f"$alt%2.0f m"
-      val atb = g.getFontMetrics.getStringBounds(atext, g)
-      textWidthShadow(g, atext, gridLeft + (pxWidth - atb.getWidth) / 2, atb.getHeight * 2.1)
-      // slope grade
-      val slope = sonda.grade.current
-      val stext = f"$slope%2.0f %%"
-      val stb = g.getFontMetrics.getStringBounds(stext, g)
-      textWidthShadow(g, stext, gridLeft + (pxWidth - stb.getWidth) / 2, atb.getHeight * 2.1 + stb.getHeight)
+      if (showCurrentValuesOnChart) {
+        // altitude
+        val alt = sonda.elevation.current
+        g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
+        val atext = f"$alt%2.0f m"
+        val atb = g.getFontMetrics.getStringBounds(atext, g)
+        textWidthShadow(g, atext, gridLeft + (pxWidth - atb.getWidth) / 2, atb.getHeight * 2.1)
+        // slope grade
+        val slope = sonda.grade.current
+        val stext = f"$slope%2.0f %%"
+        val stb = g.getFontMetrics.getStringBounds(stext, g)
+        textWidthShadow(g, stext, gridLeft + (pxWidth - stb.getWidth) / 2, atb.getHeight * 2.1 + stb.getHeight)
+      }
     }
   }
 }

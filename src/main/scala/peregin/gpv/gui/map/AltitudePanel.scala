@@ -11,6 +11,8 @@ import scala.swing._
 // altitude widget
 class AltitudePanel extends Panel with ElevationChart with Logging {
 
+  showCurrentValuesOnChart = false
+
   override def paint(g: Graphics2D) = {
     val width = peer.getWidth
     val height = peer.getHeight
