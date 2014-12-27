@@ -139,7 +139,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     paintGauges(telemetry, tsInMillis, image, setup.shift, setup.transparency)
 
     val tick = System.currentTimeMillis
-    if (tick - mark >= 1000) {
+    if (tick - mark >= 2000) {
 
       Swing.onEDT {
         progressBar.value = percentage.toInt
