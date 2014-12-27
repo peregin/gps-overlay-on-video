@@ -24,22 +24,30 @@ trait DashboardPainter {
       val stash = g.getTransform
 
       // adjusted to the size of the image proportionally
-      val boxSize = image.getWidth.min(image.getHeight) / 5
+      val width = image.getWidth
+      val height = image.getHeight
+      val boxSize = (width min height) / 5
       // shift to the bottom
-      g.translate(0, image.getHeight - boxSize)
+      g.translate(0, height - boxSize)
+
+
+      // paint elevation to the right
+      val stashBottom = g.getTransform
+      g.translate(width - boxSize * 3, 0)
+      elevationChart.telemetry = telemetry
+      elevationChart.paint(g, boxSize * 3, boxSize, sonda)
+      g.setTransform(stashBottom)
 
       // paint gauges and charts
       speedGauge.paint(g, boxSize, boxSize, sonda)
-      if (sonda.cadence.isDefined) {
-        g.translate(boxSize, 0)
-        cadenceGauge.paint(g, boxSize, boxSize, sonda)
-      }
       g.translate(boxSize, 0)
-      elevationChart.telemetry = telemetry
-      elevationChart.paint(g, boxSize * 3, boxSize, sonda)
-      g.translate(boxSize * 3, 0)
+      if (sonda.cadence.isDefined) {
+        cadenceGauge.paint(g, boxSize, boxSize, sonda)
+        g.translate(boxSize, 0)
+      }
       if (sonda.heartRate.isDefined) {
         heartRateGauge.paint(g, boxSize, boxSize, sonda)
+        g.translate(boxSize, 0)
       }
 
       // restore any kind of transformations until this point
