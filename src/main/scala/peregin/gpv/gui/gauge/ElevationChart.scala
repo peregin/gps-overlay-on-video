@@ -27,6 +27,12 @@ trait ElevationChart extends ChartPainter with KnobPainter {
     progress = Some(sonda)
   }
 
+  // for the test mode
+  override def input_=(v: InputValue) {
+    super.input_=(v)
+    progress = telemetry.distanceForProgress(v.current).map(telemetry.sondaForDistance)
+  }
+
   // default value to be shown
   override def defaultInput = InputValue(30, MinMax(0, 100))
 

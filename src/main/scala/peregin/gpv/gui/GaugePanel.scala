@@ -51,6 +51,7 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
   def withTelemetryForCharts(fac: GaugeComponent with GaugePainter) = fac match {
     case chart: ChartPainter =>
       chart.telemetry = sample
+      chart.input = chart.defaultInput
       chart
     case gauge => gauge
   }
