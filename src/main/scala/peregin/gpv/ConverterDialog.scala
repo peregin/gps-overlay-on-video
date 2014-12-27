@@ -76,8 +76,10 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
   }
 
   def save(file: File) {
-    setup.outputPath = Some(file.getAbsolutePath)
-    log.info(s"save to ${file.getAbsolutePath}")
+    val path = file.getAbsolutePath
+    setup.outputPath = Some(path)
+    chooser.fileInput.text = path
+    log.info(s"save to $path")
   }
 
   private def handleGenerate() {
