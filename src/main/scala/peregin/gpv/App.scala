@@ -31,7 +31,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   val statusLabel = new JXLabel("Ready")
   val transparencySlider = new PercentageSlider
   transparencySlider.orientation = Orientation.Vertical
-  transparencySlider.percentage = 50
+  transparencySlider.percentage = 80
 
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
