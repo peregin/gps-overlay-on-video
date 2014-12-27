@@ -26,7 +26,11 @@ trait DashboardPainter {
       // adjusted to the size of the image proportionally
       val width = image.getWidth
       val height = image.getHeight
-      val boxSize = (width min height) / 5
+      val f = height match {
+        case p360 if p360 <= 360 => 4
+        case _ => 5
+      }
+      val boxSize = (width min height) / f
       // shift to the bottom
       g.translate(0, height - boxSize)
 
