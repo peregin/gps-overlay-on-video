@@ -16,10 +16,14 @@ a steeper section or the current heart rate zone.
 The main focus is on cycling videos, but with small effort, different gauge templates it is easy to create dashboard for different type of 
 activities.
 
-Example of video generated with the tool (more screenshots are include further down):
+Example of video generated with the tool (more screenshots are included further down):
 
 [![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 &nbsp;[![Uetliberg Loop 2014](http://img.youtube.com/vi/0giJlMyX59I/1.jpg)](http://www.youtube.com/watch?v=0giJlMyX59I)
+
+Screenshot of the tool:
+
+![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
 ## Basic requirements
 Small list of wishes to achieve:
@@ -66,10 +70,7 @@ Useful links and information
 * [Slope percentage](http://geology.isu.edu/geostac/Field_Exercise/topomaps/slope_calc.htm)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
-## Evolution of the application
-Thought that it is a good idea to make some screenshots from time to time to see how the development evolves.
-
-![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
+## Generating new video with gps overlay
 
 After synchronizing the video stream with the gps track (through the shift parameter) everything is prepared to generate a new video:
 
