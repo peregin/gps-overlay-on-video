@@ -18,7 +18,9 @@ activities.
 
 Example of video generated with the tool (more screenshots are include further down):
 
-[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/0.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
+[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
+
+[![Uetliberg Loop 2014](http://img.youtube.com/vi/0giJlMyX59I/1.jpg)](http://www.youtube.com/watch?v=0giJlMyX59I)
 
 ## Basic requirements
 Small list of wishes to achieve:
