@@ -16,7 +16,7 @@ a steeper section or the current heart rate zone.
 The main focus is on cycling videos, but with small effort, different gauge templates it is easy to create dashboard for different type of 
 activities.
 
-Example of video generated with the tool (more screenshots are included further down):
+Example of videos generated with the tool, links to youtube:
 
 [![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 &nbsp;[![Uetliberg Loop 2014](http://img.youtube.com/vi/0giJlMyX59I/1.jpg)](http://www.youtube.com/watch?v=0giJlMyX59I)
