@@ -1,6 +1,8 @@
 package peregin.gpv.video
 
 import com.xuggle.mediatool.MediaToolAdapter
+import com.xuggle.mediatool.event.IAddStreamEvent
+import com.xuggle.xuggler.ICodec
 
 /**
  * Re-codes the media file as needed.
@@ -23,5 +25,15 @@ import com.xuggle.mediatool.MediaToolAdapter
  */
 class StreamResizer(dWidth: Int, dHeight: Int) extends MediaToolAdapter {
 
-
+  override def onAddStream(event: IAddStreamEvent) {
+    val streamIndex = event.getStreamIndex.toLong
+    val streamCoder = event.getSource.getContainer.getStream(streamIndex).getStreamCoder
+    streamCoder.getCodecType match {
+      case ICodec.Type.CODEC_TYPE_VIDEO =>
+        streamCoder.setWidth(dWidth)
+        streamCoder.setHeight(dHeight)
+      case _ => // ignore
+    }
+    super.onAddStream(event)
+  }
 }
