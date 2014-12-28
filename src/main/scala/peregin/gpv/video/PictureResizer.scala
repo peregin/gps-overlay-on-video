@@ -1,6 +1,8 @@
 package peregin.gpv.video
 
 import com.xuggle.mediatool.MediaToolAdapter
+import com.xuggle.mediatool.event.{VideoPictureEvent, IVideoPictureEvent}
+import com.xuggle.xuggler.{IVideoPicture, IVideoResampler}
 
 /**
  * Re-codes the media file as needed.
@@ -23,5 +25,20 @@ import com.xuggle.mediatool.MediaToolAdapter
  */
 class PictureResizer(dWidth: Int, dHeight: Int) extends MediaToolAdapter {
 
+  private var videoResampler: Option[IVideoResampler] = None
 
+  override def onVideoPicture(event: IVideoPictureEvent) {
+    val pic = event.getPicture
+
+    if (videoResampler.isEmpty) {
+      videoResampler = Some(IVideoResampler.make(dWidth, dHeight,
+        pic.getPixelType, pic.getWidth, pic.getHeight, pic.getPixelType))
+    }
+    val out = IVideoPicture.make(pic.getPixelType, dWidth, dHeight)
+    videoResampler.foreach(_.resample(out, pic))
+
+    val asc = new VideoPictureEvent(event.getSource, out, event.getStreamIndex)
+    super.onVideoPicture(asc)
+    out.delete()
+  }
 }
