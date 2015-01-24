@@ -4,7 +4,7 @@ import com.typesafe.sbt.SbtNativePackager._
 import NativePackagerKeys._
 import de.johoop.cpd4sbt.CopyPasteDetector._
 
-organization := "peregin.com"
+organization := "com.github.peregin"
 
 name := "telemetry-on-video"
 
