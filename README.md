@@ -18,7 +18,8 @@ activities.
 
 Example of videos generated with the tool, links to youtube:
 
-[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
+[![Gurten Classic 2015](http://img.youtube.com/vi/tVCgP3Xh250/1.jpg)](https://www.youtube.com/watch?v=tVCgP3Xh250)
+&nbsp;[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 &nbsp;[![Uetliberg Loop 2014](http://img.youtube.com/vi/0giJlMyX59I/1.jpg)](http://www.youtube.com/watch?v=0giJlMyX59I)
 
 Screenshot of the tool:
