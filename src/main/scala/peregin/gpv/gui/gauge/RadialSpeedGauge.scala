@@ -4,9 +4,13 @@ import java.awt._
 import java.awt.geom.Arc2D
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import peregin.gpv.util.Trigo._
+import peregin.gpv.util.UnitConverter
 
 
 trait RadialSpeedGauge extends GaugePainter {
+
+  private var units: String = ""
+  def setUnits(value: String) { units = value }
 
   lazy val dummy = InputValue(27.81, MinMax(0, 62))
   override def defaultInput = dummy
@@ -53,7 +57,8 @@ trait RadialSpeedGauge extends GaugePainter {
       val angle = -start - t * extent / ticks
       val tickLength = if (t % 10 == 0) {
         g.setStroke(borderStroke)
-        val text = s"${ticks - t}"
+
+        val text = f"${UnitConverter.speed(ticks - t, units)}%2.0f"
         val tb = g.getFontMetrics.getStringBounds(text, g)
         val tw = tb.getWidth / 2
         val th = tb.getHeight / 2
@@ -86,12 +91,12 @@ trait RadialSpeedGauge extends GaugePainter {
 
     // draw current speed
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
-    val text = f"${input.current}%2.1f"
+    val text = f"${UnitConverter.speed(input.current, units)}%2.1f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
-    val utext = "km/h"
+    val utext = UnitConverter.speedUnits(units)
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 1.5)
 

@@ -15,7 +15,7 @@ import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
 
 import scala.swing._
-import scala.swing.event.ValueChanged
+import scala.swing.event.{SelectionChanged, ValueChanged}
 
 
 object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
@@ -33,6 +33,8 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   transparencySlider.orientation = Orientation.Vertical
   transparencySlider.percentage = 80
 
+  val unitChooser = new ComboBox(Seq("Metric", "Standard"))
+
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
@@ -42,6 +44,12 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
       toolbar.addSeparator()
       toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
       add(toolbar, "span 2, wrap")
+
+      var unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
+        add(new Label("Units"), "")
+        add(unitChooser, "")
+      }
+      add(unitPanel, "span 2, wrap")
 
       //add(titled("Video", videoPanel), "pushy, width 60%")
       add(titled("Video", new MigPanel("ins 0, fill", "[fill]", "[fill]") {
@@ -73,10 +81,14 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   }
 
   val spinnerWrap = Component.wrap(telemetryPanel.spinner)
-  listenTo(transparencySlider, telemetryPanel.spinner)
+  listenTo(transparencySlider, telemetryPanel.spinner, unitChooser.selection)
   reactions += {
     case ValueChanged(`transparencySlider`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
     case ValueChanged(`spinnerWrap`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
+    case SelectionChanged(`unitChooser`) =>
+      val item = unitChooser.selection.item
+      log.info(s"switching units to $item")
+      setup.units = item
   }
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
@@ -93,7 +105,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
   }
-  
+
   def newProject() {
     log.info("new project")
     setup = Setup.empty
@@ -101,6 +113,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     videoPanel.refresh(setup)
     telemetryPanel.refresh(setup, tm)
     transparencySlider.percentage = setup.transparency
+    unitChooser.selection.index = if (setup.units == "Standard") 1 else 0
     message("New project has been created")
   }
 
@@ -174,7 +187,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
-    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage)
+    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage, unitChooser.selection.item)
     Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
   }
 

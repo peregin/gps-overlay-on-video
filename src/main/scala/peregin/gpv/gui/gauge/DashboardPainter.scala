@@ -12,13 +12,17 @@ trait DashboardPainter {
   val elevationChart = new ElevationChart {}
   val heartRateGauge = new IconicHeartRateGauge {}
 
-  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double) {
+  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String) {
 
     val g = image.createGraphics
 
     // set transparency
     val alpha = (transparencyInPercentage / 100).min(1d).max(0d)
     g.setComposite(AlphaComposite.SrcOver.derive(alpha.toFloat))
+
+    // set units
+    speedGauge.setUnits(units)
+    elevationChart.setUnits(units)
 
     telemetry.sondaForRelativeTime(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform
