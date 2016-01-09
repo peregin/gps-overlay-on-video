@@ -1,6 +1,7 @@
 package peregin.gpv.gui.gauge
 
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
+import peregin.gpv.util.UnitConverter
 
 
 trait DigitalSpeedGauge extends DigitalGauge {
@@ -9,7 +10,7 @@ trait DigitalSpeedGauge extends DigitalGauge {
   override def defaultInput = dummy
   override def sample(sonda: Sonda) {input = sonda.speed}
 
-  override def valueText() = f"${input.current}%2.1f"
+  override def valueText() = f"${UnitConverter.distance(input.current, units)}%2.1f"
 
-  override def unitText() = "km/h"
+  override def unitText() = UnitConverter.distanceUnits(units)
 }

@@ -1,6 +1,7 @@
 package peregin.gpv.gui.gauge
 
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
+import peregin.gpv.util.UnitConverter
 
 
 trait DigitalElevationGauge extends DigitalGauge {
@@ -9,7 +10,7 @@ trait DigitalElevationGauge extends DigitalGauge {
   override def defaultInput = dummy
   override def sample(sonda: Sonda) {input = sonda.elevation}
 
-  override def valueText() = f"${input.current}%2.0f"
+  override def valueText() = f"${UnitConverter.elevation(input.current, units)}%2.0f"
 
-  override def unitText() = "m"
+  override def unitText() = UnitConverter.elevationUnits(units)
 }

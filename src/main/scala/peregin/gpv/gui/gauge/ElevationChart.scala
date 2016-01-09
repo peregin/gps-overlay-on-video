@@ -11,9 +11,6 @@ import scala.swing.Graphics2D
 
 trait ElevationChart extends ChartPainter with KnobPainter {
 
-  private var units: String = ""
-  def setUnits(value: String) { units = value }
-
   protected var mode: Mode = Mode.DistanceBased
   protected var poi: Option[Sonda] = None
   protected var progress: Option[Sonda] = None

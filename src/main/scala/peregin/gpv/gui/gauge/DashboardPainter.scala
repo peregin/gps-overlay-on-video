@@ -21,8 +21,8 @@ trait DashboardPainter {
     g.setComposite(AlphaComposite.SrcOver.derive(alpha.toFloat))
 
     // set units
-    speedGauge.setUnits(units)
-    elevationChart.setUnits(units)
+    speedGauge.units = units
+    elevationChart.units = units
 
     telemetry.sondaForRelativeTime(tsInMillis + shiftInMillis).foreach{sonda =>
       val stash = g.getTransform

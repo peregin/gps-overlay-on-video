@@ -9,9 +9,6 @@ import peregin.gpv.util.UnitConverter
 
 trait RadialSpeedGauge extends GaugePainter {
 
-  private var units: String = ""
-  def setUnits(value: String) { units = value }
-
   lazy val dummy = InputValue(27.81, MinMax(0, 62))
   override def defaultInput = dummy
   override def sample(sonda: Sonda) {input = sonda.speed}

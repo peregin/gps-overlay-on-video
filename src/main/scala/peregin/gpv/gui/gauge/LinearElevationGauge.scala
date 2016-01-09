@@ -2,6 +2,7 @@ package peregin.gpv.gui.gauge
 
 import java.awt._
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
+import peregin.gpv.util.UnitConverter
 import MinMax.RoundedDouble
 
 
@@ -45,7 +46,7 @@ trait LinearElevationGauge extends GaugePainter {
     for (t <- 0 to ticks by 100) {
       val y = cy + (t * boxHeight / ticks)
       g.drawLine(cx, y, cx + boxWidth / 4, y)
-      val text = s"${ticks - t + input.boundary.min.roundDownToHundredth}"
+      val text = s"${UnitConverter.elevation(ticks - t + input.boundary.min.roundDownToHundredth, units)}"
       val tb = g.getFontMetrics.getStringBounds(text, g)
       val th = tb.getHeight / 2
       g.drawString(text, cx + boxWidth / 3, y + th.toInt)
@@ -54,12 +55,12 @@ trait LinearElevationGauge extends GaugePainter {
     // draw current altitude
     val ry = h / 2
     g.setFont(gaugeFont.deriveFont(Font.BOLD, boxWidth.toFloat))
-    val text = f"${input.current}%1.0f"
+    val text = f"${UnitConverter.elevation(input.current, units)}%1.0f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, ry + tb.getHeight / 2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, strokeWidth.toFloat))
-    val utext = "m"
+    val utext = UnitConverter.elevationUnits(units)
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, (w - utb.getWidth) / 2, ry + tb.getHeight / 2 + utb.getHeight)
   }
