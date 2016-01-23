@@ -4,6 +4,7 @@ import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import java.awt._
 import java.awt.geom.{Ellipse2D, Rectangle2D, Area}
 import peregin.gpv.util.Trigo._
+import peregin.gpv.util.UnitConverter
 
 
 trait IconicDistanceGauge extends GaugePainter {
@@ -50,12 +51,12 @@ trait IconicDistanceGauge extends GaugePainter {
 
     // draw current distance with one decimal place
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 4).toFloat))
-    val text = f"${input.current}%2.1f"
+    val text = f"${UnitConverter.distance(input.current, units)}%2.1f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, px + (w - tb.getWidth) / 2, (h + tb.getHeight) / 2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 12).toFloat))
-    val utext = "km"
+    val utext = UnitConverter.distanceUnits(units)
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, px + (w - utb.getWidth) / 2, cy + utb.getHeight * 2.1)
   }

@@ -1,6 +1,7 @@
 package peregin.gpv.gui.gauge
 
 import peregin.gpv.model.{Sonda, MinMax, InputValue}
+import peregin.gpv.util.UnitConverter
 import java.awt._
 import java.awt.geom.{Rectangle2D, Area}
 
@@ -45,12 +46,12 @@ trait IconicElevationGauge extends GaugePainter {
 
     // draw current elevation
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 4).toFloat))
-    val text = f"${input.current}%2.0f"
+    val text = f"${UnitConverter.elevation(input.current, units)}%2.0f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, px + (w - tb.getWidth) / 2, (h + tb.getHeight) / 2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 12).toFloat))
-    val utext = "m"
+    val utext = UnitConverter.elevationUnits(units)
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, px + (w - utb.getWidth) / 2, cy + utb.getHeight * 2.1)
   }

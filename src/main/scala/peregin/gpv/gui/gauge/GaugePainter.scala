@@ -10,6 +10,7 @@ trait GaugePainter {
   lazy val gaugeFont = new Font("Verdana", Font.PLAIN, 12)
   private var currentInput: Option[InputValue] = None
   private var debugging = false
+  private var displayUnits: String = ""
 
   def desiredSize = new Dimension(75, 75)
 
@@ -44,6 +45,9 @@ trait GaugePainter {
 
   def debug = debugging
   def debug_= (v: Boolean) = debugging = v
+
+  def units = displayUnits
+  def units_= (v: String) = displayUnits = v
 
   def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow) {
     val ix = x.toInt

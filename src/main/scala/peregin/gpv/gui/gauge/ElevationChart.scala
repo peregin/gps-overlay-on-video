@@ -4,6 +4,7 @@ import java.awt.{Font, AlphaComposite, Color}
 
 import peregin.gpv.gui.map.KnobPainter
 import peregin.gpv.model._
+import peregin.gpv.util.UnitConverter
 
 import scala.swing.Graphics2D
 
@@ -62,9 +63,9 @@ trait ElevationChart extends ChartPainter with KnobPainter {
 
       // legend
       g.setColor(Color.black)
-      g.drawString(s"${telemetry.elevationBoundary.max.toInt} m", 10, 10 + metersHalfHeight)
-      g.drawString(s"${telemetry.elevationBoundary.min.toInt} m", 10, height - 10 - elevFm.getHeight + metersHalfHeight)
-      val distanceTotal = f"  ${telemetry.totalDistance}%1.1fkm"
+      g.drawString(f"${UnitConverter.elevation(telemetry.elevationBoundary.max, units)}%1.0f ${UnitConverter.elevationUnits(units)}%s", 10, 10 + metersHalfHeight)
+      g.drawString(f"${UnitConverter.elevation(telemetry.elevationBoundary.min, units)}%1.0f ${UnitConverter.elevationUnits(units)}%s", 10, height - 10 - elevFm.getHeight + metersHalfHeight)
+      val distanceTotal = f"  ${UnitConverter.distance(telemetry.totalDistance, units)}%1.1f${UnitConverter.distanceUnits(units)}%s"
       val distanceWidth = elevFm.stringWidth(distanceTotal)
       val timeFirst = telemetry.minTime.toString("HH:mm:ss")
       val timeLast = telemetry.maxTime.toString("HH:mm:ss")
@@ -75,8 +76,8 @@ trait ElevationChart extends ChartPainter with KnobPainter {
 
       // max speed
       g.setColor(Color.red)
-      g.drawString(f"${telemetry.speedBoundary.max}%1.1f", 10, 10 + metersHalfHeight + elevFm.getHeight)
-      g.drawString("km/h", 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
+      g.drawString(f"${UnitConverter.speed(telemetry.speedBoundary.max, units)}%1.1f", 10, 10 + metersHalfHeight + elevFm.getHeight)
+      g.drawString(UnitConverter.speedUnits(units), 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
 
       // elevation map
       val compositeStash = g.getComposite
@@ -126,9 +127,9 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       // draw data; time, speed, distance
       g.setColor(Color.blue)
       g.drawString(sonda.time.toString("HH:mm:ss"), gridLeft + (timeWidth * 1.5).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.distance.current}%1.1fkm", gridLeft + (timeWidth * 2.9).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.speed.current}%1.1fkm/h", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
-      g.drawString(f"${sonda.elevation.current}%1.0fm", gridLeft + (timeWidth * 5.3).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${UnitConverter.distance(sonda.distance.current, units)}%1.1f${UnitConverter.distanceUnits(units)}%s", gridLeft + (timeWidth * 2.9).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${UnitConverter.speed(sonda.speed.current, units)}%1.1f${UnitConverter.speedUnits(units)}%s", gridLeft + (timeWidth * 3.9).toInt, height - 10 + metersHalfHeight)
+      g.drawString(f"${UnitConverter.elevation(sonda.elevation.current, units)}%1.0f${UnitConverter.elevationUnits(units)}%s", gridLeft + (timeWidth * 5.3).toInt, height - 10 + metersHalfHeight)
       g.drawString(f"${sonda.grade.current}%1.2f%%", gridLeft + (timeWidth * 6.2).toInt, height - 10 + metersHalfHeight)
     }
 
@@ -148,7 +149,7 @@ trait ElevationChart extends ChartPainter with KnobPainter {
         // altitude
         val alt = sonda.elevation.current
         g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
-        val atext = f"$alt%2.0f m"
+        val atext = f"${UnitConverter.elevation(alt, units)}%2.0f ${UnitConverter.elevationUnits(units)}%s"
         val atb = g.getFontMetrics.getStringBounds(atext, g)
         textWidthShadow(g, atext, gridLeft + (pxWidth - atb.getWidth) / 2, atb.getHeight * 2.1)
         // slope grade
