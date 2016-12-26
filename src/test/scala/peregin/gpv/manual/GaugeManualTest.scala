@@ -1,7 +1,7 @@
 package peregin.gpv.manual
 
 import info.BuildInfo
-import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart, GaugeComponent}
+import peregin.gpv.gui.gauge._
 import peregin.gpv.gui.{GaugeTestPanel, Goodies}
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging}
@@ -18,7 +18,7 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
   val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
     contents = new GaugeTestPanel({
-      val comp = new GaugeComponent with ElevationChart
+      val comp = new GaugeComponent with RadialSpeedGauge // ElevationChart
       comp match {
         case chart: ChartPainter => chart.telemetry = sample
         case _ => // it is not needed to update the track

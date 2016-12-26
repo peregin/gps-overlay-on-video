@@ -14,7 +14,7 @@ import scala.swing.Label
  */
 class GaugeTestPanel[T <: GaugeComponent with GaugePainter](factory: => T) extends MigPanel("ins 5, fill", "[fill]", "[fill]") {
 
-  val gauges = List.fill(4)(factory)
+  val gauges = List.fill(5)(factory)
   gauges.foreach(_.debug = true)
 
   val minSpinner = new JSpinner
@@ -39,11 +39,12 @@ class GaugeTestPanel[T <: GaugeComponent with GaugePainter](factory: => T) exten
 
   background = Color.lightGray
 
-  add(gauges(0), "w 50px, h 50px")
+  add(gauges(0), "w 32px, h 32px, wrap")
+  add(gauges(1), "w 50px, h 50px")
   add(status, "wrap")
-  add(gauges(1), "w 100px, h 100px, wrap")
-  add(gauges(2), "w 200px, h 200px")
-  add(gauges(3), "w 300px, h 300px, wrap")
+  add(gauges(2), "w 100px, h 100px, wrap")
+  add(gauges(3), "w 200px, h 200px")
+  add(gauges(4), "w 300px, h 300px, wrap")
   val controls = new MigPanel("", "[fill]", "[fill]") {
     add(new Label("Min"), "alignx left")
     add(minSpinner, "alignx left, wmin 50")
