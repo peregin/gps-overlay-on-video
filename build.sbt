@@ -19,8 +19,8 @@ scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation", "-language
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 
 resolvers ++= Seq(
-  "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
-  "Xuggle Backup Repo" at "http://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/",
+  //"Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
+  "Xuggle Backup Repo" at "https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/",
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
