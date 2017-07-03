@@ -21,8 +21,8 @@ class MapPanel extends JXMapKit with Publisher with KnobPainter {
 
   setDefaultProvider(JXMapKit.DefaultProviders.Custom)
   //setTileFactory(new NasaTileFactory)
-  //setTileFactory(new MicrosoftTileFactory)
-  setTileFactory(new MapQuestTileFactory)
+  setTileFactory(new MicrosoftTileFactory)
+  //setTileFactory(new MapQuestTileFactory)
   setDataProviderCreditShown(true)
   setMiniMapVisible(false)
   setAddressLocation(telemetry.centerGeoPosition)

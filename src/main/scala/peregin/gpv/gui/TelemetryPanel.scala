@@ -26,8 +26,8 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     override def toString = name
   }
   val mapChooser = new ComboBox(Seq(
-    TileOption("Open Street Map", new MapQuestTileFactory),
-    TileOption("Aerial (Microsoft)", new MicrosoftTileFactory)
+    TileOption("Aerial (Microsoft)", new MicrosoftTileFactory),
+    TileOption("Open Street Map", new MapQuestTileFactory)
   ))
   val mapType = new MigPanel("ins 0", "", "[grow, fill]") {
     add(new Label("Map Type"), "wrap")
