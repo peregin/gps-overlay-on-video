@@ -58,10 +58,10 @@ trait GaugePainter {
     g.drawString(text, ix, iy)
   }
 
-  def colorBasedOnInput = {
-    if (input.isInTop(10)) Color.red
-    else if (input.isInTop(20)) Color.yellow
-    else if (input.isInTop(50)) Color.green
-    else Color.gray
+  def colorBasedOnInput = input match {
+    case _ if input.isInTop(10) => Color.red
+    case _ if input.isInTop(20) => Color.yellow
+    case _ if input.isInTop(50) => Color.green
+    case _ => Color.gray
   }
 }

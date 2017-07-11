@@ -1,6 +1,7 @@
 package peregin.gpv.gui.map
 
 import org.jdesktop.swingx.mapviewer.{DefaultTileFactory, TileFactoryInfo}
+import MicrosoftTileFactoryInfo._
 
 
 class MicrosoftTileFactory extends DefaultTileFactory(new MicrosoftTileFactoryInfo)
@@ -16,7 +17,6 @@ object MicrosoftTileFactoryInfo {
   val baseURL = "http://a2.ortho.tiles.virtualearth.net/tiles/a"
 }
 
-import MicrosoftTileFactoryInfo._
 class MicrosoftTileFactoryInfo extends TileFactoryInfo(minZoom, maxZoom, mapZoom, tileSize, xr2l, yt2b, baseURL, null, null, null) {
 
   override def getTileUrl(x: Int, y: Int, zoom: Int) = {

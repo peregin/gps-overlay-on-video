@@ -4,6 +4,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.TimePrinter
 import peregin.gpv.util.Trigo._
+import math._
 
 
 object TrackPoint {
@@ -55,7 +56,6 @@ case class TrackPoint(position: GeoPosition,
   def haversineDistanceTo(gp: GeoPosition): Double = {
     val deltaPhi = (position.getLatitude - gp.getLatitude).toRadians
     val deltaLambda = (position.getLongitude - gp.getLongitude).toRadians
-    import math._
     val a = square(sin(deltaPhi / 2)) +
       cos(gp.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))

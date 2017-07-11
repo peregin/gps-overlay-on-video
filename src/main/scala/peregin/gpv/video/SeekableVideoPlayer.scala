@@ -3,13 +3,15 @@ package peregin.gpv.video
 import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
-import concurrent.duration._
 import peregin.gpv.video.PlayerControllerActor.{QueryIsRunning, Idle, Running, State}
 import peregin.gpv.video.PlayerProtocol._
 import peregin.gpv.util.{Logging, TimePrinter}
 import scala.language.postfixOps
 
 import scala.concurrent.Await
+
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 
 trait SeekableVideoPlayerFactory extends VideoPlayerFactory {
@@ -60,9 +62,6 @@ object PlayerControllerActor {
 }
 
 class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] with LoggingFSM[State, PacketReply] {
-
-  import scala.concurrent.duration._
-  import scala.language.postfixOps
 
   when(Idle) {
     case Event(StepCommand, _) => video.readNextFrame match {

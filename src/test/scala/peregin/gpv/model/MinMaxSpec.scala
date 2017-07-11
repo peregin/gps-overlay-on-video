@@ -1,6 +1,7 @@
 package peregin.gpv.model
 
 import org.specs2.mutable.Specification
+import MinMax._
 
 
 class MinMaxSpec extends Specification {
@@ -20,7 +21,7 @@ class MinMaxSpec extends Specification {
   }
 
   "rounder" should {
-    import MinMax._
+
     "round up to nearest tenth" in {
       27.2.roundUpToTenth === 30
       21.5.roundUpToTenth === 30
