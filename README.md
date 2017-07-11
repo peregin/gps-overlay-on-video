@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/peregin/gps-overlay-on-video.svg?branch=master)](https://travis-ci.org/peregin/gps-overlay-on-video)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/8951fae912144fc587db33b27e8fb1d7)](https://www.codacy.com/app/peregin/gps-overlay-on-video)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 GPS data overlay on videos
 ==========================
