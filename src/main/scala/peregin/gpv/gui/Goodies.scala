@@ -5,19 +5,22 @@ import java.awt.{Point, Toolkit}
 import javax.swing.{JComponent, KeyStroke, UIManager}
 
 import com.jgoodies.looks.plastic.{Plastic3DLookAndFeel, PlasticTheme}
+import com.jgoodies.looks.plastic.PlasticLookAndFeel._
+
 import org.jdesktop.swingx.JXBusyLabel
 
 import scala.swing.{Component, Dialog, Label, Window}
 import scala.util.control.NonFatal
+import scala.collection.JavaConverters._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 
 
 object Goodies {
 
   // on Mac start with VM parameter -Xdock:name="GSPonVideo"
   def initLookAndFeel() {
-    import com.jgoodies.looks.plastic.PlasticLookAndFeel._
-
-import scala.collection.JavaConverters._
     sys.props += "apple.laf.useScreenMenuBar" -> "true"
     sys.props += "com.apple.mrj.application.apple.menu.about.name" -> "GPSonVideo"
     val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
@@ -43,8 +46,6 @@ import scala.collection.JavaConverters._
         add(busy, "")
         add(new Label("Loading..."), "")
       }
-      import scala.concurrent.ExecutionContext.Implicits.global
-      import scala.concurrent._
       future {
         body
         dispose()
