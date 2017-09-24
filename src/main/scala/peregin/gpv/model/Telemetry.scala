@@ -75,6 +75,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val cadenceBoundary = MinMax.extreme
   val temperatureBoundary = MinMax.extreme
   val heartRateBoundary = MinMax.extreme
+  val powerBoundary = MinMax.extreme
 
   private var centerPosition = TrackPoint.centerPosition
 
@@ -88,6 +89,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       point.extension.cadence.foreach(cadenceBoundary.sample)
       point.extension.temperature.foreach(temperatureBoundary.sample)
       point.extension.heartRate.foreach(heartRateBoundary.sample)
+      point.extension.power.foreach(powerBoundary.sample)
       if (i < n - 1) {
         val nextPoint = track(i + 1)
         point.analyze(nextPoint)

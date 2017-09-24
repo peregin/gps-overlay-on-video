@@ -21,7 +21,7 @@ import scala.xml.NodeSeq
  */
 object GarminExtension extends Logging {
 
-  def empty = new GarminExtension(None, None, None)
+  def empty = new GarminExtension(None, None, None, None)
 
   def parse(node: NodeSeq): GarminExtension = {
     import scala.util.control.Exception._
@@ -30,12 +30,14 @@ object GarminExtension extends Logging {
     val cadence = (node \ "TrackPointExtension" \ "cad").text
     val temperature = (node \ "TrackPointExtension" \ "atemp").text
     val heartRate = (node \ "TrackPointExtension" \ "hr").text
+    val power = (node \ "power").text
 
-    new GarminExtension(cadence, temperature, heartRate)
+    new GarminExtension(cadence, temperature, heartRate, power)
   }
 }
 
 case class GarminExtension(cadence: Option[Double],
                            temperature: Option[Double],
-                           heartRate: Option[Double]) {
+                           heartRate: Option[Double],
+                           power: Option[Double]) {
 }

@@ -10,8 +10,8 @@ class TelemetrySpec extends Specification with Logging {
 
   "telemetry data with 2 track points" should {
     val track = Seq(
-      TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0), GarminExtension(Some(72), Some(12), Some(110))),
-      TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0), GarminExtension(Some(81), Some(14), Some(120)))
+      TrackPoint(TrackPoint.centerPosition, 100, new DateTime(2014, 6, 1, 10, 0), GarminExtension(Some(72), Some(12), Some(110), None)),
+      TrackPoint(TrackPoint.centerPosition, 200, new DateTime(2014, 6, 1, 11, 0), GarminExtension(Some(81), Some(14), Some(120), None))
     )
     track(0).distance = 0
     track(0).segment = 200
@@ -124,7 +124,10 @@ class TelemetrySpec extends Specification with Logging {
 
     "calculate min max" in {
       telemetry.track must haveSize(64)
-      // TODO: check power and heart rate
+      telemetry.heartRateBoundary === MinMax(160, 169)
+      telemetry.powerBoundary === MinMax(5, 363)
+      telemetry.track.head.extension.power must beSome(205d)
+      telemetry.track.head.extension.heartRate must beSome(160d)
     }
   }
 }
