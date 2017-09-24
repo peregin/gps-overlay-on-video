@@ -1,5 +1,4 @@
 
-import ScalaxbKeys._
 import com.typesafe.sbt.SbtNativePackager._
 import NativePackagerKeys._
 import de.johoop.cpd4sbt.CopyPasteDetector._
@@ -26,10 +25,6 @@ resolvers ++= Seq(
 cpdSettings
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
-
-scalaxbSettings
-
-sourceGenerators in Compile <+= scalaxb in Compile
 
 buildInfoSettings
 

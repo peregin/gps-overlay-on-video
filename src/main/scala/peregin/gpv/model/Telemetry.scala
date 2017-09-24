@@ -3,14 +3,33 @@ package peregin.gpv.model
 import java.io.{File, InputStream}
 import javax.xml.datatype.XMLGregorianCalendar
 
-import generated.GpxType
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.{Logging, Timed}
 
 import scala.xml.{Node, XML}
 
-
+/**
+  * Extracts telemetry data from a GPX file
+  *
+  * A sample in a segment looks like:
+  * <code>
+  *
+  *      <trkpt lat="47.1512900" lon="8.7887940">
+  *        <ele>902.4</ele>
+  *        <time>2017-09-24T06:10:53Z</time>
+  *        <extensions>
+  *         <power>205</power>
+  *         <gpxtpx:TrackPointExtension>
+  *          <gpxtpx:atemp>8</gpxtpx:atemp>
+  *          <gpxtpx:hr>160</gpxtpx:hr>
+  *          <gpxtpx:cad>90</gpxtpx:cad>
+  *         </gpxtpx:TrackPointExtension>
+  *        </extensions>
+  *       </trkpt>
+  *
+  * </code>
+  */
 object Telemetry extends Timed with Logging {
 
   def load(file: File): Telemetry = loadWith(XML.loadFile(file))
@@ -18,18 +37,20 @@ object Telemetry extends Timed with Logging {
   def load(is: InputStream): Telemetry = loadWith(XML.load(is))
 
   def loadWith(loadFunc: => Node): Telemetry = timed("load telemetry") {
-    val node = loadFunc
-    val binding = scalaxb.fromXML[GpxType](node)
-    val points = binding.trk.head.trkseg.head.trkpt.map{wyp =>
-      val extension = wyp.extensions.flatMap(_.any.map(_.value).headOption.map(_.toString)).
-        map(GarminExtension.parse).getOrElse(GarminExtension.empty)
-      TrackPoint(
-        new GeoPosition(wyp.lat.toDouble, wyp.lon.toDouble), wyp.ele.map(_.toDouble).getOrElse(0d),
-        wyp.time, extension
-      )
+    val rootNode = loadFunc
+    val points = (rootNode \ "trk" \ "trkseg" \ "trkpt").map{ node =>
+      val lat = (node \ "@lat").text.toDouble
+      val lon = (node \ "@lon").text.toDouble
+      val time = (node \ "time").text
+      val elevation = (node \ "ele").text.toDouble
+      val extension = (node \ "extensions")
+      TrackPoint(new GeoPosition(lat, lon), elevation,
+        DateTime.parse(time), GarminExtension.parse(extension))
     }.toVector
+
     // Important: points are stored in a <b>Vector</b>, allows to efficiently access an element at an arbitrary position
     // and retrieving the size is O(1)
+
     log.info(s"found ${points.size} track points")
     val data = new Telemetry(points)
     data.analyze()

@@ -118,4 +118,13 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.gradeBoundary === MinMax(-44.24623780354664, 33.245252966131574)
     }
   }
+
+  "telemetry cycling data with power meter and heart rate from Iron Bike Einsiedeln 2017 and Garmin Edge 820" in {
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/power-and-heart.gpx")))
+
+    "calculate min max" in {
+      telemetry.track must haveSize(64)
+      // TODO: check power and heart rate
+    }
+  }
 }

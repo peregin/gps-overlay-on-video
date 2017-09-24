@@ -14,9 +14,6 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 // check latest updates form maven
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.9")
 
-// xml data binding
-addSbtPlugin("org.scalaxb" % "sbt-scalaxb" % "1.1.2")
-
 // generates build information, timestamp
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.1")
 
