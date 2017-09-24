@@ -41,9 +41,9 @@ trait DashboardPainter {
 
       // paint elevation to the right
       val stashBottom = g.getTransform
-      g.translate(width - boxSize * 3, 0)
+      g.translate(width - boxSize * 3, boxSize / 4)
       elevationChart.telemetry = telemetry
-      elevationChart.paint(g, boxSize * 3, boxSize, sonda)
+      elevationChart.paint(g, boxSize * 3, boxSize * 3 / 4, sonda)
       g.setTransform(stashBottom)
 
       // paint gauges and charts
@@ -54,8 +54,10 @@ trait DashboardPainter {
         g.translate(boxSize, 0)
       }
       if (sonda.heartRate.isDefined) {
-        heartRateGauge.paint(g, boxSize, boxSize, sonda)
-        g.translate(boxSize, 0)
+        val boxSize2 = boxSize / 2
+        g.translate(0, boxSize2)
+        heartRateGauge.paint(g, boxSize2, boxSize2, sonda)
+        g.translate(boxSize2, 0)
       }
 
       // restore any kind of transformations until this point
