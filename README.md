@@ -45,18 +45,19 @@ All the information is extracted from the gps data, since mainly the coordinates
 * provide charts about the elevation
 * etc.
 
-Telemetry data sample collected with a Garmin device:
-```
-<trkpt lat="47.2747280" lon="8.5351020">
- <ele>603.8</ele>
- <time>2014-04-06T08:24:26Z</time>
- <extensions>
-   <gpxtpx:TrackPointExtension>
-     <gpxtpx:atemp>10</gpxtpx:atemp>
-     <gpxtpx:hr>135</gpxtpx:hr>
-     <gpxtpx:cad>94</gpxtpx:cad>
-   </gpxtpx:TrackPointExtension>
- </extensions>
+Telemetry data sample collected with a Garmin device (Edge 820):
+```xml
+<trkpt lat="47.1512900" lon="8.7887940">
+  <ele>902.4</ele>
+  <time>2017-09-24T06:10:53Z</time>
+  <extensions>
+    <power>205</power>
+    <gpxtpx:TrackPointExtension>
+      <gpxtpx:atemp>8</gpxtpx:atemp>
+      <gpxtpx:hr>160</gpxtpx:hr>
+      <gpxtpx:cad>90</gpxtpx:cad>
+    </gpxtpx:TrackPointExtension>
+  </extensions>
 </trkpt>
 ```
 
