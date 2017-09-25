@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import peregin.gpv.util.{TimePrinter, Io}
 import TimePrinter._
 
-
+// useful to debug and synchronize the video with the gps stream
 trait DebugGauge extends GaugePainter {
 
   lazy val bugImage = Io.loadImage("images/bug.png")
