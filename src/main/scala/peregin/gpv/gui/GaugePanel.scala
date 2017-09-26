@@ -14,10 +14,10 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
   val gaugeFactories = Seq(
     () => new GaugeComponent with RadialSpeedGauge,
     () => new GaugeComponent with CadenceGauge,
-    () => new GaugeComponent with IconicElevationGauge,
-    () => new GaugeComponent with IconicDistanceGauge,
+    () => new GaugeComponent with DrawnElevationGauge,
+    () => new GaugeComponent with DrawnDistanceGauge,
     () => new GaugeComponent with LinearElevationGauge,
-    () => new GaugeComponent with IconicHeartRateGauge,
+    () => new GaugeComponent with DrawnHeartRateGauge,
     () => new GaugeComponent with DigitalSpeedGauge,
     () => new GaugeComponent with DigitalElevationGauge,
     () => new GaugeComponent with ElevationChart

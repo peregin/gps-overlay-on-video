@@ -6,7 +6,7 @@ import peregin.gpv.util.Trigo._
 import java.awt.geom.{Ellipse2D, Rectangle2D, Area}
 
 
-trait IconicHeartRateGauge extends GaugePainter {
+trait DrawnHeartRateGauge extends GaugePainter {
 
   lazy val dummy = InputValue(89, MinMax(62, 171))
   override def defaultInput = dummy

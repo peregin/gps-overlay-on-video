@@ -7,7 +7,7 @@ import peregin.gpv.util.Trigo._
 import peregin.gpv.util.UnitConverter
 
 
-trait IconicDistanceGauge extends GaugePainter {
+trait DrawnDistanceGauge extends GaugePainter {
 
   lazy val dummy = InputValue(80.21, MinMax(0, 123.4))
   override def defaultInput = dummy

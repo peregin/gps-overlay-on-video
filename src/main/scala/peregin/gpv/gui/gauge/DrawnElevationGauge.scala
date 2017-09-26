@@ -6,7 +6,7 @@ import java.awt._
 import java.awt.geom.{Rectangle2D, Area}
 
 
-trait IconicElevationGauge extends GaugePainter {
+trait DrawnElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(689, MinMax(432, 1252))
   override def defaultInput = dummy
