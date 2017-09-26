@@ -22,6 +22,8 @@ resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
+val batikVersion = "1.9.1"
+
 cpdSettings
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
@@ -67,6 +69,8 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % "1.1.3"
 libraryDependencies += "joda-time" % "joda-time" % "2.9.2"
 
 libraryDependencies += "org.joda" % "joda-convert" % "1.7"
+
+libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
 libraryDependencies += "org.specs2" %% "specs2" % "2.4.2" % "test"
 
