@@ -1,6 +1,6 @@
 package peregin.gpv.gui.gauge
 
-import java.awt.{Color, Font, Graphics2D, Polygon}
+import java.awt._
 import java.awt.geom.{Area, Ellipse2D, Rectangle2D}
 import java.awt.image.BufferedImage
 
@@ -44,7 +44,21 @@ trait SvgGauge extends GaugePainter {
     val px = 10
     val py = (h - 10) / 2
 
-    g.drawImage(tc.getImage, px, py, null)
+    val svgImage = tc.getImage
+    //g.drawImage(svgImage, px, py, null)
+
+    // scale down for the current level indicator
+    val origWidth = svgImage.getWidth()
+    val origHeight = svgImage.getHeight()
+    val newWidth = origWidth - 4
+    val newHeight = origHeight - 4
+    val newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB)
+    val gg = newImage.createGraphics()
+    gg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+    gg.drawImage(svgImage, 0, 0, newWidth, newHeight, 0, 0, origWidth, origHeight, null)
+    gg.dispose()
+    g.drawImage(newImage, px, py, null)
+
 
 
     //g.fillOval(px, py, d / 2, d / 2)
@@ -83,5 +97,16 @@ trait SvgGauge extends GaugePainter {
     val utext = "bpm"
     val utb = g.getFontMetrics.getStringBounds(utext, g)
     textWidthShadow(g, utext, px + (w - utb.getWidth) / 2, cy + utb.getHeight * 2.2)
+  }
+
+  import java.awt.image.IndexColorModel
+
+    // a single shade of gray
+  def createColorModel(n: Int): IndexColorModel = {
+    val size = 16
+    val r = Array.fill(size)(n.toByte)
+    val g = Array.fill(size)(n.toByte)
+    val b = Array.fill(size)(n.toByte)
+    return new IndexColorModel(4, size, r, g, b)
   }
 }
