@@ -45,18 +45,23 @@ trait SvgGauge extends GaugePainter {
     val py = (h - 10) / 2
 
     val svgImage = tc.getImage
-    //g.drawImage(svgImage, px, py, null)
+    g.drawImage(svgImage, px, py, null)
 
     // scale down for the current level indicator
     val origWidth = svgImage.getWidth()
     val origHeight = svgImage.getHeight()
-    val newWidth = origWidth - 4
-    val newHeight = origHeight - 4
+    val newWidth = origWidth - 5
+    val newHeight = origHeight - 5
     val newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB)
     val gg = newImage.createGraphics()
     gg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
     gg.drawImage(svgImage, 0, 0, newWidth, newHeight, 0, 0, origWidth, origHeight, null)
     gg.dispose()
+    for (x <- 0 until newWidth; y <- 0 until newHeight) {
+      val rgb = newImage.getRGB(x, y)
+      println(s"[$x,$y]=$rgb")
+      if (rgb != 0) newImage.setRGB(x, y, 11184810 | (255 << 24))
+    }
     g.drawImage(newImage, px, py, null)
 
 
