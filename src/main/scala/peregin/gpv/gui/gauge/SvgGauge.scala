@@ -2,25 +2,12 @@ package peregin.gpv.gui.gauge
 
 import java.awt._
 import java.awt.geom.{Area, Ellipse2D, Rectangle2D}
-import java.awt.image.BufferedImage
 
-import org.apache.batik.transcoder.{SVGAbstractTranscoder, TranscoderInput, TranscoderOutput}
-import org.apache.batik.transcoder.image.ImageTranscoder
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
-import peregin.gpv.util.Io
+import peregin.gpv.util.ImageConverter
 import peregin.gpv.util.Trigo.{polarX, polarY}
 
 trait SvgGauge extends GaugePainter {
-
-  val heartStream = Io.getResource("images/heart.svg")
-  val transcoderInput = new TranscoderInput(heartStream)
-  val tc = new ImageTranscoder {
-    private var img: BufferedImage = null;
-    override def writeImage(img: BufferedImage, output: TranscoderOutput) = this.img = img
-    override def createImage(width: Int, height: Int) = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-    def getImage = img
-  }
-
 
   lazy val dummy = InputValue(89, MinMax(62, 171))
   override def defaultInput = dummy
@@ -28,10 +15,6 @@ trait SvgGauge extends GaugePainter {
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)
-
-    tc.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, w.toFloat / 4)
-    tc.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, h.toFloat / 4)
-    tc.transcode(transcoderInput, null)
 
     val box = math.min(w, h)
     val cy = h / 2
@@ -44,27 +27,17 @@ trait SvgGauge extends GaugePainter {
     val px = 10
     val py = (h - 10) / 2
 
-    val svgImage = tc.getImage
+    val w4 = w / 4
+    val h4 = h / 4
+    val svgImage = ImageConverter.loadSvg("images/heart.svg", w4, h4)
     g.drawImage(svgImage, px, py, null)
 
-    // scale down for the current level indicator
-    val origWidth = svgImage.getWidth()
-    val origHeight = svgImage.getHeight()
-    val newWidth = origWidth - 5
-    val newHeight = origHeight - 5
-    val newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB)
-    val gg = newImage.createGraphics()
-    gg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
-    gg.drawImage(svgImage, 0, 0, newWidth, newHeight, 0, 0, origWidth, origHeight, null)
-    gg.dispose()
-    for (x <- 0 until newWidth; y <- 0 until newHeight) {
-      val rgb = newImage.getRGB(x, y)
-      println(s"[$x,$y]=$rgb")
-      if (rgb != 0) newImage.setRGB(x, y, 11184810 | (255 << 24))
-    }
-    g.drawImage(newImage, px, py, null)
-
-
+    val sw = w4 - w / 25
+    val sh = h4 - h / 25
+    val svgImageSmaller = ImageConverter.loadSvg("images/heart.svg", sw, sh)
+    val grayImage = ImageConverter.fillColor(svgImageSmaller, 200, 200, 200)
+    g.drawImage(grayImage, px + (w4 - sw) / 2, py + (h4 - sh) / 2, null)
+    //g.drawImage(grayImage, px + w / 40, py, null)
 
     //g.fillOval(px, py, d / 2, d / 2)
     //g.fillOval(px + d / 2, py, d / 2, d / 2)
@@ -104,14 +77,4 @@ trait SvgGauge extends GaugePainter {
     textWidthShadow(g, utext, px + (w - utb.getWidth) / 2, cy + utb.getHeight * 2.2)
   }
 
-  import java.awt.image.IndexColorModel
-
-    // a single shade of gray
-  def createColorModel(n: Int): IndexColorModel = {
-    val size = 16
-    val r = Array.fill(size)(n.toByte)
-    val g = Array.fill(size)(n.toByte)
-    val b = Array.fill(size)(n.toByte)
-    return new IndexColorModel(4, size, r, g, b)
-  }
 }
