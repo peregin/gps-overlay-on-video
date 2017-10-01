@@ -11,7 +11,7 @@ import peregin.gpv.util.TimePrinter._
  */
 class TimePrinterSpec extends Specification with ScalaCheck {
 
-  addArguments(stopOnFail)
+  stopOnFail
 
   "duration printer" should {
     "show elapsed time formatted as hh:mm:dd.sss" in {

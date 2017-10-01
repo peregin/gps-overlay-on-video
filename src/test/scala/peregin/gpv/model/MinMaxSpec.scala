@@ -6,7 +6,7 @@ import MinMax._
 
 class MinMaxSpec extends Specification {
 
-  addArguments(stopOnFail)
+  stopOnFail
 
   "an instance" should {
     val mm = MinMax(0, 3)

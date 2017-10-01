@@ -15,6 +15,7 @@ import peregin.gpv.video.{VideoOverlay, VideoPlayer}
 
 import scala.swing._
 import scala.swing.event.ButtonClicked
+import scala.util.{Failure, Success}
 
 
 class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null) extends Dialog(parent)
@@ -85,21 +86,25 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
   private def handleGenerate() {
     log.info("generate...")
     mark = 0L
-    val reader = ToolFactory.makeReader(setup.videoPath.getOrElse("video file is not configured"))
+    val videoInputFile = setup.videoPath.getOrElse("video file is not configured")
+    log.info(s"reading video file from $videoInputFile")
+    val reader = ToolFactory.makeReader(videoInputFile)
     reader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
     reader.open()
     val container = reader.getContainer
     val durationInMillis = container.getDuration / 1000
     durationLabel.text = s"${TimePrinter.printDuration(durationInMillis)}"
 
-    val writer = ToolFactory.makeWriter(setup.outputPath.getOrElse("output file is not provided"), reader)
+    val videoOutputFile = setup.outputPath.getOrElse("output file is not provided")
+    log.info(s"video output file to $videoOutputFile")
+    val writer = ToolFactory.makeWriter(videoOutputFile, reader)
     val overlay = new VideoOverlay(this, durationInMillis)
     reader.addListener(overlay)
     overlay.addListener(writer)
 
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
-    val converterFuture = future {
+    val converterFuture = Future {
 
       Swing.onEDT {
         statusLabel.text = "Generating video file..."
@@ -111,18 +116,15 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
       }
     }
 
-    converterFuture onSuccess {
-      case _ => Swing.onEDT {
+    converterFuture onComplete {
+      case Success(_) => Swing.onEDT {
         statusLabel.background = Color.green
         statusLabel.text = "Success"
         closeButton.text = "Close"
         progressBar.value = 100
         progressBar.label = s"${TimePrinter.printDuration(durationInMillis)}"
       }
-    }
-
-    converterFuture onFailure {
-      case f => Swing.onEDT {
+      case Failure(f) => Swing.onEDT {
         statusLabel.background = Color.red
         statusLabel.text = s"Failed: ${f.getMessage}"
         closeButton.text = "Close"

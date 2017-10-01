@@ -1,8 +1,4 @@
 
-import com.typesafe.sbt.SbtNativePackager._
-import NativePackagerKeys._
-import de.johoop.cpd4sbt.CopyPasteDetector._
-
 organization := "com.github.peregin"
 
 name := "telemetry-on-video"
@@ -11,9 +7,9 @@ version := "1.0.0-SNAPSHOT"
 
 mainClass in Compile := Some("peregin.gpv.App")
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.12.3"
 
-scalacOptions ++= List("-target:jvm-1.6", "-feature", "-deprecation", "-language:implicitConversions")
+scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 
@@ -24,27 +20,27 @@ resolvers ++= Seq(
 
 val batikVersion = "1.9.1"
 
-cpdSettings
+val json4sVersion = "3.5.3"
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
+val akkaVersion = "2.5.6"
 
-buildInfoSettings
+val specs2Version = "3.8.9"
 
-sourceGenerators in Compile <+= buildInfo
+// JavaAppPackaging, CopyPasteDetector
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
+      new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
+    }),
+    buildInfoPackage := "info"
+  )
 
-buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
-  new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
-})
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.0-M2"
 
-buildInfoPackage := "info"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
-packageArchetype.java_application
-
-libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.6"
-
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.14"
-
-libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.3.14"
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 
 libraryDependencies += "org.swinglabs" % "swingx-core" % "1.6.2-2"
 
@@ -58,9 +54,9 @@ libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 
 libraryDependencies += "xuggle" % "xuggle-xuggler" % "5.4" from "https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/xuggle/xuggle-xuggler/5.4/xuggle-xuggler-5.4.jar"
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.3.0"
+libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
 
-libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.3.0"
+libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 
@@ -72,9 +68,13 @@ libraryDependencies += "org.joda" % "joda-convert" % "1.7"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
-libraryDependencies += "org.specs2" %% "specs2" % "2.4.2" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % "2.3.14" % "test"
+libraryDependencies += "org.specs2" %% "specs2-scalacheck" % specs2Version % "test"
+
+libraryDependencies += "org.specs2" %% "specs2-mock" % specs2Version % "test"
+
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % akkaVersion % "test"
 
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"
 

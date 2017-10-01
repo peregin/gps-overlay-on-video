@@ -7,7 +7,7 @@ import peregin.gpv.Setup
 
 class SetupSpec extends Specification with Logging {
 
-  addArguments(stopOnFail)
+  stopOnFail
 
   "an instance of the setup" should {
     "be serialized and deserialized" in {

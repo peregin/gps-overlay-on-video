@@ -44,7 +44,7 @@ class SimpleVideoPlayer(url: String, listener: VideoPlayer.Listener) extends Vid
   overlay.addListener(controller)
 
   import scala.concurrent.ExecutionContext.Implicits.global
-  future {
+  Future {
     while(running && reader.readPacket() == null) {
       // runs in a loop until the end
     }

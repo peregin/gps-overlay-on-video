@@ -46,7 +46,7 @@ object Goodies {
         add(busy, "")
         add(new Label("Loading..."), "")
       }
-      future {
+      Future {
         body
         dispose()
       }
