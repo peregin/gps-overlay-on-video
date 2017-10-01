@@ -11,7 +11,7 @@ object Sonda {
     new GeoPosition(0, 0),
     InputValue.zero, InputValue.zero,
     InputValue.zero, InputValue.zero,
-    None, None
+    None, None, None
   )
 }
 
@@ -19,7 +19,7 @@ case class Sonda(time: DateTime, elapsedTime: InputValue,
                  location: GeoPosition,
                  elevation: InputValue, grade: InputValue,
                  distance: InputValue, speed: InputValue,
-                 cadence: Option[InputValue], heartRate: Option[InputValue]) {
+                 cadence: Option[InputValue], heartRate: Option[InputValue], power: Option[InputValue]) {
 
   // just for debugging purposes
   private var trackIndex: Int = 0

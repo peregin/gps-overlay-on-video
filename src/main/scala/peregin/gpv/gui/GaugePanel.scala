@@ -16,13 +16,14 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
     () => new GaugeComponent with CadenceGauge,
     //() => new GaugeComponent with DrawnElevationGauge,
     //() => new GaugeComponent with DrawnDistanceGauge,
-    () => new GaugeComponent with LinearElevationGauge,
     //() => new GaugeComponent with DrawnHeartRateGauge,
+    () => new GaugeComponent with LinearElevationGauge,
     () => new GaugeComponent with DigitalSpeedGauge,
     () => new GaugeComponent with DigitalElevationGauge,
     () => new GaugeComponent with SvgElevationGauge,
     () => new GaugeComponent with SvgDistanceGauge,
     () => new GaugeComponent with SvgHeartRateGauge,
+    () => new GaugeComponent with SvgPowerGauge,
     () => new GaugeComponent with ElevationChart
   )
 
