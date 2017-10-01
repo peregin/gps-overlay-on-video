@@ -5,7 +5,7 @@ import peregin.gpv.util.UnitConverter
 
 trait SvgDistanceGauge extends SvgGauge {
 
-  lazy val dummy = InputValue(89, MinMax(62, 171))
+  lazy val dummy = InputValue(80.21, MinMax(0, 123.4))
   override def defaultInput = dummy
 
   override def sample(sonda: Sonda) {input = sonda.distance}

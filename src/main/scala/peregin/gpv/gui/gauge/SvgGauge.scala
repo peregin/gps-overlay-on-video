@@ -9,7 +9,6 @@ trait SvgGauge extends GaugePainter {
   def imagePath: String
 
   def valueText: String
-
   def unitText: String
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {

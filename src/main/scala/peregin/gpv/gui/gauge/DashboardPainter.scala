@@ -10,7 +10,7 @@ trait DashboardPainter {
   val speedGauge = new RadialSpeedGauge {}
   val cadenceGauge = new CadenceGauge {}
   val elevationChart = new ElevationChart {}
-  val heartRateGauge = new DrawnHeartRateGauge {}
+  val heartRateGauge = new SvgHeartRateGauge {}
 
   def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String) {
 
