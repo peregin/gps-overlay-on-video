@@ -1,7 +1,6 @@
 package peregin.gpv.model
 
 import java.io.{File, InputStream}
-import javax.xml.datatype.XMLGregorianCalendar
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
@@ -56,10 +55,6 @@ object Telemetry extends Timed with Logging {
     data.analyze()
     log.info(s"elevation boundary ${data.elevationBoundary}")
     data
-  }
-
-  implicit def toJoda(xml: Option[XMLGregorianCalendar]): DateTime = {
-    xml.map(x => new DateTime(x.toGregorianCalendar.getTime)).getOrElse(sys.error("unable to process data without timestamps"))
   }
 
   def empty = new Telemetry(Seq.empty)
