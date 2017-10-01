@@ -24,9 +24,8 @@ val akkaVersion = "2.5.6"
 val specs2Version = "3.9.5"
 val logbackVersion = "1.2.3"
 
-// JavaAppPackaging, CopyPasteDetector
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
+  enablePlugins(BuildInfoPlugin, CopyPasteDetector, JavaAppPackaging).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
