@@ -19,12 +19,10 @@ resolvers ++= Seq(
 )
 
 val batikVersion = "1.9.1"
-
 val json4sVersion = "3.5.3"
-
 val akkaVersion = "2.5.6"
-
-val specs2Version = "3.8.9"
+val specs2Version = "3.9.5"
+val logbackVersion = "1.2.3"
 
 // JavaAppPackaging, CopyPasteDetector
 lazy val root = (project in file(".")).
@@ -36,7 +34,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info"
   )
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.0-M2"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.0"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
@@ -58,9 +56,9 @@ libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
 
 libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 
-libraryDependencies += "ch.qos.logback" % "logback-core" % "1.1.3"
+libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
 libraryDependencies += "joda-time" % "joda-time" % "2.9.2"
 
