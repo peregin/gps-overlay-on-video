@@ -20,7 +20,8 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
     () => new GaugeComponent with DrawnHeartRateGauge,
     () => new GaugeComponent with DigitalSpeedGauge,
     () => new GaugeComponent with DigitalElevationGauge,
-    () => new GaugeComponent with ElevationChart
+    () => new GaugeComponent with ElevationChart,
+    () => new GaugeComponent with SvgHeartRateGauge
   )
 
   lazy val sample = timed("load sample gps data") {
