@@ -7,7 +7,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationLike
-import org.specs2.specification.{AfterEach, AfterSpec}
+import org.specs2.specification.AfterEach
 import peregin.gpv.util.Logging
 import peregin.gpv.video.PlayerControllerActor.Idle
 
