@@ -59,9 +59,9 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
-libraryDependencies += "joda-time" % "joda-time" % "2.9.2"
+libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
 
-libraryDependencies += "org.joda" % "joda-convert" % "1.7"
+libraryDependencies += "org.joda" % "joda-convert" % "1.9.2"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
