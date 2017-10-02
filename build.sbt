@@ -65,6 +65,8 @@ libraryDependencies += "org.joda" % "joda-convert" % "1.9.2"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
+libraryDependencies += "com.google.guava" % "guava" % "23.0"
+
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"
 
 libraryDependencies += "org.specs2" %% "specs2-scalacheck" % specs2Version % "test"

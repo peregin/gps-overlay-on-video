@@ -1,8 +1,29 @@
 package peregin.gpv.gui.gauge
 
 import java.awt._
+import java.awt.image.BufferedImage
+import java.util.concurrent.TimeUnit
 
-import peregin.gpv.util.ImageConverter
+import com.google.common.cache.{CacheBuilder, CacheLoader}
+import peregin.gpv.util.{ImageConverter, Timed}
+
+object ImageCache extends Timed {
+
+  case class CacheKey(imagePath: String, w: Int, h: Int, gray: Int)
+
+  val cache = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(1, TimeUnit.DAYS).
+    build(new CacheLoader[CacheKey, BufferedImage] {
+      override def load(key: CacheKey): BufferedImage = timed(s"loading $key") {
+        val svgImage = ImageConverter.loadSvg(key.imagePath, key.w, key.h)
+        ImageConverter.fillColor(svgImage, key.gray, key.gray, key.gray)
+      }
+  })
+
+  def svgImage(imagePath: String, w: Int, h: Int, gray: Int): BufferedImage = {
+    val key = CacheKey(imagePath, w, h, gray)
+    cache.get(key)
+  }
+}
 
 trait SvgGauge extends GaugePainter {
 
@@ -26,15 +47,17 @@ trait SvgGauge extends GaugePainter {
 
     val sx = w / 4
     val sy = h / 4
-    val svgImage = ImageConverter.loadSvg(imagePath, sx, sy)
-    val whiteImage = ImageConverter.fillColor(svgImage, 255, 255, 255)
+
+    val whiteImage = ImageCache.svgImage(imagePath, sx, sy, 255)
     g.drawImage(whiteImage, px, py, null)
 
     // fill the heart based on the current value
     val pointerHeight = (input.current - input.boundary.min) * sy / input.boundary.diff
     g.clipRect(px, py + sy - pointerHeight.toInt, sx, pointerHeight.toInt)
-    val grayImage = ImageConverter.fillColor(svgImage, 150, 150, 150)
+
+    val grayImage = ImageCache.svgImage(imagePath, sx, sy, 150)
     g.drawImage(grayImage, px, py, null)
+    // revert clip
     g.setClip(null)
 
     // draw current value
