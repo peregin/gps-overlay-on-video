@@ -11,6 +11,7 @@ trait DashboardPainter {
   val cadenceGauge = new CadenceGauge {}
   val elevationChart = new ElevationChart {}
   val heartRateGauge = new SvgHeartRateGauge {}
+  val powerGauge = new SvgPowerGauge {}
 
   def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String) {
 
@@ -35,6 +36,7 @@ trait DashboardPainter {
         case _ => 5
       }
       val boxSize = (width min height) / f
+      val boxSize2 = boxSize / 2
       // shift to the bottom
       g.translate(0, height - boxSize)
 
@@ -54,11 +56,16 @@ trait DashboardPainter {
         g.translate(boxSize, 0)
       }
       if (sonda.heartRate.isDefined) {
-        val boxSize2 = boxSize / 2
         g.translate(0, boxSize2)
         heartRateGauge.paint(g, boxSize2, boxSize2, sonda)
         g.translate(boxSize2, 0)
       }
+      if (sonda.power.isDefined) {
+        if (sonda.heartRate.isDefined) g.translate(-boxSize2, -boxSize2)
+        powerGauge.paint(g, boxSize2, boxSize2, sonda)
+        g.translate(boxSize2, 0)
+      }
+
 
       // restore any kind of transformations until this point
       g.setTransform(stash)
