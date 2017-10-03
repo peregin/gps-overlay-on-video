@@ -75,7 +75,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
       statusPanel.add(statusLabel)
       add(statusPanel, "pushx, growx")
       val link = new JXHyperlink()
-      link.setURI(new URI("www.peregin.com"))
+      link.setURI(new URI("www.velocorner.com"))
       add(link, "split, w 150!, align right")
     }
   }
