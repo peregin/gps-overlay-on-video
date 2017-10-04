@@ -38,12 +38,17 @@ case class TrackPoint(position: GeoPosition,
   // average grade (expressed in percentage) or steepness of the segment between previous and current track points
   var grade = 0d
 
-  def analyze(next: TrackPoint) {
+  def analyze(next: TrackPoint, prevs: Seq[TrackPoint]) {
     segment = distanceTo(next)
     next.distance = distance + segment
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
     if (dt != 0d) speed = segment / dt
-    if (segment > 0) grade = (next.elevation - elevation) / (segment * 10)
+    // smoother grade calculation, consider the previous point as well, otherwise some outliers are being introduced
+    val (gradeSegment, firstElevation) = {
+      if (prevs.isEmpty) (segment, elevation)
+      else (prevs.map(_.segment).sum + segment, prevs.head.elevation)
+    }
+    if (gradeSegment > 0) grade = (next.elevation - firstElevation) / (gradeSegment * 10)
   }
 
   // The return value is the distance expressed in kilometers.
@@ -68,5 +73,5 @@ case class TrackPoint(position: GeoPosition,
     pythagoras(d, h)
   }
 
-  override def toString = f"${TimePrinter.printTime(time.getMillis)} - [${position.getLatitude}%1.6f,${position.getLongitude}%1.6f] ->$distance%3.2f ^$elevation%4.1f %%$grade%2.2f"
+  override def toString = f"${TimePrinter.printTime(time.getMillis)} - [${position.getLatitude}%1.6f,${position.getLongitude}%1.6f] ->$distance%3.2f(\u0394$segment%3.4f) ^$elevation%4.1f %%$grade%2.2f"
 }

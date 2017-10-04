@@ -62,7 +62,7 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
       telemetry.totalDistance === 25.969048381307253
       telemetry.speedBoundary === MinMax(0.07879420148031871, 86.28724568098714)
-      telemetry.gradeBoundary === MinMax(-100.00000000000001,83.00310261101451)
+      telemetry.gradeBoundary === MinMax(-35.5112900107015, 38.58484806897635)
       telemetry.cadenceBoundary === MinMax(0, 120)
       telemetry.temperatureBoundary === MinMax(6, 14)
       telemetry.heartRateBoundary === MinMax(104, 175)
@@ -78,7 +78,7 @@ class TelemetrySpec extends Specification with Logging {
     "find outliers" in {
       val outliers = telemetry.track.count(_.grade > 30)
       log.info(s"found $outliers outliers out of ${telemetry.track.size}")
-      outliers === 48
+      outliers === 9
     }
   }
 
@@ -92,7 +92,7 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
       telemetry.speedBoundary.max === 85.56435201871793
       telemetry.totalDistance === 63.23256444282121
-      telemetry.gradeBoundary === MinMax(-61.06372461979527,61.74814599643726)
+      telemetry.gradeBoundary === MinMax(-38.71463504215173, 114.48149716420424)
     }
   }
 
@@ -115,7 +115,7 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.elevationBoundary === MinMax(452.6, 513.2)
       telemetry.speedBoundary.max === 33.471772761781544
       telemetry.totalDistance === 12.492226904069824
-      telemetry.gradeBoundary === MinMax(-44.24623780354664, 33.245252966131574)
+      telemetry.gradeBoundary === MinMax(-6.504534982064397, 11.890875118231593)
     }
   }
 

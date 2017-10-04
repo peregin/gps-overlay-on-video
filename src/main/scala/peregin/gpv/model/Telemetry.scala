@@ -87,7 +87,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       point.extension.power.foreach(powerBoundary.sample)
       if (i < n - 1) {
         val nextPoint = track(i + 1)
-        point.analyze(nextPoint)
+        val prevPoints = track.slice(0.max(i - 10), 0.max(i - 1))
+        point.analyze(nextPoint, prevPoints)
         speedBoundary.sample(point.speed)
         gradeBoundary.sample(point.grade)
       }
