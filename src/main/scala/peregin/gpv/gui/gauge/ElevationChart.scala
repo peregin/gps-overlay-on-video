@@ -139,10 +139,10 @@ trait ElevationChart extends ChartPainter with KnobPainter {
         case Mode.TimeBased => telemetry.progressForTime(sonda.time)
         case Mode.DistanceBased => telemetry.progressForDistance(sonda.distance.current)
       }
-      val x = (gridLeft + p * pxWidth / 100).toInt
+      val currentX = (gridLeft + p * pxWidth / 100).toInt
       g.setColor(Color.orange)
-      g.drawLine(x, 10, x, gridBottom)
-      paintKnob(g, x, 10, Color.orange)
+      g.drawLine(currentX, 10, currentX, gridBottom)
+      paintKnob(g, currentX, 10, Color.orange)
 
       if (showCurrentValuesOnChart) {
         // altitude
@@ -161,6 +161,10 @@ trait ElevationChart extends ChartPainter with KnobPainter {
         val distanceTotal = f"${UnitConverter.distance(telemetry.totalDistance, units)}%1.1f${UnitConverter.distanceUnits(units)}%s"
         val dtb = g.getFontMetrics.getStringBounds(distanceTotal, g)
         textWidthShadow(g, distanceTotal, gridRight - dtb.getWidth, middleHeight)
+        // current distance
+        val distanceCurrent = f"${UnitConverter.distance(sonda.distance.current, units)}%1.1f${UnitConverter.distanceUnits(units)}%s"
+        val ctb = g.getFontMetrics.getStringBounds(distanceCurrent, g)
+        textWidthShadow(g, distanceCurrent, currentX - ctb.getWidth / 2, 10 + ctb.getHeight)
       }
     }
   }
