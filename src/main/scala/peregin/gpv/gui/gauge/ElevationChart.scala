@@ -22,7 +22,7 @@ trait ElevationChart extends ChartPainter with KnobPainter {
 
   // shows the current elevation and grade on the middle of the chart
   protected var showCurrentValuesOnChart = true
-
+  protected var showGrid = false
 
   def elevationMode = mode
 
@@ -104,12 +104,18 @@ trait ElevationChart extends ChartPainter with KnobPainter {
     }
 
     // grid
-    g.setColor(Color.gray)
-    for (y <- 10 until height - 10 by math.max(1, pxHeight / 6)) {
+    if (showGrid) {
+      g.setColor(Color.gray)
+      for (y <- 10 until height - 10 by math.max(1, pxHeight / 6)) {
+        g.drawLine(gridLeft, y, gridRight, y)
+      }
+      for (x <- gridLeft until gridRight by math.max(1, pxWidth / 8)) {
+        g.drawLine(x, 10, x, gridBottom)
+      }
+    } else {
+      // just the top line
+      val y = 10
       g.drawLine(gridLeft, y, gridRight, y)
-    }
-    for (x <- gridLeft until gridRight by math.max(1, pxWidth / 8)) {
-      g.drawLine(x, 10, x, gridBottom)
     }
 
 
@@ -148,15 +154,20 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       if (showCurrentValuesOnChart) {
         // altitude
         val alt = sonda.elevation.current
-        g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
-        val atext = f"${UnitConverter.elevation(alt, units)}%2.0f ${UnitConverter.elevationUnits(units)}%s"
-        val atb = g.getFontMetrics.getStringBounds(atext, g)
-        textWidthShadow(g, atext, gridLeft + (pxWidth - atb.getWidth) / 2, atb.getHeight * 2.1)
+        g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 8).toFloat))
+        val elevationText = f"${UnitConverter.elevation(alt, units)}%2.0f ${UnitConverter.elevationUnits(units)}%s"
+        val atb = g.getFontMetrics.getStringBounds(elevationText, g)
+        val middleHeight = gridBottom - (height - atb.getHeight) / 2
+        textWidthShadow(g, elevationText, gridLeft + (pxWidth - atb.getWidth) / 2, middleHeight)
         // slope grade
         val slope = sonda.grade.current
-        val stext = f"$slope%2.0f %%"
-        val stb = g.getFontMetrics.getStringBounds(stext, g)
-        textWidthShadow(g, stext, gridLeft + (pxWidth - stb.getWidth) / 2, atb.getHeight * 2.1 + stb.getHeight)
+        val slopeText = f"$slope%2.0f %%"
+        val stb = g.getFontMetrics.getStringBounds(slopeText, g)
+        textWidthShadow(g, slopeText, gridLeft + (pxWidth - stb.getWidth) / 2, middleHeight + stb.getHeight)
+        // total distance
+        val distanceTotal = f"${UnitConverter.distance(telemetry.totalDistance, units)}%1.1f${UnitConverter.distanceUnits(units)}%s"
+        val dtb = g.getFontMetrics.getStringBounds(distanceTotal, g)
+        textWidthShadow(g, distanceTotal, gridRight - dtb.getWidth, middleHeight)
       }
     }
   }

@@ -12,6 +12,7 @@ import scala.swing._
 class AltitudePanel extends Panel with ElevationChart with Logging {
 
   showCurrentValuesOnChart = false
+  showGrid = true
 
   override def paint(g: Graphics2D) = {
     val width = peer.getWidth
