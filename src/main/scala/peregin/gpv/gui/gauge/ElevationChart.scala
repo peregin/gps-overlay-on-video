@@ -71,13 +71,6 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       val timeLast = telemetry.maxTime.toString("HH:mm:ss")
       g.drawString(timeFirst, gridLeft, height - 10 + metersHalfHeight)
       g.drawString(timeLast, gridRight - timeWidth - distanceWidth, height - 10 + metersHalfHeight)
-      g.setColor(Color.red)
-      g.drawString(distanceTotal, gridRight - distanceWidth, height - 10 + metersHalfHeight)
-
-      // max speed
-      g.setColor(Color.red)
-      g.drawString(f"${UnitConverter.speed(telemetry.speedBoundary.max, units)}%1.1f", 10, 10 + metersHalfHeight + elevFm.getHeight)
-      g.drawString(UnitConverter.speedUnits(units), 10, 10 + metersHalfHeight + 2 * elevFm.getHeight)
 
       // elevation map
       val compositeStash = g.getComposite
