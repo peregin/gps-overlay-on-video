@@ -29,6 +29,12 @@ Screenshot of the tool:
 
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
+
+## How to use
+* Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the how to use [4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) [![4min Tutorial](http://img.youtube.com/vi/yOvT8IoDUPA/2.jpg)](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
+* Thank you [Schrottie](https://github.com/Schrottie) for creating the [how to in german](https://blog.dafb-o.de/gps-overlay-on-video-howto-anzeige-von-gps-daten-in-videos-mit-linux) [![how to in german](http://img.youtube.com/vi/kpHlk4FVELk/1.jpg)](https://www.youtube.com/watch?v=kpHlk4FVELk) 
+
+
 ## Basic requirements
 Small list of wishes to achieve:
 * show the video file and the track on the map to help synchronizing (shifting) the gps data to the beginning of the video
