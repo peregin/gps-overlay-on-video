@@ -1,7 +1,6 @@
 package peregin.gpv.util
 
 import java.awt.image.BufferedImage
-import java.io.Closeable
 import javax.imageio.ImageIO
 import javax.swing.{Icon, ImageIcon}
 
@@ -9,12 +8,6 @@ import javax.swing.{Icon, ImageIcon}
 object Io extends Logging {
 
   lazy val emptyImage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB)
-
-  def withCloseable[R](c: Closeable)(body: Closeable => R): R = try {
-    body(c)
-  } finally {
-    c.close()
-  }
 
   def getResource(path: String) = Io.getClass.getClassLoader.getResourceAsStream(path)
 
