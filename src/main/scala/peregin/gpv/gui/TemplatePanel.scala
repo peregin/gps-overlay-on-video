@@ -2,12 +2,13 @@ package peregin.gpv.gui
 
 import java.awt.{Component, Font}
 import javax.swing._
+import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
 
 import org.jdesktop.swingx.JXList
-import peregin.gpv.util.Io
+import peregin.gpv.util.{Io, Logging}
 
 // save/load/use templates (set of already selected and aligned gauges)
-class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") {
+class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
 
   case class TemplateEntry(name: String) {
     override def toString = name
@@ -50,4 +51,12 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") {
 
   add(templates, "grow, push")
 
+  templates.addListSelectionListener(new ListSelectionListener {
+    override def valueChanged(e: ListSelectionEvent): Unit = {
+      if (!e.getValueIsAdjusting) {
+        val selected = templates.getSelectedValue
+        log.info(s"selected $selected")
+      }
+    }
+  })
 }
