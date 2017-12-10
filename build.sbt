@@ -7,7 +7,7 @@ version := "1.0.0-SNAPSHOT"
 
 mainClass in Compile := Some("peregin.gpv.App")
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 
@@ -18,14 +18,14 @@ resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-val batikVersion = "1.9.1"
 val json4sVersion = "3.5.3"
-val akkaVersion = "2.5.6"
-val specs2Version = "3.9.5"
+val akkaVersion = "2.5.8"
+val specs2Version = "4.0.2"
 val logbackVersion = "1.2.3"
+val batikVersion = "1.9.1" // svg manipulation
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin, CopyPasteDetector, JavaAppPackaging).
+  enablePlugins(BuildInfoPlugin, JavaAppPackaging).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
@@ -33,7 +33,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info"
   )
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.1"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
