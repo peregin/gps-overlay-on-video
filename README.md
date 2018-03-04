@@ -3,6 +3,8 @@
 [![codecov.io](https://codecov.io/github/peregin/gps-overlay-on-video/coverage.svg?branch=master)](https://codecov.io/github/peregin/gps-overlay-on-video?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Build Stats](https://buildstats.info/travisci/chart/peregin/gps-overlay-on-video?branch=master&buildCount=25)
+
 GPS data overlay on videos
 ==========================
 _The Ultimate Cycling Software_
