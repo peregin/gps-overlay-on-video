@@ -2,6 +2,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/8951fae912144fc587db33b27e8fb1d7)](https://www.codacy.com/app/peregin/gps-overlay-on-video)
 [![codecov.io](https://codecov.io/github/peregin/gps-overlay-on-video/coverage.svg?branch=master)](https://codecov.io/github/peregin/gps-overlay-on-video?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ![Build Stats](https://buildstats.info/travisci/chart/peregin/gps-overlay-on-video?branch=master&buildCount=25)
 
 GPS data overlay on videos
