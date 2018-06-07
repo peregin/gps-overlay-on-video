@@ -7,7 +7,7 @@ version := "1.0.0-SNAPSHOT"
 
 mainClass in Compile := Some("peregin.gpv.App")
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.6"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 
