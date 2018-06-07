@@ -18,11 +18,11 @@ resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-val json4sVersion = "3.5.3"
-val akkaVersion = "2.5.8"
-val specs2Version = "4.0.2"
+val json4sVersion = "3.5.4"
+val akkaVersion = "2.5.13"
+val specs2Version = "4.2.0"
 val logbackVersion = "1.2.3"
-val batikVersion = "1.9.1" // svg manipulation
+val batikVersion = "1.10" // svg manipulation
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin, JavaAppPackaging).
@@ -33,7 +33,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info"
   )
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.3"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
@@ -59,9 +59,9 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
-libraryDependencies += "joda-time" % "joda-time" % "2.9.9"
+libraryDependencies += "joda-time" % "joda-time" % "2.10"
 
-libraryDependencies += "org.joda" % "joda-convert" % "1.9.2"
+libraryDependencies += "org.joda" % "joda-convert" % "2.0.2"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
