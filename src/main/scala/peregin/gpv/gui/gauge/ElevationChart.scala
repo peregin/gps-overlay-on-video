@@ -147,7 +147,8 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       if (showCurrentValuesOnChart) {
         // altitude
         val alt = sonda.elevation.current
-        g.setFont(gaugeFont.deriveFont(Font.BOLD, (pxHeight / 5).toFloat))
+        val fontSize = (pxHeight.toFloat / 5) min (pxWidth.toFloat / 14)
+        g.setFont(gaugeFont.deriveFont(Font.BOLD, fontSize))
         val elevationText = f"${UnitConverter.elevation(alt, units)}%2.0f ${UnitConverter.elevationUnits(units)}%s"
         val atb = g.getFontMetrics.getStringBounds(elevationText, g)
         val middleHeight = gridBottom - (height - atb.getHeight) / 2
