@@ -1,5 +1,7 @@
 package peregin.gpv.model
 
+import MinMax._
+
 object MinMax {
   def zero = new MinMax(0, 0)
   def extreme = new MinMax(Double.MaxValue, Double.MinValue)
@@ -25,7 +27,7 @@ object MinMax {
 
 case class MinMax(var min: Double, var max: Double) {
 
-  // range of [min, max) - min inclusive, max exlusive
+  // range of [min, max) - min inclusive, max exclusive
   def includes(v: Double) = v >= min && v < max
 
   def sample(sample: Double) {
@@ -37,7 +39,6 @@ case class MinMax(var min: Double, var max: Double) {
 
   def diff = max - min
 
-  import MinMax._
   def tenths = (max.roundUpToTenth - min.roundDownToTenth).toInt
   def hundredths = (max.roundUpToHundredth - min.roundDownToHundredth).toInt
 }

@@ -39,5 +39,4 @@ object GarminExtension extends Logging {
 case class GarminExtension(cadence: Option[Double],
                            temperature: Option[Double],
                            heartRate: Option[Double],
-                           power: Option[Double]) {
-}
+                           power: Option[Double])

@@ -55,6 +55,6 @@ object ImageConverter {
     val r = Array.fill(size)(n.toByte)
     val g = Array.fill(size)(n.toByte)
     val b = Array.fill(size)(n.toByte)
-    return new IndexColorModel(4, size, r, g, b)
+    new IndexColorModel(4, size, r, g, b)
   }
 }
