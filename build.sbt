@@ -20,7 +20,7 @@ resolvers ++= Seq(
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.13"
-val specs2Version = "4.2.0"
+val specs2Version = "4.3.4"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
 
