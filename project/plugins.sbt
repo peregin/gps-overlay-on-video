@@ -19,3 +19,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.2")
 
 // code coverage
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+
+// Gerolf's release plugin
+addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.8")
