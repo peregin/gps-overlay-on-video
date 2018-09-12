@@ -3,6 +3,8 @@
 [![codecov.io](https://codecov.io/github/peregin/gps-overlay-on-video/coverage.svg?branch=master)](https://codecov.io/github/peregin/gps-overlay-on-video?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Issues](https://img.shields.io/github/issues/peregin/gps-overlay-on-video.svg)](https://github.com/peregin/gps-overlay-on-video/issues)
+![GitHub release](https://img.shields.io/github/release/gps-overlay-on-video/rubidium.svg)
+
 
 ![Build Stats](https://buildstats.info/travisci/chart/peregin/gps-overlay-on-video?branch=master&buildCount=25)
 
