@@ -3,8 +3,6 @@ organization := "com.github.peregin"
 
 name := "telemetry-on-video"
 
-version := "1.0.0-SNAPSHOT"
-
 mainClass in Compile := Some("peregin.gpv.App")
 
 scalaVersion := "2.12.6"
@@ -19,7 +17,7 @@ resolvers ++= Seq(
 )
 
 val json4sVersion = "3.5.4"
-val akkaVersion = "2.5.13"
+val akkaVersion = "2.5.16"
 val specs2Version = "4.3.4"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
@@ -61,7 +59,7 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10"
 
-libraryDependencies += "org.joda" % "joda-convert" % "2.0.2"
+libraryDependencies += "org.joda" % "joda-convert" % "2.1.1"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
