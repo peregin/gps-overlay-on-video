@@ -25,7 +25,7 @@ assemblyMergeStrategy in assembly := {
   case x => MergeStrategy.first
 }
 
-assemblyJarName in assembly := "gps-overlay.jar"
+assemblyJarName in assembly := "gps-overlay-on-video.jar"
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
