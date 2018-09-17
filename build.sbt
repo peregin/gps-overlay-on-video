@@ -3,7 +3,10 @@ organization := "com.github.peregin"
 
 name := "telemetry-on-video"
 
-mainClass in Compile := Some("peregin.gpv.App")
+val entryPoint = "peregin.gpv.App"
+
+mainClass in Compile := Some(entryPoint)
+mainClass in assembly := Some(entryPoint)
 
 scalaVersion := "2.12.6"
 
@@ -15,6 +18,14 @@ resolvers ++= Seq(
   "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
+
+assemblyMergeStrategy in assembly := {
+  case "application.conf" => MergeStrategy.concat
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
+
+assemblyJarName in assembly := "gps-overlay.jar"
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
@@ -74,5 +85,3 @@ libraryDependencies += "org.specs2" %% "specs2-mock" % specs2Version % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % akkaVersion % "test"
 
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"
-
-publishTo := Some(Resolver.file("peregin@github", file(Path.userHome + "/data/repo")))
