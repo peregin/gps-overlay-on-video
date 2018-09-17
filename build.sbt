@@ -23,7 +23,7 @@ val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin, JavaAppPackaging).
+  enablePlugins(BuildInfoPlugin).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
