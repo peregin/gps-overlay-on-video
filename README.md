@@ -25,7 +25,7 @@ _The Ultimate Cycling Software_
 
 ## Download
 
-Download the latest executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/latest/gps-verlay-on-video.jar)
+Download the latest executable jar file (gps-overlay-on-video.jar) from [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/)
 
 ## Overview
 
