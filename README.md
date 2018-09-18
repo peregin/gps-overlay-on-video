@@ -12,6 +12,13 @@ GPS data overlay on videos
 ==========================
 _The Ultimate Cycling Software_
 
+## Table of Contents
+- [Overview](#overview)
+- [Download](#download)
+- [How to use](#how-to-use)
+
+## Overview
+
 The idea came after I bought a [GoPro](http://gopro.com/cameras/hd-hero3-silver-edition) camera and started to record
 some of my rides with the bicycle which were also tracked with a GPS device.
 For tracking the rides I was using the [Strava](http://www.strava.com) application on my phone
@@ -34,6 +41,9 @@ Screenshot of the tool:
 
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
+## Download
+
+Download the executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/gps-verlay-on-video.jar)
 
 ## How to use
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 

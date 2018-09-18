@@ -36,7 +36,7 @@ artifact in(Compile, assembly) := {
 }
 addArtifact(artifact in(Compile, assembly), assembly)
 
-publishArtifact := false
+publishArtifact := false // it is done by the assembly plugin
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
