@@ -15,7 +15,13 @@ _The Ultimate Cycling Software_
 ## Table of Contents
 - [Overview](#overview)
 - [Download](#download)
-- [How to use](#how-to-use)
+- [How to use it](#how-to-use)
+- [Basic requirements](#basic-requirements)
+- [Credits](#credits)
+- [Resources](#resources)
+  - [Links](#links)
+  - [Videos](#generating-new-video-with-gps-overlay)
+  - [Gauge Ideas](#gauge-ideas)
 
 ## Overview
 
@@ -43,9 +49,9 @@ Screenshot of the tool:
 
 ## Download
 
-Download the executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/gps-verlay-on-video.jar)
+Download the latest executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/gps-verlay-on-video.jar)
 
-## How to use
+## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
 * Thank you [Schrottie](https://github.com/Schrottie) for creating the [how to in german](https://blog.dafb-o.de/gps-overlay-on-video-howto-anzeige-von-gps-daten-in-videos-mit-linux) 
 
@@ -92,13 +98,15 @@ The application is using libraries and images created by other people or organiz
 * [digital true type fonts](http://www.styleseven.com/) for the gauges with seven segment display
 
 ## Resources
+
+### Links
 Useful links and information
 * [Geographical distance](http://en.wikipedia.org/wiki/Geographical_distance)
 * [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula) and [Versine function](http://en.wikipedia.org/wiki/Versine)
 * [Slope percentage](http://geology.isu.edu/geostac/Field_Exercise/topomaps/slope_calc.htm)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
-## Generating new video with gps overlay
+### Generating new video with gps overlay
 
 After synchronizing the video stream with the gps track (through the shift parameter) everything is prepared to generate a new video:
 
@@ -108,7 +116,7 @@ And here it is :) the first video generated with the software (Zugerberg Classic
 
 [![Zugerberg Classic 2014](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/youtube.png)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 
-## Gauge ideas
+### Gauge ideas
 Besides the basic gauge types (speed, cadence, etc.) showing the current value so called _chart types_ are introduced as well.
 The charts are showing all the data (for example an elevation chart) and the current value.
 
