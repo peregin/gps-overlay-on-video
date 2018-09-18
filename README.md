@@ -13,8 +13,8 @@ GPS data overlay on videos
 _The Ultimate Cycling Software_
 
 ## Table of Contents
-- [Overview](#overview)
 - [Download](#download)
+- [Overview](#overview)
 - [How to use it](#how-to-use)
 - [Basic requirements](#basic-requirements)
 - [Credits](#credits)
@@ -22,6 +22,10 @@ _The Ultimate Cycling Software_
   - [Links](#links)
   - [Videos](#generating-new-video-with-gps-overlay)
   - [Gauge Ideas](#gauge-ideas)
+
+## Download
+
+Download the latest executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/gps-verlay-on-video.jar)
 
 ## Overview
 
@@ -46,10 +50,6 @@ Example of videos generated with the tool, links to youtube:
 Screenshot of the tool:
 
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
-
-## Download
-
-Download the latest executable jar file from here [gps-verlay-on-video.jar](https://github.com/peregin/gps-overlay-on-video/releases/gps-verlay-on-video.jar)
 
 ## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
