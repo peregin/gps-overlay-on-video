@@ -20,7 +20,6 @@ resolvers ++= Seq(
 )
 
 assemblyMergeStrategy in assembly := {
-  case "application.conf" => MergeStrategy.concat
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
