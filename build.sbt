@@ -1,3 +1,6 @@
+import sbtrelease.ReleasePlugin.autoImport._
+import sbtrelease._
+import ReleaseStateTransformations._
 
 organization := "com.github.peregin"
 
@@ -23,7 +26,6 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
-
 assemblyJarName in assembly := "gps-overlay-on-video.jar"
 
 val json4sVersion = "3.5.4"
@@ -31,6 +33,13 @@ val akkaVersion = "2.5.16"
 val specs2Version = "4.3.4"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
+
+lazy val releaseToGh: ReleaseStep = ReleaseStep(
+  action = { st: State =>
+    val extracted = Project.extract(st)
+    extracted.runInputTask(githubRelease, "", st)._1
+  }
+)
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
@@ -40,7 +49,21 @@ lazy val root = (project in file(".")).
     }),
     buildInfoPackage := "info",
     ghreleaseRepoOrg := "peregin",
-    ghreleaseRepoName := "gps-overlay-on-video"
+    ghreleaseRepoName := "gps-overlay-on-video",
+    ghreleaseNotes := (v => s"Release $v"),
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,              // : ReleaseStep
+      inquireVersions,                        // : ReleaseStep
+      runClean,                               // : ReleaseStep
+      runTest,                                // : ReleaseStep
+      setReleaseVersion,                      // : ReleaseStep
+      commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
+      tagRelease,                             // : ReleaseStep
+      releaseToGh,                       // : ReleaseStep, checks whether `publishTo` is properly set up
+      setNextVersion,                         // : ReleaseStep
+      commitNextVersion,                      // : ReleaseStep
+      pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
+    )
   )
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.3"
