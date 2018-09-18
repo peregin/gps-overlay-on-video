@@ -25,6 +25,8 @@ assemblyJarName in assembly := "gps-overlay-on-video.jar"
 assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard
+  case PathList("junit", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
 (test in assembly) := {}
@@ -34,7 +36,7 @@ artifact in(Compile, assembly) := {
 }
 addArtifact(artifact in(Compile, assembly), assembly)
 
-//ReleaseKeys.useDefaults
+publishArtifact in (Compile, packageDoc) := false
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
