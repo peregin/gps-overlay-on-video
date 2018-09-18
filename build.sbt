@@ -1,18 +1,16 @@
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease._
 import ReleaseStateTransformations._
+import sbtassembly.AssemblyPlugin.defaultUniversalScript
 
 organization := "com.github.peregin"
-
 name := "telemetry-on-video"
 
 val entryPoint = "peregin.gpv.App"
 
 mainClass in Compile := Some(entryPoint)
-mainClass in assembly := Some(entryPoint)
 
 scalaVersion := "2.12.6"
-
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
@@ -22,11 +20,21 @@ resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
+mainClass in assembly := Some(entryPoint)
+assemblyJarName in assembly := "gps-overlay-on-video.jar"
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
-assemblyJarName in assembly := "gps-overlay-on-video.jar"
+(test in assembly) := {}
+artifact in(Compile, assembly) := {
+  val art = (artifact in(Compile, assembly)).value
+  art.withClassifier(Some("assembly"))
+}
+addArtifact(artifact in(Compile, assembly), assembly)
+
+//ReleaseKeys.useDefaults
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
@@ -34,15 +42,8 @@ val specs2Version = "4.3.4"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
 
-lazy val releaseToGh: ReleaseStep = ReleaseStep(
-  action = { st: State =>
-    val extracted = Project.extract(st)
-    extracted.runInputTask(githubRelease, "", st)._1
-  }
-)
-
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
+  enablePlugins(BuildInfoPlugin, AssemblyPlugin).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
@@ -59,11 +60,12 @@ lazy val root = (project in file(".")).
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
-      pushChanges,
-      releaseToGh,
+      ReleaseStep(releaseStepTask(assembly)),  // package artifacts
+      pushChanges, // needed fot the GH plugin to use the latest tag
+      ReleaseStep(releaseStepInputTask(githubRelease)),
       setNextVersion,
       commitNextVersion,
-      pushChanges
+      pushChanges // push the next version
     )
   )
 
