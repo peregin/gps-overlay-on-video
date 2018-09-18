@@ -38,7 +38,9 @@ lazy val root = (project in file(".")).
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, BuildInfoKey.action("buildTime") {
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
     }),
-    buildInfoPackage := "info"
+    buildInfoPackage := "info",
+    ghreleaseRepoOrg := "peregin",
+    ghreleaseRepoName := "gps-overlay-on-video"
   )
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.3"
