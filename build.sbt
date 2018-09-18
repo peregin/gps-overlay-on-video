@@ -36,8 +36,7 @@ artifact in(Compile, assembly) := {
 }
 addArtifact(artifact in(Compile, assembly), assembly)
 
-publishArtifact in (Compile, packageDoc) := false
-publishArtifact in (Compile, packageSrc) := false
+publishArtifact := false
 
 val json4sVersion = "3.5.4"
 val akkaVersion = "2.5.16"
@@ -52,8 +51,6 @@ lazy val root = (project in file(".")).
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
     }),
     buildInfoPackage := "info",
-    publish := (),
-    publishLocal := (),
     ghreleaseRepoOrg := "peregin",
     ghreleaseRepoName := "gps-overlay-on-video",
     ghreleaseNotes := (v => s"Release $v"),
