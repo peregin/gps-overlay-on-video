@@ -68,7 +68,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
   statusLabel.text = "Ready"
   statusLabel.border = BorderFactory.createBevelBorder(BevelBorder.LOWERED)
 
-  Goodies.mapEscapeTo(this, handleClose)
+  Goodies.mapEscapeTo(this, () => handleClose())
 
   listenTo(generateButton, closeButton)
   reactions += {

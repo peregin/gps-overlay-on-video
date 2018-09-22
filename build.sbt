@@ -38,7 +38,7 @@ addArtifact(artifact in(Compile, assembly), assembly)
 
 publishArtifact := false // it is done by the assembly plugin
 
-val json4sVersion = "3.5.4"
+val json4sVersion = "3.6.1"
 val akkaVersion = "2.5.16"
 val specs2Version = "4.3.4"
 val logbackVersion = "1.2.3"
@@ -72,6 +72,8 @@ lazy val root = (project in file(".")).
   )
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.3"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
