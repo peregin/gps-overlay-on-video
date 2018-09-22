@@ -41,4 +41,10 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
     log.info(s"opening $file")
     video.refresh(setup)
   }
+
+  // for convenience in testing, try to load the video file if first argument is configured
+  override def main(args: Array[String]) {
+    super.main(args)
+    args.headOption.map(new File(_)).foreach(openVideoFile)
+  }
 }
