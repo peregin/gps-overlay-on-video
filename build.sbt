@@ -12,6 +12,8 @@ mainClass in Compile := Some(entryPoint)
 
 scalaVersion := "2.12.6"
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
+val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
+javaOptions ++= List(macDockNameOpt)
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 
@@ -22,7 +24,7 @@ resolvers ++= Seq(
 
 mainClass in assembly := Some(entryPoint)
 assemblyJarName in assembly := "gps-overlay-on-video.jar"
-assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false)))
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard

@@ -139,7 +139,7 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
     val p = percentage match {
       case a if a > 100d => 100d
       case b if b < 0d => 0d
-      case c => percentage
+      case _ => percentage
     }
 
     val jumpToMillis = p * durationInMillis / 100
