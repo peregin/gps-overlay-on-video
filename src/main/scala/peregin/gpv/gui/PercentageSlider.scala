@@ -27,10 +27,13 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
 
   val defaults: UIDefaults = UIManager.getLookAndFeelDefaults
   val sliderClass = defaults.getUIClass("SliderUI")
-  val xValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
-  xValForPos.setAccessible(true)
+  val methodXValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
+  methodXValForPos.setAccessible(true)
+  val methodIsDragging = classOf[BasicSliderUI].getDeclaredMethod("isDragging")
+  methodIsDragging.setAccessible(true)
 
   @volatile private var sliderChangeFromApi = true
+  @volatile private var ignoreNextChangeEvent = false
 
   peer.setPaintTrack(true)
   peer.setPaintTicks(true)
@@ -40,17 +43,26 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
 
   peer.addMouseListener(new MouseAdapter {
     override def mousePressed(e: MouseEvent) {
-      val xSlider = xValForPos.invoke(peer.getUI, new Integer(e.getX)).asInstanceOf[Integer]
-      val xSlideTo = xSlider.toDouble / 100
-      info(s"sliding to $xSlideTo %")
-      percentage = xSlideTo
+      val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
+      if (!dragging) {
+        val xSlider = methodXValForPos.invoke(peer.getUI, new Integer(e.getX)).asInstanceOf[Integer]
+        val xSlideTo = xSlider.toDouble / 100
+        //debug(s"sliding to $xSlideTo % , when dragging=$dragging, on event $e")
+        ignoreNextChangeEvent = true
+        percentage = xSlideTo // set the slider value
+        publish(new ValueChanged(PercentageSlider.this))
+      }
     }
   })
 
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e: javax.swing.event.ChangeEvent) {
       if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
-        publish(new ValueChanged(PercentageSlider.this))
+        if (ignoreNextChangeEvent) ignoreNextChangeEvent = false
+        else {
+          //debug(s"value changed on event $e")
+          publish(new ValueChanged(PercentageSlider.this))
+        }
       }
     }
   })

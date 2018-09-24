@@ -64,6 +64,7 @@ object PlayerControllerActor {
 class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Listener) extends Actor with FSM[State, PacketReply] with LoggingFSM[State, PacketReply] {
 
   when(Idle) {
+
     case Event(StepCommand, _) => video.readNextFrame match {
       case Some(frame) =>
         log.debug(s"step to ts=${TimePrinter.printDuration(frame.tsInMillis)}")
@@ -71,6 +72,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         stay using frame
       case _ => stay using EndOfStream
     }
+
     case Event(SeekCommand(percentage), _) => video.seek(percentage) match {
       case Some(seekFrame) =>
         log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
@@ -78,28 +80,42 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         stay using seekFrame
       case _ => stay using EndOfStream
     }
+
     case Event(PlayCommand, data) =>
       setTimer("nextread", PlayCommand, 500 millis, repeat = false)
       goto(Running) using data
   }
 
   when(Running) {
+
     case Event(_, data @ EndOfStream) =>
       log.info("end of the stream has been reached")
       goto(Idle) using data
-    case Event(PlayCommand, _) => video.readNextFrame match {
+
+    case Event(PlayCommand, _) =>
+      //log.info("playing")
+      cancelTimer("nextread") // if something was piled up, remove it from the queue
+      video.readNextFrame match {
       case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
-        //log.debug(s"delay is $delay millis")
-        cancelTimer("nextread") // if somthing was piled up, remove it from the queue
         setTimer("nextread", PlayCommand, delay millis, repeat = false)
         stay using frame
       case _ => goto(Idle) using EndOfStream
     }
-    case Event(sc: SeekCommand, data) =>
+
+    case Event(SeekCommand(percentage), data) =>
       cancelTimer("nextread")
-      goto(Idle) using data
+      video.seek(percentage) match {
+        case Some(seekFrame) =>
+          log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
+          handleFrame(seekFrame)
+          video.resetDelay()
+          setTimer("nextread", PlayCommand, 0 millis, repeat = false)
+          stay using seekFrame
+        case _ => stay using EndOfStream
+    }
+
     case Event(PauseCommand, data) =>
       cancelTimer("nextread")
       goto(Idle) using data

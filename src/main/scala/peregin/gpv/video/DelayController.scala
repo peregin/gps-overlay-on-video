@@ -7,7 +7,7 @@ trait DelayController extends Logging {
   @volatile private var prevVideoTs: Option[Long] = None
   @volatile private var prevClockTs: Option[Long] = None
 
-  def reset() {
+  def resetDelay() {
     prevVideoTs = None
     prevClockTs = None
   }
