@@ -33,7 +33,6 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   methodIsDragging.setAccessible(true)
 
   @volatile private var sliderChangeFromApi = true
-  @volatile private var ignoreNextChangeEvent = false
 
   peer.setPaintTrack(true)
   peer.setPaintTicks(true)
@@ -47,10 +46,8 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
       if (!dragging) {
         val xSlider = methodXValForPos.invoke(peer.getUI, new Integer(e.getX)).asInstanceOf[Integer]
         val xSlideTo = xSlider.toDouble / 100
-        //debug(s"sliding to $xSlideTo % , when dragging=$dragging, on event $e")
-        ignoreNextChangeEvent = true
+        //debug(s"EVENT-M: sliding to $xSlideTo % , when dragging=$dragging, on event $e")
         percentage = xSlideTo // set the slider value
-        publish(new ValueChanged(PercentageSlider.this))
       }
     }
   })
@@ -58,11 +55,8 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e: javax.swing.event.ChangeEvent) {
       if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
-        if (ignoreNextChangeEvent) ignoreNextChangeEvent = false
-        else {
-          //debug(s"value changed on event $e")
-          publish(new ValueChanged(PercentageSlider.this))
-        }
+        //debug(s"EVENT-C: value changed on event $e")
+        publish(new ValueChanged(PercentageSlider.this))
       }
     }
   })
