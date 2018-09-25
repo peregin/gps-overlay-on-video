@@ -1,6 +1,6 @@
 package peregin.gpv.gui
 
-import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
 
 import javax.swing.JSlider
 import peregin.gpv.util.Logging
@@ -33,6 +33,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   methodIsDragging.setAccessible(true)
 
   @volatile private var sliderChangeFromApi = true
+  @volatile private var lastEventX = 0
 
   peer.setPaintTrack(true)
   peer.setPaintTicks(true)
@@ -40,12 +41,23 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   peer.setMinorTickSpacing(100)
   peer.setSnapToTicks(false)
 
+  peer.addMouseMotionListener(new MouseMotionAdapter {
+
+    override def mouseDragged(e: MouseEvent) {
+      val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
+      if (dragging) {
+        lastEventX = e.getX
+      }
+    }
+  })
+
   peer.addMouseListener(new MouseAdapter {
+
     override def mousePressed(e: MouseEvent) {
       val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
       if (!dragging) {
-        val xSlider = methodXValForPos.invoke(peer.getUI, new Integer(e.getX)).asInstanceOf[Integer]
-        val xSlideTo = xSlider.toDouble / 100
+        lastEventX = e.getX()
+        val xSlideTo = calculatePercentage(lastEventX)
         //debug(s"EVENT-M: sliding to $xSlideTo % , when dragging=$dragging, on event $e")
         percentage = xSlideTo // set the slider value
       }
@@ -55,7 +67,9 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e: javax.swing.event.ChangeEvent) {
       if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
-        //debug(s"EVENT-C: value changed on event $e")
+        val xSlideTo = calculatePercentage(lastEventX)
+        //debug(s"EVENT-C: value changed[$xSlideTo] on event $e")
+        // FIXME: publish custom event with value xSlideTo
         publish(new ValueChanged(PercentageSlider.this))
       }
     }
@@ -66,5 +80,10 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
     sliderChangeFromApi = true
     peer.setValue((v * 100).toInt)
     sliderChangeFromApi = false
+  }
+
+  private def calculatePercentage(x: Int): Double = {
+    val xSlider = methodXValForPos.invoke(peer.getUI, new Integer(x)).asInstanceOf[Integer]
+    xSlider.toDouble / 100
   }
 }
