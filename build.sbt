@@ -6,7 +6,7 @@ import sbtassembly.AssemblyPlugin.defaultUniversalScript
 organization := "com.github.peregin"
 name := "telemetry-on-video"
 
-val entryPoint = "peregin.gpv.App"
+val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 mainClass in Compile := Some(entryPoint)
 

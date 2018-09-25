@@ -4,7 +4,7 @@ import java.io.File
 import peregin.gpv.util.Logging
 import scala.swing._
 import scala.swing.event.ButtonClicked
-import peregin.gpv.App
+import peregin.gpv.GpsOverlayApp
 import javax.swing.filechooser.FileNameExtensionFilter
 
 
@@ -27,7 +27,7 @@ class FileChooserPanel(info: String, action: File => Unit, filter: FileNameExten
     chooser.fileFilter = filter
     chooser.title = info
     val openFunc: (Component) => FileChooser.Result.Value = if (openDialog) chooser.showOpenDialog else chooser.showSaveDialog
-    if (openFunc(App.frame.contents.head) == FileChooser.Result.Approve) {
+    if (openFunc(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       log.debug(s"opening ${file.getAbsolutePath}")
       action(file)

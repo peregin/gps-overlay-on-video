@@ -18,7 +18,7 @@ import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
 
 
-object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
+object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
 
   log.info("initializing...")
 
@@ -93,9 +93,9 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
 
   frame.title = s"GPS data overlay onto video - built ${BuildInfo.buildTime}"
   frame.iconImage = Io.loadImage("images/video.png")
-  frame.size = new Dimension(1024, 768)
+  frame.size = new Dimension(1500, 1000)
   Goodies.center(frame)
-  frame.maximize()
+  //frame.maximize()
 
   def top = frame
 
@@ -121,7 +121,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     val chooser = new FileChooser()
     chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Open project:"
-    if (chooser.showOpenDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
+    if (chooser.showOpenDialog(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       val path = file.getAbsolutePath
       debug(s"opening $path")
@@ -149,7 +149,7 @@ object App extends SimpleSwingApplication with DashboardPainter with VideoPlayer
     val chooser = new FileChooser()
     chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Save project:"
-    if (chooser.showSaveDialog(App.frame.contents.head) == FileChooser.Result.Approve) {
+    if (chooser.showSaveDialog(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       if (!file.exists() ||
           (file.exists() && Dialog.showConfirmation(frame.contents(0), "Do you want to overwrite the file?", "File already exists", Dialog.Options.YesNo) ==  Dialog.Result.Yes)) {
