@@ -39,7 +39,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
 
   listenTo(slider)
   reactions += {
-    case ValueChanged(`slider`) => player.foreach(_.seek(slider.percentage))
+    case SliderChanged(`slider`, percentage) => player.foreach(_.seek(percentage))
   }
 
   @volatile private var player: Option[VideoPlayer] = None
@@ -75,6 +75,10 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
         videoEvent(ts, percentage, rawImage)
       }
     }
+  }
+
+  override def seekEvent(percentage: Double) {
+    slider.percentage = percentage
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {

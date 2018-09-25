@@ -18,6 +18,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   Goodies.initLookAndFeel()
 
   val video = new VideoPanel(openVideoFile, new VideoPlayer.Listener() {
+    override def seekEvent(percentage: Double) {}
     override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {}
     override def videoStarted() {}
     override def videoStopped() {}

@@ -7,7 +7,10 @@ import java.awt.image.BufferedImage
 // implementation can be easily replaced (media vs tool based implementation form xuggler or something completely different)
 object VideoPlayer {
   trait Listener {
+
     def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage)
+    def seekEvent(percentage: Double)
+
     def videoStopped()
     def videoStarted()
   }

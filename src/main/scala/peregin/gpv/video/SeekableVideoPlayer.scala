@@ -93,7 +93,6 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       goto(Idle) using data
 
     case Event(PlayCommand, _) =>
-      //log.info("playing")
       cancelTimer("nextread") // if something was piled up, remove it from the queue
       video.readNextFrame match {
       case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
@@ -106,11 +105,13 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
 
     case Event(SeekCommand(percentage), data) =>
       cancelTimer("nextread")
+      handleSeek(percentage)
+
       video.seek(percentage) match {
         case Some(seekFrame) =>
           log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
-          handleFrame(seekFrame)
           video.resetDelay()
+          //handleFrame(seekFrame)
           setTimer("nextread", PlayCommand, 0 millis, repeat = false)
           stay using seekFrame
         case _ => stay using EndOfStream
@@ -141,5 +142,9 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
 
   private def handleFrame(frame: FrameIsReady) {
     listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
+  }
+
+  private def handleSeek(percentage: Double) {
+    listener.seekEvent(percentage)
   }
 }

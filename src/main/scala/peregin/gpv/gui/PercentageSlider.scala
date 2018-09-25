@@ -5,8 +5,14 @@ import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
 import javax.swing.JSlider
 import peregin.gpv.util.Logging
 
-import scala.swing.event.ValueChanged
+import scala.swing.event.ComponentEvent
 import scala.swing.{Component, Orientable, Publisher}
+
+object SliderChanged {
+  def unapply(a: SliderChanged): Option[(Component, Double)] = Some((a.source, a.percentage))
+}
+
+case class SliderChanged(override val source: Component, percentage: Double) extends ComponentEvent
 
 /**
  * Stores a percentage value with 2 decimal places.
@@ -58,7 +64,6 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
       if (!dragging) {
         lastEventX = e.getX()
         val xSlideTo = calculatePercentage(lastEventX)
-        //debug(s"EVENT-M: sliding to $xSlideTo % , when dragging=$dragging, on event $e")
         percentage = xSlideTo // set the slider value
       }
     }
@@ -68,9 +73,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
     def stateChanged(e: javax.swing.event.ChangeEvent) {
       if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
         val xSlideTo = calculatePercentage(lastEventX)
-        //debug(s"EVENT-C: value changed[$xSlideTo] on event $e")
-        // FIXME: publish custom event with value xSlideTo
-        publish(new ValueChanged(PercentageSlider.this))
+        publish(new SliderChanged(PercentageSlider.this, xSlideTo))
       }
     }
   })

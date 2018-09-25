@@ -137,6 +137,8 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     close()
   }
 
+  override def seekEvent(percentage: Double) {}
+
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
     paintGauges(telemetry, tsInMillis, image, setup.shift, setup.transparency, setup.units)
 

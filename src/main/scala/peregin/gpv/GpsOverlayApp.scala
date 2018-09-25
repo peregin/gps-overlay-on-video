@@ -186,6 +186,8 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     }
   }
 
+  override def seekEvent(percentage: Double) {}
+
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
     paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage, unitChooser.selection.item)
     Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
