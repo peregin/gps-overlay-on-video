@@ -103,7 +103,7 @@ The application is using libraries and images created by other people or organiz
 Useful links and information
 * [Geographical distance](http://en.wikipedia.org/wiki/Geographical_distance)
 * [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula) and [Versine function](http://en.wikipedia.org/wiki/Versine)
-* [Slope percentage](http://geology.isu.edu/geostac/Field_Exercise/topomaps/slope_calc.htm)
+* [Slope calculation](https://www.calculator.net/slope-calculator.html)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
 
 ### Generating new video with gps overlay
