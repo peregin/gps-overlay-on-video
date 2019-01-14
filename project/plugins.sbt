@@ -9,7 +9,7 @@ addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.2.4")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
 
 // check latest updates form maven
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.3")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.4")
 
 // generates build information, timestamp
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.7.0")
@@ -25,3 +25,6 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.8")
 
 // github publishing
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
+
+// Library to fetch dependencies from Maven / Ivy repositories super fast - 1.1.0-M4
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.3")
