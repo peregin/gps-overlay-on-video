@@ -82,7 +82,7 @@ class TelemetrySpec extends Specification with Logging {
     }
   }
 
-  "telemetry cycling data from Stelvio collected with Strava" in {
+  "telemetry cycling data from Stelvio collected with Strava" should {
     // activity tracked:
     // http://app.strava.com/activities/78985204 - exact data
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/stelvio.gpx")))
@@ -107,7 +107,7 @@ class TelemetrySpec extends Specification with Logging {
     }
   }
 
-  "telemetry cycling data along Sihl river collected with Garmin 510" in {
+  "telemetry cycling data along Sihl river collected with Garmin 510" should {
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/sample.gpx")))
 
     "calculate min max" in {
@@ -119,7 +119,7 @@ class TelemetrySpec extends Specification with Logging {
     }
   }
 
-  "telemetry cycling data with power meter and heart rate from Iron Bike Einsiedeln 2017 and Garmin Edge 820" in {
+  "telemetry cycling data with power meter and heart rate from Iron Bike Einsiedeln 2017 and Garmin Edge 820" should {
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/power-and-heart.gpx")))
 
     "calculate min max" in {
@@ -128,6 +128,14 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.powerBoundary === MinMax(5, 363)
       telemetry.track.head.extension.power must beSome(205d)
       telemetry.track.head.extension.heartRate must beSome(160d)
+    }
+  }
+
+  "telemetry data having trackpoint without elevation" should {
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/20190517_221037.gpx")))
+
+    "be parsed" in {
+      telemetry.track must haveSize(2516)
     }
   }
 }

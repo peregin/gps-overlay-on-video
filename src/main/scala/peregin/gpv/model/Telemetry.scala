@@ -6,6 +6,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.{Logging, Timed}
 
+import scala.util.Try
 import scala.xml.{Node, XML}
 
 /**
@@ -37,14 +38,18 @@ object Telemetry extends Timed with Logging {
 
   def loadWith(loadFunc: => Node): Telemetry = timed("load telemetry") {
     val rootNode = loadFunc
-    val points = (rootNode \ "trk" \ "trkseg" \ "trkpt").map{ node =>
-      val lat = (node \ "@lat").text.toDouble
-      val lon = (node \ "@lon").text.toDouble
-      val time = (node \ "time").text
-      val elevation = (node \ "ele").text.toDouble
-      val extension = (node \ "extensions")
-      TrackPoint(new GeoPosition(lat, lon), elevation,
-        DateTime.parse(time), GarminExtension.parse(extension))
+    val points = (rootNode \ "trk" \ "trkseg" \ "trkpt").flatMap{ node =>
+      Try {
+        val lat = (node \ "@lat").text.toDouble
+        val lon = (node \ "@lon").text.toDouble
+        val time = (node \ "time").text
+        val elevation = (node \ "ele").text.toDouble
+        val extension = (node \ "extensions")
+        TrackPoint(
+          new GeoPosition(lat, lon), elevation,
+          DateTime.parse(time), GarminExtension.parse(extension)
+        )
+      }.toOption
     }.toVector
 
     // Important: points are stored in a <b>Vector</b>, allows to efficiently access an element at an arbitrary position
