@@ -40,7 +40,7 @@ addArtifact(artifact in(Compile, assembly), assembly)
 
 publishArtifact := false // it is done by the assembly plugin
 
-val json4sVersion = "3.6.2"
+val json4sVersion = "3.6.7"
 val akkaVersion = "2.5.18"
 val specs2Version = "4.3.5"
 val logbackVersion = "1.2.3"
@@ -101,7 +101,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.1"
+libraryDependencies += "joda-time" % "joda-time" % "2.10.2"
 
 libraryDependencies += "org.joda" % "joda-convert" % "2.1.2"
 
