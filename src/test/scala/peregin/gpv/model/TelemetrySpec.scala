@@ -1,12 +1,22 @@
 package peregin.gpv.model
 
 import org.specs2.mutable.Specification
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{DateTime, DateTimeZone}
+import org.specs2.matcher.{Expectable, MatchResult, Matcher, SignificantFigures}
 import peregin.gpv.util.Logging
+
 import scala.xml.XML
 
 
 class TelemetrySpec extends Specification with Logging {
+
+  def beCloseTo(ref: MinMax, figures: SignificantFigures): Matcher[MinMax] = new Matcher[MinMax] {
+    def apply[T <: MinMax](e: Expectable[T]): MatchResult[T] = {
+      val res1 = e.value.min must beCloseTo(ref.min within figures).updateMessage(s => s"min value $s")
+      val res2 = e.value.max must beCloseTo(ref.max within figures).updateMessage(s => s"max value $s")
+      result(res1 and res2, e)
+    }
+  }
 
   "telemetry data with 2 track points" should {
     val track = Seq(
@@ -61,8 +71,8 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.latitudeBoundary === MinMax(47.231995, 47.310311)
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
       telemetry.totalDistance === 25.969048381307253
-      telemetry.speedBoundary === MinMax(0.07879420148031871, 86.28724568098714)
-      telemetry.gradeBoundary === MinMax(-35.5112900107015, 38.58484806897635)
+      telemetry.speedBoundary must beCloseTo(MinMax(0.07879420148031871, 86.28724568098714), 6.significantFigures)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-35.5112900107015, 38.58484806897635), 6.significantFigures)
       telemetry.cadenceBoundary === MinMax(0, 120)
       telemetry.temperatureBoundary === MinMax(6, 14)
       telemetry.heartRateBoundary === MinMax(104, 175)
@@ -92,7 +102,7 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
       telemetry.speedBoundary.max must beCloseTo(85.56435201871793 within 6.significantFigures)
       telemetry.totalDistance must beCloseTo(63.23256444282121 within 6.significantFigures)
-      telemetry.gradeBoundary === MinMax(-38.71463504215173, 114.48149716420424)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-38.71463504215173, 114.48149716420424), 6.significantFigures)
     }
   }
 
@@ -115,7 +125,7 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.elevationBoundary === MinMax(452.6, 513.2)
       telemetry.speedBoundary.max must beCloseTo(33.471772761781544 within 6.significantFigures)
       telemetry.totalDistance must beCloseTo(12.492226904069824 within 6.significantFigures)
-      telemetry.gradeBoundary === MinMax(-6.504534982064397, 11.890875118231593)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-6.504534982064397, 11.890875118231593), 6.significantFigures)
     }
   }
 
