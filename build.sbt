@@ -44,7 +44,7 @@ val json4sVersion = "3.6.7"
 val akkaVersion = "2.5.24"
 val specs2Version = "4.7.0"
 val logbackVersion = "1.2.3"
-val batikVersion = "1.10" // svg manipulation
+val batikVersion = "1.11" // svg manipulation
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin, AssemblyPlugin).
