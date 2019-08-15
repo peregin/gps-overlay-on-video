@@ -41,8 +41,8 @@ addArtifact(artifact in(Compile, assembly), assembly)
 publishArtifact := false // it is done by the assembly plugin
 
 val json4sVersion = "3.6.7"
-val akkaVersion = "2.5.18"
-val specs2Version = "4.3.5"
+val akkaVersion = "2.5.24"
+val specs2Version = "4.7.0"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.10" // svg manipulation
 
