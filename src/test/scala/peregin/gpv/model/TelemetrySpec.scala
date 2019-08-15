@@ -90,8 +90,8 @@ class TelemetrySpec extends Specification with Logging {
     "calculate min max" in {
       telemetry.track must haveSize(9558)
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
-      telemetry.speedBoundary.max === 85.56435201871793
-      telemetry.totalDistance === 63.23256444282121
+      telemetry.speedBoundary.max must beCloseTo(85.56435201871793 within 6.significantFigures)
+      telemetry.totalDistance must beCloseTo(63.23256444282121 within 6.significantFigures)
       telemetry.gradeBoundary === MinMax(-38.71463504215173, 114.48149716420424)
     }
   }
@@ -102,8 +102,8 @@ class TelemetrySpec extends Specification with Logging {
     "calculate min max" in {
       telemetry.track must haveSize(1009)
       telemetry.elevationBoundary === MinMax(442.0, 447.0)
-      telemetry.speedBoundary.max === 23.656438316953857
-      telemetry.totalDistance === 4.234620202017025
+      telemetry.speedBoundary.max must beCloseTo(23.656438316953857 within 6.significantFigures)
+      telemetry.totalDistance must beCloseTo(4.234620202017025 within 6.significantFigures)
     }
   }
 
@@ -113,8 +113,8 @@ class TelemetrySpec extends Specification with Logging {
     "calculate min max" in {
       telemetry.track must haveSize(674)
       telemetry.elevationBoundary === MinMax(452.6, 513.2)
-      telemetry.speedBoundary.max === 33.471772761781544
-      telemetry.totalDistance === 12.492226904069824
+      telemetry.speedBoundary.max must beCloseTo(33.471772761781544 within 6.significantFigures)
+      telemetry.totalDistance must beCloseTo(12.492226904069824 within 6.significantFigures)
       telemetry.gradeBoundary === MinMax(-6.504534982064397, 11.890875118231593)
     }
   }
