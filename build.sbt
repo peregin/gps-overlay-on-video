@@ -10,7 +10,7 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 mainClass in Compile := Some(entryPoint)
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.9"
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
 javaOptions ++= List(macDockNameOpt)
