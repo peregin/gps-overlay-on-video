@@ -2,6 +2,7 @@ resolvers += "staged dependency-graph" at "https://oss.sonatype.org/content/repo
 
 resolvers += "oss snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
+// because of Java 11
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 
 // eclipse support
