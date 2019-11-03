@@ -10,7 +10,7 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 mainClass in Compile := Some(entryPoint)
 
-scalaVersion := "2.12.9"
+scalaVersion := "2.12.10"
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
 javaOptions ++= List(macDockNameOpt)
@@ -41,8 +41,8 @@ addArtifact(artifact in(Compile, assembly), assembly)
 publishArtifact := false // it is done by the assembly plugin
 
 val json4sVersion = "3.6.7"
-val akkaVersion = "2.5.24"
-val specs2Version = "4.7.0"
+val akkaVersion = "2.5.26"
+val specs2Version = "4.8.0"
 val logbackVersion = "1.2.3"
 val batikVersion = "1.11" // svg manipulation
 
@@ -73,9 +73,9 @@ lazy val root = (project in file(".")).
     )
   )
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.3"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.1.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
@@ -101,9 +101,9 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.2"
+libraryDependencies += "joda-time" % "joda-time" % "2.10.5"
 
-libraryDependencies += "org.joda" % "joda-convert" % "2.1.2"
+libraryDependencies += "org.joda" % "joda-convert" % "2.2.1"
 
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 
@@ -118,3 +118,4 @@ libraryDependencies += "org.specs2" %% "specs2-mock" % specs2Version % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % akkaVersion % "test"
 
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"
+
