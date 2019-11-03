@@ -109,6 +109,9 @@ libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVers
 
 libraryDependencies += "com.google.guava" % "guava" % "23.0"
 
+// deprecated from Java 9, needs to be added when
+libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
+
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"
 
 libraryDependencies += "org.specs2" %% "specs2-scalacheck" % specs2Version % "test"
