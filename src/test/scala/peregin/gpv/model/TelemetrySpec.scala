@@ -141,11 +141,19 @@ class TelemetrySpec extends Specification with Logging {
     }
   }
 
-  "telemetry data having trackpoint without elevation" should {
+  "telemetry data having a few trackpoints without elevation nodes" should {
     val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/20190517_221037.gpx")))
 
     "be parsed" in {
-      telemetry.track must haveSize(2516)
+      telemetry.track must haveSize(2522)
+    }
+  }
+
+  "telemetry data without any elevation" should {
+    val telemetry = Telemetry.loadWith(XML.load(getClass.getResource("/gps/noelevation.gpx")))
+
+    "be parsed" in {
+      telemetry.track must haveSize(179)
     }
   }
 }

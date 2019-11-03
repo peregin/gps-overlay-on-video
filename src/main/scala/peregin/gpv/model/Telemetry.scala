@@ -43,7 +43,8 @@ object Telemetry extends Timed with Logging {
         val lat = (node \ "@lat").text.toDouble
         val lon = (node \ "@lon").text.toDouble
         val time = (node \ "time").text
-        val elevation = (node \ "ele").text.toDouble
+        // some devices are not tracking the elevation, default it 0
+        val elevation = Try((node \ "ele").text.toDouble).toOption.getOrElse(0d)
         val extension = (node \ "extensions")
         TrackPoint(
           new GeoPosition(lat, lon), elevation,
