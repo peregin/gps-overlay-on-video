@@ -15,7 +15,8 @@ _The Ultimate Cycling Software_
 ## Table of Contents
 - [Download](#download)
 - [Overview](#overview)
-- [How to use it](#how-to-use)
+- [How to run it](#how-to-run-it)
+- [How to use it](#how-to-use-it)
 - [Basic requirements](#basic-requirements)
 - [Credits](#credits)
 - [Resources](#resources)
@@ -26,6 +27,11 @@ _The Ultimate Cycling Software_
 ## Download
 
 Download the latest executable jar file (gps-overlay-on-video.jar) from [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/)
+Only `java` is needed to run the application as follows:
+```shell script
+java -jar gps-overlay-on-video.jar
+```
+There are other options to run the application see [How to run it](#how-to-run-it) section.
 
 ## Overview
 
@@ -50,6 +56,19 @@ Example of videos generated with the tool, links to youtube:
 Screenshot of the tool:
 
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
+
+## How to run it
+The released packages are published regularly [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/). 
+The easiest way to run the application having just `java` installed:
+```shell script
+run.sh
+```
+The script will download the latest version published on github and will run it.
+
+if you have the `scala` environment installed, you can run it with:
+```shell script
+sbt run
+``` 
 
 ## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
