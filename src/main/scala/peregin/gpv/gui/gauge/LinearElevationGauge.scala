@@ -10,9 +10,9 @@ trait LinearElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(728, MinMax(592, 1718))
   override def defaultInput = dummy
-  override def sample(sonda: Sonda) {input = sonda.elevation}
+  override def sample(sonda: Sonda): Unit = input = sonda.elevation
 
-  override def paint(g: Graphics2D, w: Int, h: Int) = {
+  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
     super.paint(g, w, h)
 
     val box = math.min(w, h)

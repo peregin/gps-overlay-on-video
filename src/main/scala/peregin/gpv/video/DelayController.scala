@@ -7,7 +7,7 @@ trait DelayController extends Logging {
   @volatile private var prevVideoTs: Option[Long] = None
   @volatile private var prevClockTs: Option[Long] = None
 
-  def resetDelay() {
+  def resetDelay(): Unit = {
     prevVideoTs = None
     prevClockTs = None
   }
@@ -27,7 +27,7 @@ trait DelayController extends Logging {
     delay.max(0)
   }
 
-  def waitIfNeeded(videoTsInMillis: Long) {
+  def waitIfNeeded(videoTsInMillis: Long): Unit = {
     val delay = markDelay(videoTsInMillis)
     if (delay > 0) {
       //debug(s"ts = ${TimePrinter.printDuration(videoTsInMillis)}, prevVideoTs = ${TimePrinter.printDuration(prevVideoTs)}, prevClockTs = ${TimePrinter.printTime(prevClockTs)}")

@@ -8,19 +8,19 @@ class ImagePanel extends JPanel {
   var image: Option[Image] = None
   var topImage: Option[Image] = None
 
-  def show(im: Image) {
+  def show(im: Image): Unit = {
     show(im, None)
   }
 
   // imTop expected to have the same size as im
   // allows to paint a normal and top layer
-  def show(im: Image, imTop: Option[Image]) {
+  def show(im: Image, imTop: Option[Image]): Unit = {
     image = Some(im)
     topImage = imTop
     repaint()
   }
 
-  override def paint(g: Graphics) = {
+  override def paint(g: Graphics): Unit = {
     val width = getWidth
     val height = getHeight
     g.setColor(Color.black)

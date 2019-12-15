@@ -26,22 +26,20 @@ trait GaugePainter {
     }
   }
 
-  final def paint(g: Graphics2D, w: Int, h: Int, sonda: Sonda) {
+  final def paint(g: Graphics2D, w: Int, h: Int, sonda: Sonda): Unit = {
     sample(sonda)
     paint(g, w, h)
   }
 
   // each implementation should extract the desired input data from the sonda
   // e.g. speed gauge extracts speed input, etc.
-  def sample(sonda: Sonda)
+  def sample(sonda: Sonda): Unit
 
   // each implementation should provide the default values used for testing or to show a sample in the gauges' list
   def defaultInput: InputValue
 
-  def input = currentInput.getOrElse(defaultInput)
-  def input_= (v: InputValue) {
-    currentInput = Some(v)
-  }
+  def input: InputValue = currentInput.getOrElse(defaultInput)
+  def input_= (v: InputValue): Unit = currentInput = Some(v)
 
   def debug = debugging
   def debug_= (v: Boolean) = debugging = v
@@ -49,7 +47,7 @@ trait GaugePainter {
   def units = displayUnits
   def units_= (v: String) = displayUnits = v
 
-  def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow) {
+  def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow): Unit = {
     val ix = x.toInt
     val iy = y.toInt
     g.setColor(Color.black)
@@ -58,7 +56,7 @@ trait GaugePainter {
     g.drawString(text, ix, iy)
   }
 
-  def colorBasedOnInput = input match {
+  def colorBasedOnInput: Color = input match {
     case _ if input.isInTop(10) => Color.red
     case _ if input.isInTop(20) => Color.yellow
     case _ if input.isInTop(50) => Color.green

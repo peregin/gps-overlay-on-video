@@ -13,7 +13,7 @@ trait DashboardPainter {
   val heartRateGauge = new SvgHeartRateGauge {}
   val powerGauge = new SvgPowerGauge {}
 
-  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String) {
+  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String): Unit = {
 
     val g = image.createGraphics
 

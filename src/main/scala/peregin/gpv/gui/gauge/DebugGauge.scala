@@ -12,10 +12,10 @@ trait DebugGauge extends GaugePainter {
   lazy val bugImage = Io.loadImage("images/bug.png")
   var current: Option[Sonda] = None
 
-  override def defaultInput = InputValue.zero
+  override def defaultInput: InputValue = InputValue.zero
 
 
-  override def sample(sonda: Sonda) {
+  override def sample(sonda: Sonda): Unit = {
     current = Some(sonda)
   }
 

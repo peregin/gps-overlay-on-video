@@ -38,7 +38,7 @@ case class TrackPoint(position: GeoPosition,
   // average grade (expressed in percentage) or steepness of the segment between previous and current track points
   var grade = 0d
 
-  def analyze(next: TrackPoint, prevs: Seq[TrackPoint]) {
+  def analyze(next: TrackPoint, prevs: Seq[TrackPoint]): Unit = {
     segment = distanceTo(next)
     next.distance = distance + segment
     val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours

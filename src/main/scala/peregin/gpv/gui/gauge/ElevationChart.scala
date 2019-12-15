@@ -27,12 +27,10 @@ trait ElevationChart extends ChartPainter with KnobPainter {
   def elevationMode = mode
 
   // extract the data needed
-  override def sample(sonda: Sonda) {
-    progress = Some(sonda)
-  }
+  override def sample(sonda: Sonda): Unit = progress = Some(sonda)
 
   // for the test mode
-  override def input_=(v: InputValue) {
+  override def input_=(v: InputValue): Unit = {
     super.input_=(v)
     progress = telemetry.distanceForProgress(v.current).map(telemetry.sondaForDistance)
   }
@@ -40,7 +38,7 @@ trait ElevationChart extends ChartPainter with KnobPainter {
   // default value to be shown
   override def defaultInput = InputValue(30, MinMax(0, 100))
 
-  override def paint(g: Graphics2D, width: Int, height: Int) {
+  override def paint(g: Graphics2D, width: Int, height: Int): Unit = {
     super.paint(g, width, height)
 
     val elevFm = g.getFontMetrics(elevFont)

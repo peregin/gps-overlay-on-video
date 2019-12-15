@@ -7,8 +7,8 @@ import peregin.gpv.util.UnitConverter
 trait DigitalSpeedGauge extends DigitalGauge {
 
   lazy val dummy = InputValue(23.52, MinMax(0, 71))
-  override def defaultInput = dummy
-  override def sample(sonda: Sonda) {input = sonda.speed}
+  override def defaultInput: InputValue = dummy
+  override def sample(sonda: Sonda): Unit = input = sonda.speed
 
   override def valueText() = f"${UnitConverter.distance(input.current, units)}%2.1f"
 

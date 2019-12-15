@@ -30,11 +30,11 @@ object WidgetManualTest extends SimpleSwingApplication with Logging {
     size = new Dimension(1024, 768)
   }
 
-  def test() {
+  def test(): Unit = {
     Goodies.showBusy(frame){ Thread.sleep(2000) }
   }
 
-  def someTest() {
+  def someTest(): Unit = {
     println("hello")
   }
 }

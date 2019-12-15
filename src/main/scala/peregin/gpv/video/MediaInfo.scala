@@ -7,7 +7,7 @@ import peregin.gpv.util.Logging
 
 object MediaInfo extends Logging {
 
-  def logInfo(mr: IMediaReader) {
+  def logInfo(mr: IMediaReader): Unit = {
     // show some video info
     val container = mr.getContainer
     info(s"duration = ${container.getDuration/1000} millis")

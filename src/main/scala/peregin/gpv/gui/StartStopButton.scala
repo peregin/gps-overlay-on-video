@@ -20,13 +20,13 @@ class StartStopButton[T](playImage: String, playTooltip: String, stopImage: Stri
 
   def isPlaying = playing
 
-  def play() {
+  def play(): Unit = {
     playing = true
     setToolTipText(stopTooltip)
     setIcon(stopIcon)
   }
 
-  def stop() {
+  def stop(): Unit = {
     playing = false
     setToolTipText(playTooltip)
     setIcon(playIcon)

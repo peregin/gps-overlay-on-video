@@ -27,7 +27,7 @@ class PictureResizer(dWidth: Int, dHeight: Int) extends MediaToolAdapter {
 
   private var videoResampler: Option[IVideoResampler] = None
 
-  override def onVideoPicture(event: IVideoPictureEvent) {
+  override def onVideoPicture(event: IVideoPictureEvent): Unit = {
     val pic = event.getPicture
 
     if (videoResampler.isEmpty) {

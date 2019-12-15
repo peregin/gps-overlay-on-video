@@ -8,7 +8,7 @@ trait SvgDistanceGauge extends SvgGauge {
   lazy val dummy = InputValue(80.21, MinMax(0, 123.4))
   override def defaultInput = dummy
 
-  override def sample(sonda: Sonda) {input = sonda.distance}
+  override def sample(sonda: Sonda): Unit = input = sonda.distance
 
   override def imagePath = "images/road.svg"
 

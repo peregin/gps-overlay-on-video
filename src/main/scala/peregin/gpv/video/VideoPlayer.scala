@@ -8,20 +8,20 @@ import java.awt.image.BufferedImage
 object VideoPlayer {
   trait Listener {
 
-    def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage)
-    def seekEvent(percentage: Double)
+    def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit
+    def seekEvent(percentage: Double): Unit
 
-    def videoStopped()
-    def videoStarted()
+    def videoStopped(): Unit
+    def videoStarted(): Unit
   }
 }
 
 trait VideoPlayer {
-  def play()
-  def step()
-  def pause()
-  def seek(percentage: Double)
-  def close()
+  def play(): Unit
+  def step(): Unit
+  def pause(): Unit
+  def seek(percentage: Double): Unit
+  def close(): Unit
   def duration: Long // retrieves the duration of the video stream in millis
   def playing: Boolean // tells whether the player is on or not
 }

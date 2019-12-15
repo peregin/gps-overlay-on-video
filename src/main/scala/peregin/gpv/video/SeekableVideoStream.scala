@@ -68,11 +68,11 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
   val packet = IPacket.make()
 
 
-  def readPacket: Stream[PacketReply] = {
+  def readPacket: LazyList[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
-      if (packet.getStreamIndex == videoStreamId) Stream.cons(readVideo, readPacket)
-      else Stream.cons(ReadInProgress, readPacket)
-    } else Stream.cons(EndOfStream, Stream.empty)
+      if (packet.getStreamIndex == videoStreamId) LazyList.cons(readVideo, readPacket)
+      else LazyList.cons(ReadInProgress, readPacket)
+    } else LazyList.cons(EndOfStream, LazyList.empty)
   }
 
   private[this] def readVideo: PacketReply = {
@@ -157,7 +157,7 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
     closestFrameOption orElse keyFrameOption
   }
 
-  def close() {
+  def close(): Unit = {
     if (videoCoder != null) videoCoder.close()
     if (container != null) container.close()
   }

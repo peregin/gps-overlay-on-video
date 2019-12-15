@@ -27,7 +27,7 @@ object TelemetryPanelManualTest extends SimpleSwingApplication with Logging {
   frame.size = new Dimension(800, 600)
   Goodies.center(frame)
 
-  def openGpsFile(file: File) {
+  def openGpsFile(file: File): Unit = {
     val setup = Setup.empty
     setup.gpsPath = Some(file.getAbsolutePath)
     log.info(s"opening $file")

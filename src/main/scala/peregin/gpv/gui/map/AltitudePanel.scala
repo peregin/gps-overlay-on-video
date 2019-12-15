@@ -44,21 +44,21 @@ class AltitudePanel extends Panel with ElevationChart with Logging {
     (x - gridLeft).toDouble * 100 / (gridRight - gridLeft)
   }
 
-  def refresh(telemetry: Telemetry) {
+  def refresh(telemetry: Telemetry): Unit = {
     this.telemetry = telemetry
   }
 
-  def refresh(mode: Mode) {
+  def refresh(mode: Mode): Unit = {
     this.mode = mode
     repaint()
   }
 
-  def refreshPoi(sonda: Option[Sonda]) {
+  def refreshPoi(sonda: Option[Sonda]): Unit = {
     poi = sonda
     repaint()
   }
 
-  def refreshProgress(sonda: Option[Sonda]) {
+  def refreshProgress(sonda: Option[Sonda]): Unit = {
     progress = sonda
     repaint()
   }

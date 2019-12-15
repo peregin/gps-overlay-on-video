@@ -106,7 +106,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     Component.wrap(panel)
   }
 
-  def newProject() {
+  def newProject(): Unit = {
     log.info("new project")
     setup = Setup.empty
     val tm = Telemetry.empty
@@ -145,7 +145,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     }
   }
 
-  def saveProject() {
+  def saveProject(): Unit = {
     val chooser = new FileChooser()
     chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Save project:"
@@ -159,26 +159,26 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     }
   }
 
-  private def saveProject(file: File) {
+  private def saveProject(file: File): Unit = {
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
     setup.saveFile(file.getAbsolutePath)
   }
 
-  def convertProject() {
+  def convertProject(): Unit = {
     log.debug("convert project")
     val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, frame)
     Goodies.center(dialog)
     dialog.open()
   }
 
-  def openVideoData(file: File) {
+  def openVideoData(file: File): Unit = {
     setup.videoPath = Some(file.getAbsolutePath)
     videoPanel.refresh(setup)
   }
 
-  def openGpsData(file: File) {
+  def openGpsData(file: File): Unit = {
     setup.gpsPath = Some(file.getAbsolutePath)
     Goodies.showBusy(frame) {
       val telemetry = Telemetry.load(file)
@@ -186,14 +186,14 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     }
   }
 
-  override def seekEvent(percentage: Double) {}
+  override def seekEvent(percentage: Double): Unit = {}
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
     paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage, unitChooser.selection.item)
     Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
   }
 
-  override def videoStarted() {}
+  override def videoStarted(): Unit = {}
 
-  override def videoStopped() {}
+  override def videoStopped(): Unit = {}
 }

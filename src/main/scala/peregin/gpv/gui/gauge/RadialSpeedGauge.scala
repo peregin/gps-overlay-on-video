@@ -11,7 +11,7 @@ trait RadialSpeedGauge extends GaugePainter {
 
   lazy val dummy = InputValue(27.81, MinMax(0, 62))
   override def defaultInput = dummy
-  override def sample(sonda: Sonda) {input = sonda.speed}
+  override def sample(sonda: Sonda): Unit = {input = sonda.speed}
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
     super.paint(g, w, h)

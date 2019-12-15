@@ -45,7 +45,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   @volatile private var player: Option[VideoPlayer] = None
   @volatile private var lastRawImage: Option[BufferedImage] = None // without overlay
 
-  def refresh(setup: Setup) {
+  def refresh(setup: Setup): Unit = {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
     lastRawImage = None
     setup.videoPath.foreach{path =>
@@ -54,17 +54,17 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     }
   }
 
-  def playOrPauseVideo() {
+  def playOrPauseVideo(): Unit = {
     player.foreach{p =>
       if (startStopButton.isPlaying) p.pause() else p.play()
     }
   }
 
-  def stepForwardVideo() {
+  def stepForwardVideo(): Unit = {
     player.foreach(_.step())
   }
 
-  def fireLastVideoEventIfNotPlaying() = {
+  def fireLastVideoEventIfNotPlaying(): Unit = {
     if (!player.exists(_.playing)) {
       log.debug("refreshing dashboard painter, because player is not running")
       // when player is not running and changing the transparency
@@ -77,11 +77,11 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     }
   }
 
-  override def seekEvent(percentage: Double) {
+  override def seekEvent(percentage: Double): Unit = {
     slider.percentage = percentage
   }
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
     lastRawImage = Some(image)
     val topImage = new BufferedImage(image.getWidth, image.getHeight, BufferedImage.TYPE_INT_ARGB)
     // first allow the listeners to modify the image, then show it
@@ -94,13 +94,13 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     }
   }
 
-  override def videoStopped() {
+  override def videoStopped(): Unit = {
     listener.videoStopped()
     startStopButton.stop()
     log.info("stopped")
   }
 
-  override def videoStarted() {
+  override def videoStarted(): Unit = {
     listener.videoStopped()
     startStopButton.play()
     log.info("started")

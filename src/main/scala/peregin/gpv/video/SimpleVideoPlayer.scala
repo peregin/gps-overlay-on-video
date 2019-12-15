@@ -58,12 +58,12 @@ class SimpleVideoPlayer(url: String, listener: VideoPlayer.Listener) extends Vid
 
   override def seek(percentage: Double) = sys.error("not supported")
 
-  override def close() {
+  override def close(): Unit = {
     running = false
     reader.close()
   }
 
-  override def duration = durationInMillis
+  override def duration: Long = durationInMillis
 
-  override def playing = running
+  override def playing: Boolean = running
 }

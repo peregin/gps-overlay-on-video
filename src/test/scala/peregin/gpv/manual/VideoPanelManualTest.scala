@@ -18,10 +18,10 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   Goodies.initLookAndFeel()
 
   val video = new VideoPanel(openVideoFile, new VideoPlayer.Listener() {
-    override def seekEvent(percentage: Double) {}
-    override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {}
-    override def videoStarted() {}
-    override def videoStopped() {}
+    override def seekEvent(percentage: Double): Unit = {}
+    override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {}
+    override def videoStarted(): Unit = {}
+    override def videoStopped(): Unit = {}
   }) with SeekableVideoPlayerFactory
 
   val frame = new MainFrame {
@@ -36,7 +36,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   frame.size = new Dimension(800, 600)
   Goodies.center(frame)
 
-  def openVideoFile(file: File) {
+  def openVideoFile(file: File): Unit = {
     val setup = Setup.empty
     setup.videoPath = Some(file.getAbsolutePath)
     log.info(s"opening $file")
@@ -44,7 +44,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   }
 
   // for convenience in testing, try to load the video file if first argument is configured
-  override def main(args: Array[String]) {
+  override def main(args: Array[String]): Unit = {
     super.main(args)
     args.headOption.map(new File(_)).foreach(openVideoFile)
   }

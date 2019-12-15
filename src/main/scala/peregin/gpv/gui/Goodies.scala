@@ -11,7 +11,7 @@ import org.jdesktop.swingx.JXBusyLabel
 
 import scala.swing.{Component, Dialog, Label, Window}
 import scala.util.control.NonFatal
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
@@ -20,7 +20,7 @@ import scala.concurrent._
 object Goodies {
 
   // on Mac start with VM parameter -Xdock:name="GSPonVideo"
-  def initLookAndFeel() {
+  def initLookAndFeel(): Unit = {
     sys.props += "apple.laf.useScreenMenuBar" -> "true"
     sys.props += "com.apple.mrj.application.apple.menu.about.name" -> "GPSonVideo"
     val theme = getInstalledThemes.asScala.map(_.asInstanceOf[PlasticTheme]).find(_.getName == "Dark Star")
@@ -28,7 +28,7 @@ object Goodies {
     UIManager.setLookAndFeel(new Plastic3DLookAndFeel())
   }
 
-  def center(w: Window) {
+  def center(w: Window): Unit = {
     val screen = Toolkit.getDefaultToolkit.getScreenSize
     val size = w.bounds
     val x = (screen.width - size.width) / 2
@@ -36,7 +36,7 @@ object Goodies {
     w.location = new Point(x, y)
   }
 
-  def showBusy(w: Window)(body: => Unit) {
+  def showBusy(w: Window)(body: => Unit): Unit = {
     val dlg = new Dialog(w) {
       modal = true
       peer.setUndecorated(true)
@@ -64,7 +64,7 @@ object Goodies {
     }
   }
 
-  def mapEscapeTo(dialog: Dialog, cancelFunc: () => Unit) {
+  def mapEscapeTo(dialog: Dialog, cancelFunc: () => Unit): Unit = {
     dialog.peer.getRootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelDialog")
     dialog.peer.getRootPane.getActionMap.put("cancelDialog", new javax.swing.AbstractAction() {
       def actionPerformed(e: ActionEvent) = cancelFunc()

@@ -18,14 +18,14 @@ class DurationSpinner extends JSpinner(new SpinnerDateModel()) with Publisher wi
   val cal = Calendar.getInstance()
 
   addChangeListener(new ChangeListener {
-    override def stateChanged(e: ChangeEvent) {
+    override def stateChanged(e: ChangeEvent): Unit = {
       publish(new ValueChanged(Component.wrap(DurationSpinner.this)))
     }
   })
 
   duration = 0L
 
-  def duration_= (millis: Long) {
+  def duration_= (millis: Long): Unit = {
     val d = Duration(millis, TimeUnit.MILLISECONDS)
     var t = millis
     val hours = d.toHours.toInt

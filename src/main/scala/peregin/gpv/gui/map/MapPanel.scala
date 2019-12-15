@@ -29,7 +29,7 @@ class MapPanel extends JXMapKit with Publisher with KnobPainter {
   setZoom(6)
 
   getMainMap.addMouseListener(new MouseAdapter {
-    override def mouseClicked(e: MouseEvent) {
+    override def mouseClicked(e: MouseEvent): Unit = {
       publish(new MouseClicked(Component.wrap(MapPanel.this), e.getPoint, e.getModifiers, e.getClickCount, e.isPopupTrigger)(e))
     }
   })
@@ -67,16 +67,16 @@ class MapPanel extends JXMapKit with Publisher with KnobPainter {
   }
   getMainMap.setOverlayPainter(routePainter)
 
-  def refresh(telemetry: Telemetry) {
+  def refresh(telemetry: Telemetry): Unit = {
     this.telemetry = telemetry
   }
 
-  def refreshPoi(sonda: Option[GeoPosition]) {
+  def refreshPoi(sonda: Option[GeoPosition]): Unit = {
     poi = sonda
     repaint()
   }
 
-  def refreshProgress(sonda: Option[GeoPosition]) {
+  def refreshProgress(sonda: Option[GeoPosition]): Unit = {
     progress = sonda
     repaint()
   }

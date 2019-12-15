@@ -58,21 +58,21 @@ class GaugeTestPanel[T <: GaugeComponent with GaugePainter](factory: => T) exten
   curValueAdjusted()
 
 
-  def minValueAdjusted() {
+  def minValueAdjusted(): Unit = {
     val min = minSpinner.getValue.asInstanceOf[Int]
     slider.setMinimum(min)
     updateGui(min, maxSpinner.getValue.asInstanceOf[Int], slider.getValue)
   }
-  def maxValueAdjusted() {
+  def maxValueAdjusted(): Unit = {
     val max = maxSpinner.getValue.asInstanceOf[Int]
     slider.setMaximum(max)
     updateGui(minSpinner.getValue.asInstanceOf[Int], max, slider.getValue)
   }
-  def curValueAdjusted() {
+  def curValueAdjusted(): Unit = {
     updateGui(minSpinner.getValue.asInstanceOf[Int], maxSpinner.getValue.asInstanceOf[Int], slider.getValue)
   }
 
-  def updateGui(min: Int, max: Int, cur: Int) {
+  def updateGui(min: Int, max: Int, cur: Int): Unit = {
     status.text = s"Current Value $cur"
     gauges.foreach{g =>
       g.input = InputValue(cur, MinMax(min, max))

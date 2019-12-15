@@ -171,6 +171,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   }
 
   def sondaForPosition(gp: GeoPosition): Option[Sonda] = {
+    import Ordering.Double.TotalOrdering
     if (track.size < 3) None
     else {
       // drop first and last where the distance is incorrect

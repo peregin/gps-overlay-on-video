@@ -76,14 +76,14 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     case ButtonClicked(`closeButton`) => handleClose()
   }
 
-  def save(file: File) {
+  def save(file: File): Unit = {
     val path = file.getAbsolutePath
     setup.outputPath = Some(path)
     chooser.fileInput.text = path
     log.info(s"save to $path")
   }
 
-  private def handleGenerate() {
+  private def handleGenerate(): Unit = {
     log.info("generate...")
     mark = 0L
     val videoInputFile = setup.videoPath.getOrElse("video file is not configured")
@@ -132,14 +132,14 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     }
   }
 
-  private def handleClose() {
+  private def handleClose(): Unit = {
     log.info("cancel or close")
     close()
   }
 
-  override def seekEvent(percentage: Double) {}
+  override def seekEvent(percentage: Double): Unit = {}
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage) {
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
     paintGauges(telemetry, tsInMillis, image, setup.shift, setup.transparency, setup.units)
 
     val tick = System.currentTimeMillis
@@ -155,7 +155,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, parent: Window = null)
     }
   }
 
-  override def videoStarted() {}
+  override def videoStarted(): Unit = {}
 
-  override def videoStopped() {}
+  override def videoStopped(): Unit = {}
 }

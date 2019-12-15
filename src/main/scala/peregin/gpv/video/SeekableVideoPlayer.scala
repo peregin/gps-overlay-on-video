@@ -36,7 +36,7 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
   }
 
   // FIXME: callback from the actor, subscribe to events instead of callback
-  private[video] def handleFrame(frame: FrameIsReady) {
+  private[video] def handleFrame(frame: FrameIsReady): Unit = {
     listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
   }
 
@@ -82,7 +82,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
     }
 
     case Event(PlayCommand, data) =>
-      setTimer("nextread", PlayCommand, 500 millis, repeat = false)
+      startSingleTimer("nextread", PlayCommand, 500 millis)
       goto(Running) using data
   }
 
@@ -98,7 +98,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
-        setTimer("nextread", PlayCommand, delay millis, repeat = false)
+        startSingleTimer("nextread", PlayCommand, delay millis)
         stay using frame
       case _ => goto(Idle) using EndOfStream
     }
@@ -112,7 +112,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
           log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
           video.resetDelay()
           //handleFrame(seekFrame)
-          setTimer("nextread", PlayCommand, 0 millis, repeat = false)
+          startSingleTimer("nextread", PlayCommand, 0 millis)
           stay using seekFrame
         case _ => stay using EndOfStream
     }
@@ -140,11 +140,11 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
   startWith(Idle, ReadInProgress)
   initialize()
 
-  private def handleFrame(frame: FrameIsReady) {
+  private def handleFrame(frame: FrameIsReady): Unit = {
     listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
   }
 
-  private def handleSeek(percentage: Double) {
+  private def handleSeek(percentage: Double): Unit = {
     listener.seekEvent(percentage)
   }
 }

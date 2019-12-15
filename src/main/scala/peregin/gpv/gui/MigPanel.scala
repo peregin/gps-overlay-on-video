@@ -8,7 +8,7 @@ import javax.swing.JComponent
 class MigPanel(layoutConstraints: String, colConstraints: String, rowConstraints: String) extends Panel {
   peer.setLayout(new MigLayout(layoutConstraints, colConstraints, rowConstraints))
 
-  def add(comp: Component, constraint: String) {
+  def add(comp: Component, constraint: String): Unit = {
     peer.add(comp.peer, constraint)
   }
 

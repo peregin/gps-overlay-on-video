@@ -8,7 +8,7 @@ import scala.io.Source
 object Setup {
 
   def save(setup: Setup): String = JsonConverter.generate(setup)
-  def saveFile(file: String, setup: Setup) {
+  def saveFile(file: String, setup: Setup): Unit = {
     val fw = new FileWriter(file)
     fw.write(save(setup))
     fw.close()

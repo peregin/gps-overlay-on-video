@@ -10,7 +10,7 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 mainClass in Compile := Some(entryPoint)
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.1"
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
 javaOptions ++= List(macDockNameOpt)
@@ -18,8 +18,8 @@ javaOptions ++= List(macDockNameOpt)
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 
 resolvers ++= Seq(
-  "Xuggle Repo" at "http://xuggle.googlecode.com/svn/trunk/repo/share/java/",
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+  "Xuggle Repo" at "https://xuggle.googlecode.com/svn/trunk/repo/share/java/",
+  "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
 mainClass in assembly := Some(entryPoint)
@@ -41,10 +41,10 @@ addArtifact(artifact in(Compile, assembly), assembly)
 publishArtifact := false // it is done by the assembly plugin
 
 val json4sVersion = "3.6.7"
-val akkaVersion = "2.5.26"
-val specs2Version = "4.8.0"
+val akkaVersion = "2.6.1"
+val specs2Version = "4.8.1"
 val logbackVersion = "1.2.3"
-val batikVersion = "1.11" // svg manipulation
+val batikVersion = "1.12" // svg manipulation
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin, AssemblyPlugin).

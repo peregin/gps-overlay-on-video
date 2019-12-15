@@ -49,7 +49,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
 
   peer.addMouseMotionListener(new MouseMotionAdapter {
 
-    override def mouseDragged(e: MouseEvent) {
+    override def mouseDragged(e: MouseEvent): Unit = {
       val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
       if (dragging) {
         lastEventX = e.getX
@@ -59,7 +59,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
 
   peer.addMouseListener(new MouseAdapter {
 
-    override def mousePressed(e: MouseEvent) {
+    override def mousePressed(e: MouseEvent): Unit = {
       val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
       if (!dragging) {
         lastEventX = e.getX()
@@ -70,7 +70,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   })
 
   peer.addChangeListener(new javax.swing.event.ChangeListener {
-    def stateChanged(e: javax.swing.event.ChangeEvent) {
+    def stateChanged(e: javax.swing.event.ChangeEvent): Unit = {
       if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
         val xSlideTo = calculatePercentage(lastEventX)
         publish(new SliderChanged(PercentageSlider.this, xSlideTo))
@@ -79,7 +79,7 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   })
 
   def percentage: Double = peer.getValue.toDouble / 100
-  def percentage_=(v: Double) {
+  def percentage_=(v: Double): Unit = {
     sliderChangeFromApi = true
     peer.setValue((v * 100).toInt)
     sliderChangeFromApi = false

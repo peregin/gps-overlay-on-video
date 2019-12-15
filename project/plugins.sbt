@@ -28,6 +28,3 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.8")
 
 // github publishing
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
-
-// Library to fetch dependencies from Maven / Ivy repositories super fast - 1.1.0-M4
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.3")

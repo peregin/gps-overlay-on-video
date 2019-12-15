@@ -25,7 +25,7 @@ import com.xuggle.xuggler.ICodec
  */
 class StreamResizer(dWidth: Int, dHeight: Int) extends MediaToolAdapter {
 
-  override def onAddStream(event: IAddStreamEvent) {
+  override def onAddStream(event: IAddStreamEvent): Unit = {
     val streamIndex = event.getStreamIndex.toLong
     val streamCoder = event.getSource.getContainer.getStream(streamIndex).getStreamCoder
     streamCoder.getCodecType match {

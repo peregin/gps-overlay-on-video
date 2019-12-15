@@ -30,7 +30,7 @@ case class MinMax(var min: Double, var max: Double) {
   // range of [min, max) - min inclusive, max exclusive
   def includes(v: Double) = v >= min && v < max
 
-  def sample(sample: Double) {
+  def sample(sample: Double): Unit = {
     if (sample < min) min = sample
     else if (sample > max) max = sample
   }

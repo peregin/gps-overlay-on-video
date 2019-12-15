@@ -94,7 +94,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       mapKit.setCenterPosition(center)
   }
 
-  def refresh(setup: Setup, telemetry: Telemetry) {
+  def refresh(setup: Setup, telemetry: Telemetry): Unit = {
     fileChooser.fileInput.text = setup.gpsPath.getOrElse("")
     this.telemetry = telemetry
 
@@ -114,7 +114,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   def getShift = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
 
   // dispatched by the video controller, invoked from EDT
-  def updateVideoProgress(videoTimeInMillis: Long) {
+  def updateVideoProgress(videoTimeInMillis: Long): Unit = {
     val sonda = telemetry.sondaForRelativeTime(videoTimeInMillis + getShift)
     altitude.refreshProgress(sonda)
     mapKit.refreshProgress(sonda.map(_.location))
