@@ -6,6 +6,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.{Logging, Timed}
 
+import scala.annotation.tailrec
 import scala.util.Try
 import scala.xml.{Node, XML}
 
@@ -45,7 +46,7 @@ object Telemetry extends Timed with Logging {
         val time = (node \ "time").text
         // some devices are not tracking the elevation, default it 0
         val elevation = Try((node \ "ele").text.toDouble).toOption.getOrElse(0d)
-        val extension = (node \ "extensions")
+        val extension = node \ "extensions"
         TrackPoint(
           new GeoPosition(lat, lon), elevation,
           DateTime.parse(time), GarminExtension.parse(extension)
@@ -59,7 +60,7 @@ object Telemetry extends Timed with Logging {
     log.info(s"found ${points.size} track points")
     val data = new Telemetry(points)
     data.analyze()
-    log.info(s"elevation boundary ${data.elevationBoundary}")
+    log.info(f"elevation boundary: ${data.elevationBoundary}, max speed: ${data.speedBoundary.max}%.02f")
     data
   }
 
@@ -80,7 +81,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   private var centerPosition = TrackPoint.centerPosition
 
-  def analyze() = timed("analyze GPS data") {
+  def analyze(): Unit = timed("analyze GPS data") {
     val n = track.size
     for (i <- 0 until n) {
       val point = track(i)
@@ -102,12 +103,12 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
   }
 
-  def centerGeoPosition = centerPosition
+  def centerGeoPosition: GeoPosition = centerPosition
 
-  def minTime = track.head.time
-  def maxTime = track.last.time
+  def minTime: DateTime = track.head.time
+  def maxTime: DateTime = track.last.time
 
-  def totalDistance = track.last.distance
+  def totalDistance: Double = track.last.distance
 
   /**
    * Retrieves the interpolated distance for the given progress.
@@ -128,7 +129,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
    * Convenience method to find a given value/field belonging to the track point based on the actual progress.
    * @param progressInPerc is defined between 0 and 100
    */
-  private def valueForProgress(progressInPerc: Double, convertFunc: (TrackPoint) => Double): Option[Double] = {
+  private def valueForProgress(progressInPerc: Double, convertFunc: TrackPoint => Double): Option[Double] = {
     if (progressInPerc <= 0d) track.headOption.map(convertFunc)
     else if (progressInPerc >= 100d) track.lastOption.map(convertFunc)
     else (track.headOption, track.lastOption) match {
@@ -154,7 +155,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   }
 
   // 0 - 100
-  private def progressForValue(v: Double, first: TrackPoint, last: TrackPoint, convertFunc: (TrackPoint) => Double): Double = {
+  private def progressForValue(v: Double, first: TrackPoint, last: TrackPoint, convertFunc: TrackPoint => Double): Double = {
     val firstV = convertFunc(first)
     val lastV = convertFunc(last)
     if (v <= firstV) 0d
@@ -186,12 +187,13 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def sondaForDistance(d: Double): Sonda = search(d, (tp: TrackPoint) => tp.distance)
 
   // binary search then interpolate
-  private def search(t: Double, convertFunc: (TrackPoint) => Double): Sonda = {
+  private def search(t: Double, convertFunc: TrackPoint => Double): Sonda = {
     val tn = track.size
     if (tn < 2) Sonda.empty
     else {
       // find the closest track point with a simple binary search
       // eventually to improve the performance by searching on percentage of time between the endpoints of the list
+      @tailrec
       def findNearestIndex(list: Seq[TrackPoint], t: Double, ix: Int): Int = {
         val n = list.size
         if (n < 2) ix
