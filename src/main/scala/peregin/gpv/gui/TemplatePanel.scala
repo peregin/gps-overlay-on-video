@@ -1,18 +1,27 @@
 package peregin.gpv.gui
 
 import java.awt.{Component, Font}
+
 import javax.swing._
-import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
-
+import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
-import peregin.gpv.util.{Io, Logging}
+import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
+import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SkiingDashboard}
+import peregin.gpv.util.Io
 
-// save/load/use dashboard templates (set of already selected and aligned gauges)
-class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
+object TemplatePanel {
 
-  case class TemplateEntry(name: String) {
+  case class TemplateEntry(name: String, dashboard: Dashboard) {
     override def toString: String = name
   }
+
+  trait Listener {
+    def selected(entry: TemplateEntry): Unit
+  }
+}
+
+// save/load/use dashboard templates (set of already selected and aligned gauges)
+class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fill]") {
 
   class TemplateCellRenderer extends JLabel with ListCellRenderer[TemplateEntry] {
 
@@ -40,9 +49,9 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
   }
 
   val model = new DefaultListModel[TemplateEntry]
-  model.addElement(TemplateEntry("Cycling"))
-  model.addElement(TemplateEntry("Skiing"))
-  model.addElement(TemplateEntry("MotorBiking"))
+  model.addElement(TemplateEntry("Cycling", new CyclingDashboard {}))
+  model.addElement(TemplateEntry("Skiing", new SkiingDashboard {}))
+  model.addElement(TemplateEntry("MotorBiking", new MotorBikingDashboard {}))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
@@ -54,8 +63,10 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
 
   templates.addListSelectionListener((e: ListSelectionEvent) => {
     if (!e.getValueIsAdjusting) {
-      val selected = templates.getSelectedValue
-      log.info(s"selected $selected")
+      templates.getSelectedValue match {
+        case entry: TemplateEntry => listener.selected(entry)
+        case _ =>
+      }
     }
   })
 }

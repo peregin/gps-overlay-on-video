@@ -9,11 +9,11 @@ import peregin.gpv.util.Logging
 import scala.swing.{MainFrame, SimpleSwingApplication}
 
 
-object TemplatePanelManualTest extends SimpleSwingApplication with Logging {
+object TemplatePanelManualTest extends SimpleSwingApplication with TemplatePanel.Listener with Logging {
 
   Goodies.initLookAndFeel()
 
-  val panel = new TemplatePanel
+  val panel = new TemplatePanel(this)
   val frame = new MainFrame {
     title = s"Templates Test - built ${BuildInfo.buildTime}"
     contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
@@ -26,4 +26,5 @@ object TemplatePanelManualTest extends SimpleSwingApplication with Logging {
   frame.minimumSize = new Dimension(400, 300)
   Goodies.center(frame)
 
+  override def selected(entry: TemplatePanel.TemplateEntry): Unit = log.info(s"selected $entry")
 }

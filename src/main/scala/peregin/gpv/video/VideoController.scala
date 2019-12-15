@@ -6,7 +6,7 @@ import com.xuggle.mediatool.event.IVideoPictureEvent
 
 class VideoController extends MediaToolAdapter with DelayController {
 
-  override def onVideoPicture(event: IVideoPictureEvent) = {
+  override def onVideoPicture(event: IVideoPictureEvent): Unit = {
     val tsInMillis = event.getTimeUnit.toMillis(event.getTimeStamp)
     waitIfNeeded(tsInMillis)
 

@@ -9,7 +9,7 @@ import javax.swing._
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
-import peregin.gpv.gui.dashboard.DashboardPainter
+import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
@@ -18,23 +18,23 @@ import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
 
 
-object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with VideoPlayer.Listener with Logging with Timed {
+object GpsOverlayApp extends SimpleSwingApplication
+  with DashboardPainter with VideoPlayer.Listener with TemplatePanel.Listener
+  with Logging with Timed {
 
   log.info("initializing...")
 
   Goodies.initLookAndFeel()
 
-  var setup = Setup.empty
+  private var setup = Setup.empty
 
-  val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
-  val telemetryPanel = new TelemetryPanel(openGpsData)
-  val statusLabel = new JXLabel("Ready")
-  val transparencySlider = new PercentageSlider
+  private val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
+  private val telemetryPanel = new TelemetryPanel(openGpsData)
+  private val statusLabel = new JXLabel("Ready")
+  private val transparencySlider = new PercentageSlider
   transparencySlider.orientation = Orientation.Vertical
   transparencySlider.percentage = 80
-
-  val unitChooser = new ComboBox(Seq("Metric", "Standard"))
-
+  private val unitChooser = new ComboBox(Seq("Metric", "Standard"))
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
@@ -45,7 +45,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
       toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
       add(toolbar, "span 2, wrap")
 
-      var unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
+      private var unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
         add(new Label("Units"), "")
         add(unitChooser, "")
       }
@@ -68,7 +68,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
 
       val gaugePanel = new GaugePanel
       add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
-      val templatePanel = new TemplatePanel
+      val templatePanel = new TemplatePanel(GpsOverlayApp.this)
       add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
@@ -80,7 +80,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     }
   }
 
-  val spinnerWrap = Component.wrap(telemetryPanel.spinner)
+  private val spinnerWrap = Component.wrap(telemetryPanel.spinner)
   listenTo(transparencySlider, telemetryPanel.spinner, unitChooser.selection)
   reactions += {
     case ValueChanged(`transparencySlider`) => videoPanel.fireLastVideoEventIfNotPlaying() // will trigger the dashboard repaint
@@ -196,4 +196,9 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
   override def videoStarted(): Unit = {}
 
   override def videoStopped(): Unit = {}
+
+  override def selected(entry: TemplatePanel.TemplateEntry): Unit = {
+    dash = entry.dashboard
+    log.info(s"dashboard is ${entry.name}")
+  }
 }

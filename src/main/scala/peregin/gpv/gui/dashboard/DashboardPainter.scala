@@ -8,7 +8,11 @@ import peregin.gpv.model.Telemetry
 
 trait DashboardPainter {
 
-  private val dashboard = new CyclingDashboard {}
+  // default dashboard painter
+  @volatile private var dashboard: Dashboard = new CyclingDashboard {}
+
+  def dash: Dashboard = dashboard
+  def dash_= (d: Dashboard): Unit = dashboard = d
 
   def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String): Unit = {
 
