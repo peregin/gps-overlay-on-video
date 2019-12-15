@@ -42,6 +42,7 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
   val model = new DefaultListModel[TemplateEntry]
   model.addElement(TemplateEntry("Cycling"))
   model.addElement(TemplateEntry("Skiing"))
+  model.addElement(TemplateEntry("MotorBiking"))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)

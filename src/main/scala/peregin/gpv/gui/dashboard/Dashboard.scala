@@ -50,3 +50,59 @@ trait CyclingDashboard extends Dashboard {
     }
   }
 }
+
+trait SkiingDashboard extends Dashboard {
+
+  private val speedGauge = new RadialSpeedGauge {}
+  private val elevationChart = new ElevationChart {}
+  private val heartRateGauge = new SvgHeartRateGauge {}
+
+  override def gauges(): Seq[GaugePainter] = Seq(speedGauge, elevationChart, heartRateGauge)
+
+  override def paintDashboard(g: Graphics2D, imageWidth: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    // paint elevation to the right
+    val stashBottom = g.getTransform
+    g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
+    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    g.setTransform(stashBottom)
+
+    // paint gauges and charts
+    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    g.translate(gaugeSize, 0)
+
+    val gaugeSize2 = gaugeSize / 2
+    if (sonda.heartRate.isDefined) {
+      g.translate(0, gaugeSize2)
+      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      g.translate(gaugeSize2, 0)
+    }
+  }
+}
+
+trait MotorBikingDashboard extends Dashboard {
+
+  private val speedGauge = new RadialSpeedGauge {}
+  private val elevationChart = new ElevationChart {}
+  private val heartRateGauge = new SvgHeartRateGauge {}
+
+  override def gauges(): Seq[GaugePainter] = Seq(speedGauge, elevationChart, heartRateGauge)
+
+  override def paintDashboard(g: Graphics2D, imageWidth: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    // paint elevation to the right
+    val stashBottom = g.getTransform
+    g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
+    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    g.setTransform(stashBottom)
+
+    // paint gauges and charts
+    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    g.translate(gaugeSize, 0)
+
+    val gaugeSize2 = gaugeSize / 2
+    if (sonda.heartRate.isDefined) {
+      g.translate(0, gaugeSize2)
+      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      g.translate(gaugeSize2, 0)
+    }
+  }
+}
