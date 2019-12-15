@@ -7,16 +7,16 @@ import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
 import org.jdesktop.swingx.JXList
 import peregin.gpv.util.{Io, Logging}
 
-// save/load/use templates (set of already selected and aligned gauges)
+// save/load/use dashboard templates (set of already selected and aligned gauges)
 class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
 
   case class TemplateEntry(name: String) {
-    override def toString = name
+    override def toString: String = name
   }
 
   class TemplateCellRenderer extends JLabel with ListCellRenderer[TemplateEntry] {
 
-    val anIcon = Io.loadIcon("images/video.png")
+    val anIcon: Icon = Io.loadIcon("images/video.png")
 
     setOpaque(true)
 
@@ -24,11 +24,11 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
                                               isSelected: Boolean, cellHasFocus: Boolean): Component = {
 
       if (isSelected) {
-        setBackground(list.getSelectionBackground())
-        setForeground(list.getSelectionForeground())
+        setBackground(list.getSelectionBackground)
+        setForeground(list.getSelectionForeground)
       } else {
-        setBackground(list.getBackground())
-        setForeground(list.getForeground())
+        setBackground(list.getBackground)
+        setForeground(list.getForeground)
       }
 
       setFont(list.getFont)
@@ -51,12 +51,10 @@ class TemplatePanel extends MigPanel("ins 2", "[fill]", "[fill]") with Logging {
 
   add(templates, "grow, push")
 
-  templates.addListSelectionListener(new ListSelectionListener {
-    override def valueChanged(e: ListSelectionEvent): Unit = {
-      if (!e.getValueIsAdjusting) {
-        val selected = templates.getSelectedValue
-        log.info(s"selected $selected")
-      }
+  templates.addListSelectionListener((e: ListSelectionEvent) => {
+    if (!e.getValueIsAdjusting) {
+      val selected = templates.getSelectedValue
+      log.info(s"selected $selected")
     }
   })
 }

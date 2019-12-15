@@ -32,18 +32,18 @@ case class Setup(var videoPath: Option[String],
                  var dashboardTransparency: Option[Double],
                  var dashboardUnits: Option[String]) {
 
-  def save = Setup.save(this)
-  def saveFile(path: String) = Setup.saveFile(path, this)
+  def save: String = Setup.save(this)
+  def saveFile(path: String): Unit = Setup.saveFile(path, this)
 
   // in millis
-  def shift = shiftTimestamp.getOrElse(0L)
-  def shift_= (value: Long) = shiftTimestamp = Some(value)
+  def shift: Long = shiftTimestamp.getOrElse(0L)
+  def shift_= (value: Long): Unit = shiftTimestamp = Some(value)
 
   // in percentage
-  def transparency = dashboardTransparency.getOrElse(60d)
-  def transparency_=(value: Double) = dashboardTransparency = Some(value)
+  def transparency: Double = dashboardTransparency.getOrElse(60d)
+  def transparency_=(value: Double): Unit = dashboardTransparency = Some(value)
 
   // units
-  def units = dashboardUnits.getOrElse("Metric")
-  def units_=(value: String) = dashboardUnits = Some(value)
+  def units: String = dashboardUnits.getOrElse("Metric")
+  def units_=(value: String): Unit = dashboardUnits = Some(value)
 }

@@ -4,12 +4,12 @@ import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
-import javax.swing._
 
+import javax.swing._
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
-import peregin.gpv.gui.gauge.DashboardPainter
+import peregin.gpv.gui.dashboard.DashboardPainter
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
@@ -152,7 +152,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
     if (chooser.showSaveDialog(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       if (!file.exists() ||
-          (file.exists() && Dialog.showConfirmation(frame.contents(0), "Do you want to overwrite the file?", "File already exists", Dialog.Options.YesNo) ==  Dialog.Result.Yes)) {
+          (file.exists() && Dialog.showConfirmation(frame.contents.head, "Do you want to overwrite the file?", "File already exists", Dialog.Options.YesNo) ==  Dialog.Result.Yes)) {
         saveProject(file)
         message(s"Project file has been saved to ${file.getAbsolutePath}")
       }

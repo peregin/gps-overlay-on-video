@@ -3,12 +3,12 @@ package peregin.gpv
 import java.awt.image.BufferedImage
 import java.awt.{Color, Dimension, Font}
 import java.io.File
+
 import javax.swing.BorderFactory
 import javax.swing.border.BevelBorder
-
 import com.xuggle.mediatool.ToolFactory
 import peregin.gpv.gui._
-import peregin.gpv.gui.gauge.DashboardPainter
+import peregin.gpv.gui.dashboard.DashboardPainter
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Logging, TimePrinter}
 import peregin.gpv.video.{VideoOverlay, VideoPlayer}

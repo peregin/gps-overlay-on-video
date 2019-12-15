@@ -10,6 +10,6 @@ trait ChartPainter extends GaugePainter {
 
   protected var data: Option[Telemetry] = None
 
-  def telemetry = data.getOrElse(Telemetry.empty)
-  def telemetry_= (on: Telemetry) = data = Some(on)
+  def telemetry: Telemetry = data.getOrElse(Telemetry.empty)
+  def telemetry_= (on: Telemetry): Unit = data = Some(on)
 }

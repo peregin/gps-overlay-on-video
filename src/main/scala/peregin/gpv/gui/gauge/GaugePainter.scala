@@ -14,7 +14,7 @@ trait GaugePainter {
 
   def desiredSize = new Dimension(75, 75)
 
-  def paint(g: Graphics2D, w: Int, h: Int) = {
+  def paint(g: Graphics2D, w: Int, h: Int): Unit = {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
@@ -41,11 +41,11 @@ trait GaugePainter {
   def input: InputValue = currentInput.getOrElse(defaultInput)
   def input_= (v: InputValue): Unit = currentInput = Some(v)
 
-  def debug = debugging
-  def debug_= (v: Boolean) = debugging = v
+  def debug: Boolean = debugging
+  def debug_= (v: Boolean): Unit = debugging = v
 
-  def units = displayUnits
-  def units_= (v: String) = displayUnits = v
+  def units: String = displayUnits
+  def units_= (v: String): Unit = displayUnits = v
 
   def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow): Unit = {
     val ix = x.toInt
