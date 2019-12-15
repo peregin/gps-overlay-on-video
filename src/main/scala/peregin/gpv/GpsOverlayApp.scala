@@ -95,7 +95,7 @@ object GpsOverlayApp extends SimpleSwingApplication with DashboardPainter with V
   frame.iconImage = Io.loadImage("images/video.png")
   frame.size = new Dimension(1500, 1000)
   Goodies.center(frame)
-  //frame.maximize()
+  frame.maximize()
 
   def top = frame
 
