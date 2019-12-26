@@ -9,7 +9,7 @@ import javax.swing._
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui._
-import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
+import peregin.gpv.gui.dashboard.DashboardPainter
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._

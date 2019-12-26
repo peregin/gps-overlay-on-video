@@ -108,7 +108,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def minTime: DateTime = track.head.time
   def maxTime: DateTime = track.last.time
 
-  def totalDistance: Double = track.last.distance
+  def totalDistance: Double = track.lastOption.map(_.distance).getOrElse(0d)
 
   /**
    * Retrieves the interpolated distance for the given progress.

@@ -1,12 +1,13 @@
 package peregin.gpv.gui
 
-import java.awt.{Component, Font}
+import java.awt.{Color, Component, Font, Graphics, Graphics2D}
 
 import javax.swing._
 import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
 import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SkiingDashboard}
+import peregin.gpv.model.Sonda
 import peregin.gpv.util.Io
 
 object TemplatePanel {
@@ -64,9 +65,31 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   templates.addListSelectionListener((e: ListSelectionEvent) => {
     if (!e.getValueIsAdjusting) {
       templates.getSelectedValue match {
-        case entry: TemplateEntry => listener.selected(entry)
+        case entry: TemplateEntry =>
+          listener.selected(entry)
+          preview.repaint()
         case _ =>
       }
     }
   })
+
+  // shows the current selection
+  val preview = new JPanel() {
+
+    override def paint(g: Graphics): Unit = {
+      val width = getWidth
+      val height = getHeight
+      g.setColor(Color.black)
+      g.fillRect(0, 0, width, height)
+
+      templates.getSelectedValue match {
+        case entry: TemplateEntry =>
+          g.translate(0, height / 2)
+          entry.dashboard.paintDashboard(g.asInstanceOf[Graphics2D], width, width / 6, Sonda.sample)
+        case _ =>
+      }
+    }
+  }
+
+  add(preview, "grow, push")
 }

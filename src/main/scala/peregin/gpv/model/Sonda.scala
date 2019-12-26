@@ -5,13 +5,22 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 
 object Sonda {
 
-  def empty = zeroAt(new DateTime(0))
+  def empty: Sonda = zeroAt(new DateTime(0))
 
-  def zeroAt(t: DateTime) = new Sonda(t, InputValue.zero,
+  def zeroAt(t: DateTime): Sonda = new Sonda(t, InputValue.zero,
     new GeoPosition(0, 0),
     InputValue.zero, InputValue.zero,
     InputValue.zero, InputValue.zero,
     None, None, None
+  )
+
+  def sample: Sonda = new Sonda(
+    time = DateTime.now(), elapsedTime = InputValue.zero,
+    location = new GeoPosition(47.366074, 8.541264), // Buerkliplatz, Zurich, Switzerland
+    elevation = InputValue(480, MinMax.extreme), grade = InputValue.zero,
+    distance = InputValue(5000, MinMax.extreme), speed = InputValue(32, MinMax.extreme),
+    cadence = Some(InputValue(81, MinMax.extreme)),
+    heartRate = Some(InputValue(110, MinMax.extreme)), power = Some(InputValue(223, MinMax.extreme))
   )
 }
 

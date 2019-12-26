@@ -23,7 +23,7 @@ object TemplatePanelManualTest extends SimpleSwingApplication with TemplatePanel
   }
   override def top = frame
 
-  frame.minimumSize = new Dimension(400, 300)
+  frame.minimumSize = new Dimension(500, 300)
   Goodies.center(frame)
 
   override def selected(entry: TemplatePanel.TemplateEntry): Unit = log.info(s"selected $entry")
