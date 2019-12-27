@@ -9,7 +9,7 @@ import peregin.gpv.util.UnitConverter
 
 trait RadialSpeedGauge extends GaugePainter {
 
-  lazy val dummy = InputValue(27.81, MinMax(0, 62))
+  lazy val dummy: InputValue = InputValue(27.81, MinMax.max(62))
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = {input = sonda.speed}
 
@@ -50,9 +50,10 @@ trait RadialSpeedGauge extends GaugePainter {
     val smallTickLength = math.max(1, longTickLength / 2)
     val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20))
     g.setFont(gaugeFont.deriveFont((longTickLength + 2).toFloat))
+    val ticksWithNumber = if (input.boundary.max > 180) 30 else if (input.boundary.max > 100) 20 else 10
     for (t <- 0 to ticks) {
       val angle = -start - t * extent / ticks
-      val tickLength = if (t % 10 == 0) {
+      val tickLength = if (t % ticksWithNumber == 0) {
         g.setStroke(borderStroke)
 
         val text = f"${UnitConverter.speed(ticks - t, units)}%2.0f"

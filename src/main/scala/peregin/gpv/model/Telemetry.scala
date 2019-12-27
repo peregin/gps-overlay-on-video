@@ -4,7 +4,7 @@ import java.io.{File, InputStream}
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
-import peregin.gpv.util.{Logging, Timed}
+import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.annotation.tailrec
 import scala.util.Try
@@ -64,7 +64,13 @@ object Telemetry extends Timed with Logging {
     data
   }
 
-  def empty = new Telemetry(Seq.empty)
+  def empty() = new Telemetry(Seq.empty)
+
+  def sample(): Telemetry = timed("load sample gps data") {
+    Try(Telemetry.load(Io.getResource("gps/sample.gpx")))
+      .toOption
+      .getOrElse(Telemetry.empty())
+  }
 }
 
 case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {

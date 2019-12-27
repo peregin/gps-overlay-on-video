@@ -5,6 +5,7 @@ import MinMax._
 object MinMax {
   def zero = new MinMax(0, 0)
   def extreme = new MinMax(Double.MaxValue, Double.MinValue)
+  def max(max: Double) = new MinMax(0, max)
 
   implicit class RoundedDouble(v: Double) {
     def roundUpToTenth: Double = roundUpTo(10)

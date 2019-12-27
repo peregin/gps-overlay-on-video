@@ -7,8 +7,11 @@ import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
 import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SkiingDashboard}
-import peregin.gpv.model.Sonda
+import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
+import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 import peregin.gpv.util.Io
+
+import scala.jdk.CollectionConverters._
 
 object TemplatePanel {
 
@@ -19,6 +22,7 @@ object TemplatePanel {
   trait Listener {
     def selected(entry: TemplateEntry): Unit
   }
+
 }
 
 // save/load/use dashboard templates (set of already selected and aligned gauges)
@@ -62,13 +66,16 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
 
   add(templates, "grow, push")
 
+  def getSelectedEntry: Option[TemplateEntry] = templates.getSelectedValue match {
+    case entry: TemplateEntry => Some(entry)
+    case _ => None
+  }
+
   templates.addListSelectionListener((e: ListSelectionEvent) => {
     if (!e.getValueIsAdjusting) {
-      templates.getSelectedValue match {
-        case entry: TemplateEntry =>
-          listener.selected(entry)
-          preview.repaint()
-        case _ =>
+      getSelectedEntry.foreach { entry =>
+        listener.selected(entry)
+        preview.repaint()
       }
     }
   })
@@ -76,17 +83,31 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   // shows the current selection
   val preview = new JPanel() {
 
+    // clone painters
+    private val name2Dashboard = model.elements().asScala.map {
+      entry =>
+        val dashboard = entry.dashboard.clone()
+        // setup with default values
+        dashboard.gauges().foreach {
+          case e: ElevationChart => e.telemetry = Telemetry.sample()
+          case _ =>
+        }
+        (entry.name, dashboard)
+    }.toMap
+
+    private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(181, MinMax.max(230)))
+    private lazy val regularSample = Sonda.sample()
+
     override def paint(g: Graphics): Unit = {
       val width = getWidth
       val height = getHeight
       g.setColor(Color.black)
       g.fillRect(0, 0, width, height)
 
-      templates.getSelectedValue match {
-        case entry: TemplateEntry =>
-          g.translate(0, height / 2)
-          entry.dashboard.paintDashboard(g.asInstanceOf[Graphics2D], width, width / 6, Sonda.sample)
-        case _ =>
+      getSelectedEntry.flatMap(e => name2Dashboard.get(e.name)).foreach { d =>
+        g.translate(0, height / 2)
+        val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
+        d.paintDashboard(g.asInstanceOf[Graphics2D], width, width / 6, sample)
       }
     }
   }

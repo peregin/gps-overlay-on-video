@@ -14,13 +14,13 @@ object Sonda {
     None, None, None
   )
 
-  def sample: Sonda = new Sonda(
+  def sample(): Sonda = new Sonda(
     time = DateTime.now(), elapsedTime = InputValue.zero,
     location = new GeoPosition(47.366074, 8.541264), // Buerkliplatz, Zurich, Switzerland
-    elevation = InputValue(480, MinMax.extreme), grade = InputValue.zero,
-    distance = InputValue(5000, MinMax.extreme), speed = InputValue(32, MinMax.extreme),
-    cadence = Some(InputValue(81, MinMax.extreme)),
-    heartRate = Some(InputValue(110, MinMax.extreme)), power = Some(InputValue(223, MinMax.extreme))
+    elevation = InputValue(480, MinMax.max(640)), grade = InputValue.zero,
+    distance = InputValue(4, MinMax.max(12)), speed = InputValue(32, MinMax.max(61)),
+    cadence = Some(InputValue(81, MinMax.max(100))),
+    heartRate = Some(InputValue(110, MinMax.max(160))), power = Some(InputValue(223, MinMax.max(320)))
   )
 }
 
@@ -38,8 +38,8 @@ case class Sonda(time: DateTime, elapsedTime: InputValue,
     trackIndex = v
     this
   }
-  def getTrackIndex = trackIndex
+  def getTrackIndex: Int = trackIndex
   
-  def videoProgress_= (progressInMillis: Long) = videoProgressInMillis = progressInMillis
-  def videoProgress = videoProgressInMillis
+  def videoProgress_= (progressInMillis: Long): Unit = videoProgressInMillis = progressInMillis
+  def videoProgress: Long = videoProgressInMillis
 }

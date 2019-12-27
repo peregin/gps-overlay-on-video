@@ -1,11 +1,13 @@
 package peregin.gpv.gui.dashboard
 
 import peregin.gpv.gui.gauge.{CadenceGauge, ElevationChart, GaugePainter, RadialSpeedGauge, SvgHeartRateGauge, SvgPowerGauge}
-import peregin.gpv.model.Sonda
+import peregin.gpv.model.{InputValue, MinMax, Sonda}
 
 import scala.swing.Graphics2D
 
-trait Dashboard {
+trait Dashboard extends Cloneable {
+
+  override def clone(): Dashboard = super.clone().asInstanceOf[Dashboard]
 
   def gauges(): Seq[GaugePainter]
 
@@ -81,7 +83,9 @@ trait SkiingDashboard extends Dashboard {
 
 trait MotorBikingDashboard extends Dashboard {
 
-  private val speedGauge = new RadialSpeedGauge {}
+  private val speedGauge = new RadialSpeedGauge {
+    override lazy val dummy: InputValue = InputValue(181, MinMax.max(230))
+  }
   private val elevationChart = new ElevationChart {}
   private val heartRateGauge = new SvgHeartRateGauge {}
 

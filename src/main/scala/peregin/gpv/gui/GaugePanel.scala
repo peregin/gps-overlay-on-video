@@ -2,11 +2,10 @@ package peregin.gpv.gui
 
 import peregin.gpv.gui.gauge._
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{Io, Timed}
+import peregin.gpv.util.Timed
 
 import scala.swing.event.MouseClicked
 import scala.swing.{Dialog, GridPanel}
-import scala.util.Try
 
 
 class GaugePanel extends GridPanel(0, 5) with Timed {
@@ -27,9 +26,7 @@ class GaugePanel extends GridPanel(0, 5) with Timed {
     () => new GaugeComponent with ElevationChart
   )
 
-  lazy val sample = timed("load sample gps data") {
-    Try(Telemetry.load(Io.getResource("gps/sample.gpx"))).toOption.getOrElse(Telemetry.empty)
-  }
+  private lazy val sample = Telemetry.sample()
 
   gaugeFactories.foreach { fac =>
     // create the component
