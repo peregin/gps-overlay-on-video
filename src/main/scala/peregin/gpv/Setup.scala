@@ -22,7 +22,7 @@ object Setup {
     load(json)
   }
 
-  def empty = new Setup(None, None, None, None, None, None)
+  def empty() = new Setup(None, None, None, None, None, None)
 }
 
 case class Setup(var videoPath: Option[String],

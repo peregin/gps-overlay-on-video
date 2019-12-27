@@ -28,7 +28,7 @@ object TelemetryPanelManualTest extends SimpleSwingApplication with Logging {
   Goodies.center(frame)
 
   def openGpsFile(file: File): Unit = {
-    val setup = Setup.empty
+    val setup = Setup.empty()
     setup.gpsPath = Some(file.getAbsolutePath)
     log.info(s"opening $file")
     Goodies.showBusy(frame) {
@@ -43,7 +43,7 @@ object TelemetryPanelManualTest extends SimpleSwingApplication with Logging {
       val resource = "gps/sihlwald.gpx"
       val telemetry = Telemetry.load(Io.getResource(resource))
       Swing.onEDT {
-        panel.refresh(Setup.empty, telemetry)
+        panel.refresh(Setup.empty(), telemetry)
         panel.fileChooser.fileInput.text = resource
       }
     }

@@ -8,8 +8,9 @@ import java.net.URI
 import javax.swing._
 import info.BuildInfo
 import org.jdesktop.swingx._
+import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
-import peregin.gpv.gui.dashboard.DashboardPainter
+import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
@@ -26,7 +27,7 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   Goodies.initLookAndFeel()
 
-  private var setup = Setup.empty
+  private var setup = Setup.empty()
 
   private val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
   private val telemetryPanel = new TelemetryPanel(openGpsData)
@@ -35,6 +36,7 @@ object GpsOverlayApp extends SimpleSwingApplication
   transparencySlider.orientation = Orientation.Vertical
   transparencySlider.percentage = 80
   private val unitChooser = new ComboBox(Seq("Metric", "Standard"))
+  private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
@@ -68,7 +70,6 @@ object GpsOverlayApp extends SimpleSwingApplication
 
       val gaugePanel = new GaugePanel
       add(titled("Gauges", new ScrollPane(gaugePanel)), "height 30%")
-      val templatePanel = new TemplatePanel(GpsOverlayApp.this)
       add(titled("Dashboard templates", templatePanel), "height 30%, wrap")
 
       val statusPanel = new JXStatusBar
@@ -97,7 +98,7 @@ object GpsOverlayApp extends SimpleSwingApplication
   Goodies.center(frame)
   frame.maximize()
 
-  def top = frame
+  def top: Frame = frame
 
   def message(s: String): Unit = statusLabel.setText(s)
 
@@ -108,8 +109,8 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def newProject(): Unit = {
     log.info("new project")
-    setup = Setup.empty
-    val tm = Telemetry.empty
+    setup = Setup.empty()
+    val tm = Telemetry.empty()
     videoPanel.refresh(setup)
     telemetryPanel.refresh(setup, tm)
     transparencySlider.percentage = setup.transparency
@@ -133,7 +134,7 @@ object GpsOverlayApp extends SimpleSwingApplication
             debug(s"setup $setup")
             message("Analyzing telemetry...")
             val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
-            val tm = telemetry.getOrElse(Telemetry.empty)
+            val tm = telemetry.getOrElse(Telemetry.empty())
             message("Updating...")
             videoPanel.refresh(setup)
             telemetryPanel.refresh(setup, tm)
@@ -168,7 +169,8 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def convertProject(): Unit = {
     log.debug("convert project")
-    val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, frame)
+    val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry("Cycling", new CyclingDashboard {}))
+    val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, template, frame)
     Goodies.center(dialog)
     dialog.open()
   }
