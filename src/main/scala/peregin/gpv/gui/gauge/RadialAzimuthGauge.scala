@@ -5,7 +5,6 @@ import java.awt.geom.Arc2D
 
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
 import peregin.gpv.util.Trigo._
-import peregin.gpv.util.UnitConverter
 
 
 trait RadialAzimuthGauge extends GaugePainter {
@@ -57,12 +56,14 @@ trait RadialAzimuthGauge extends GaugePainter {
       val tickLength = if (t % ticksWithNumber == 0) {
         g.setStroke(borderStroke)
 
-        val text = f"${UnitConverter.speed(ticks - t, units)}%2.0f"
+        val text = f"${ticks - t}%2.0f"
         val tb = g.getFontMetrics.getStringBounds(text, g)
         val tw = tb.getWidth / 2
         val th = tb.getHeight / 2
         val tp = r - longTickLength - tw - 2
-        g.drawString(text, polarX(cx, tp, angle) - tw.toInt, polarY(cy, tp, angle) + th.toInt)
+        if (ticks-t < 360) {
+          g.drawString(text, polarX(cx, tp, angle) - tw.toInt, polarY(cy, tp, angle) + th.toInt)
+        }
         longTickLength
       } else {
         g.setStroke(tickStroke)
@@ -71,26 +72,10 @@ trait RadialAzimuthGauge extends GaugePainter {
       g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
 
-    // draw colored sections with color
-//    dia = box - strokeWidth * 2.5
-//    x = (w - dia) / 2
-//    y = (h - dia) / 2
-//    g.setColor(Color.red)
-//    arc = new Arc2D.Double(x, y, dia, dia, start, 50, Arc2D.OPEN)
-//    g.draw(arc)
-//    g.setColor(Color.yellow)
-//    arc = new Arc2D.Double(x, y, dia, dia, start + 50, 50, Arc2D.OPEN)
-//    g.draw(arc)
-//    g.setColor(Color.green)
-//    arc = new Arc2D.Double(x, y, dia, dia, start + 100, 100, Arc2D.OPEN)
-//    g.draw(arc)
-//    g.setColor(Color.gray)
-//    arc = new Arc2D.Double(x, y, dia, dia, start + 200, extent - 200, Arc2D.OPEN)
-//    g.draw(arc)
 
-    // draw current speed
+    // draw current azimuth
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
-    val text = f"${UnitConverter.speed(input.current, units)}%2.1f"
+    val text = f"${input.current}%3.0f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
     // draw unit

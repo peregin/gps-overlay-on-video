@@ -6,7 +6,7 @@ import javax.swing._
 import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
-import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SkiingDashboard}
+import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard}
 import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
 import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 import peregin.gpv.util.Io
@@ -57,6 +57,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   model.addElement(TemplateEntry("Cycling", new CyclingDashboard {}))
   model.addElement(TemplateEntry("Skiing", new SkiingDashboard {}))
   model.addElement(TemplateEntry("MotorBiking", new MotorBikingDashboard {}))
+  model.addElement(TemplateEntry("Sailing", new SailingDashboard {}))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
