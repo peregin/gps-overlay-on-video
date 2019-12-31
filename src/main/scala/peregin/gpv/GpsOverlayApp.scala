@@ -35,7 +35,7 @@ object GpsOverlayApp extends SimpleSwingApplication
   private val transparencySlider = new PercentageSlider
   transparencySlider.orientation = Orientation.Vertical
   transparencySlider.percentage = 80
-  private val unitChooser = new ComboBox(Seq("Metric", "Standard"))
+  private val unitChooser = new ComboBox(Seq("Metric", "Marine","Standard"))
   private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
   val frame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
