@@ -26,8 +26,8 @@ _The Ultimate Cycling Software_
 
 ## Download
 
-Download the latest executable jar file (gps-overlay-on-video.jar) from [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/)
-Only `java` is needed to run the application as follows:
+Download the latest executable jar file (gps-overlay-on-video.jar) from [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/).
+It requires to have a `java` installation to run the application as follows:
 ```shell script
 java -jar gps-overlay-on-video.jar
 ```
