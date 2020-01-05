@@ -1,6 +1,6 @@
 package peregin.gpv.gui.dashboard
 
-import peregin.gpv.gui.gauge.{CadenceGauge, ElevationChart, GaugePainter, RadialSpeedGauge, SvgHeartRateGauge, SvgPowerGauge}
+import peregin.gpv.gui.gauge.{CadenceGauge, ElevationChart, GaugePainter, RadialAzimuthGauge, RadialSpeedGauge, SvgHeartRateGauge, SvgPowerGauge}
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
 
 import scala.swing.Graphics2D
@@ -101,6 +101,36 @@ trait MotorBikingDashboard extends Dashboard {
     // paint gauges and charts
     speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
+
+    val gaugeSize2 = gaugeSize / 2
+    if (sonda.heartRate.isDefined) {
+      g.translate(0, gaugeSize2)
+      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      g.translate(gaugeSize2, 0)
+    }
+  }
+}
+
+trait SailingDashboard extends Dashboard {
+
+  private val speedGauge = new RadialSpeedGauge {}
+  private val azimuthGauge = new RadialAzimuthGauge {}
+  private val heartRateGauge = new SvgHeartRateGauge {}
+
+  override def gauges(): Seq[GaugePainter] = Seq(speedGauge, azimuthGauge, heartRateGauge)
+
+  override def paintDashboard(g: Graphics2D, imageWidth: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    // paint elevation to the right
+    val stashBottom = g.getTransform
+    g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
+    g.setTransform(stashBottom)
+
+    // paint gauges and charts
+    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    g.translate(gaugeSize, 0)
+    azimuthGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    g.translate(gaugeSize, 0)
+
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {

@@ -55,7 +55,7 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
   if (videoStreamId == -1) throw new RuntimeException(s"could not find video stream in container: $url")
 
   // Now we have found the video stream in this file.  Let's open up our decoder so it can do work.
-  if (videoCoder.open() < 0) throw new RuntimeException(s"could not open video decoder for container: $url")
+  if (videoCoder.open(null,null) < 0) throw new RuntimeException(s"could not open video decoder for container: $url")
 
   var resampler: IVideoResampler = null
   if (videoCoder.getPixelType != IPixelFormat.Type.BGR24) {

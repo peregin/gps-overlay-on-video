@@ -35,6 +35,8 @@ case class TrackPoint(position: GeoPosition,
   var segment = 0d
   // average speed of travelling form the previous to current track point
   var speed = 0d
+  // average bearing from the previous to current track point
+  var bearing = 0d
   // average grade (expressed in percentage) or steepness of the segment between previous and current track points
   var grade = 0d
 
@@ -49,6 +51,7 @@ case class TrackPoint(position: GeoPosition,
       else (prevs.map(_.segment).sum + segment, prevs.head.elevation)
     }
     if (gradeSegment > 0) grade = (next.elevation - firstElevation) / (gradeSegment * 10)
+    bearing = bearingTo(next)
   }
 
   // The return value is the distance expressed in kilometers.
@@ -65,6 +68,16 @@ case class TrackPoint(position: GeoPosition,
       cos(gp.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     TrackPoint.earthRadius * c
+  }
+
+  def bearingTo(that: TrackPoint): Double = bearingTo(that.position)
+
+  def bearingTo(gp: GeoPosition): Double = {
+    val dLon: Double = position.getLongitude - gp.getLongitude
+    val y: Double = Math.sin(dLon) * Math.cos(gp.getLatitude)
+    val x: Double = Math.cos(position.getLatitude) * Math.sin(gp.getLatitude) - Math.sin(position.getLatitude) * Math.cos(gp.getLatitude) * Math.cos(dLon)
+    val deg = 360 - ((Math.toDegrees(Math.atan2(y, x)) + 360) % 360)
+    if (deg == 360.0) 0.0 else deg
   }
 
   def distanceTo(that: TrackPoint): Double = {

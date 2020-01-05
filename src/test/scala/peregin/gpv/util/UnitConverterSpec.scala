@@ -20,12 +20,21 @@ class UnitConverterSpec extends Specification {
     (output - 62.1371).abs <= 0.0001
   }
 
+  "convert distance to nautical" in {
+    val output = UnitConverter.distance(100.0, "Marine")
+    (output - 53.995680).abs <= 0.0001
+  }
+
   "distance units in metric" in {
     UnitConverter.distanceUnits("Metric") === "km"
   }
 
   "distance units in standard" in {
     UnitConverter.distanceUnits("Standard") === "miles"
+  }
+
+  "distance units in marine" in {
+    UnitConverter.distanceUnits("Marine") === "NMs"
   }
 
   /*
@@ -41,12 +50,21 @@ class UnitConverterSpec extends Specification {
     (output - 62.1371).abs <= 0.0001
   }
 
+  "convert speed to marine" in {
+    val output = UnitConverter.speed(100.0, "Marine")
+    (output - 53.995680).abs <= 0.0001
+  }
+
   "speed units in metric" in {
     UnitConverter.speedUnits("Metric") === "km/h"
   }
 
   "speed units in standard" in {
     UnitConverter.speedUnits("Standard") === "mph"
+  }
+
+  "speed units in marine" in {
+    UnitConverter.speedUnits("Marine") === "knots"
   }
 
   /*
@@ -68,5 +86,9 @@ class UnitConverterSpec extends Specification {
 
   "elevation units in standard" in {
     UnitConverter.elevationUnits("Standard") === "ft"
+  }
+
+  "elevation units in marine" in {
+    UnitConverter.elevationUnits("Marine") === "m"
   }
 }

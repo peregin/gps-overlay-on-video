@@ -79,6 +79,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
   val speedBoundary = MinMax.extreme
+  val bearingBoundary = MinMax.extreme
   val gradeBoundary = MinMax.extreme
   val cadenceBoundary = MinMax.extreme
   val temperatureBoundary = MinMax.extreme
@@ -103,6 +104,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
         val prevPoints = track.slice(0.max(i - 10), 0.max(i - 1))
         point.analyze(nextPoint, prevPoints)
         speedBoundary.sample(point.speed)
+        bearingBoundary.sample(point.bearing)
         gradeBoundary.sample(point.grade)
       }
     }
@@ -238,7 +240,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
-      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary),
+      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
       cadence.map(InputValue(_, cadenceBoundary)),
       heartRate.map(InputValue(_, heartRateBoundary)),
       power.map(InputValue(_, powerBoundary))

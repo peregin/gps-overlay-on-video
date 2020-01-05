@@ -33,6 +33,8 @@ java -jar gps-overlay-on-video.jar
 ```
 There are other options to run the application see [How to run it](#how-to-run-it) section.
 
+When running under windows make sure to use 32bit java JDK/JRE (due to bugs in the xuggle library when running in 64bit)
+
 ## Overview
 
 The idea came after I bought a [GoPro](http://gopro.com/cameras/hd-hero3-silver-edition) camera and started to record
