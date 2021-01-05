@@ -74,7 +74,6 @@ sbt run
 
 ## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
-* Thank you [Schrottie](https://github.com/Schrottie) for creating the [how to in german](https://blog.dafb-o.de/gps-overlay-on-video-howto-anzeige-von-gps-daten-in-videos-mit-linux) 
 
 [![how to use 4min Tutorial](http://img.youtube.com/vi/yOvT8IoDUPA/2.jpg)](https://www.youtube.com/watch?v=yOvT8IoDUPA)
 &nbsp;[![how to in german](http://img.youtube.com/vi/kpHlk4FVELk/1.jpg)](https://www.youtube.com/watch?v=kpHlk4FVELk)
