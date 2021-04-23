@@ -6,7 +6,4 @@ notifications:
   email: false
 
 script:
-  - sbt clean coverage test coverageReport
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - sbt test
