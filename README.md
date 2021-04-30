@@ -142,3 +142,4 @@ The charts are showing all the data (for example an elevation chart) and the cur
 The very early drafts on the paper, how it started:
 
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
+

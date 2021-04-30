@@ -1,3 +1,10 @@
+
+# tricks to avoid unnecessary cache updates
+before_cache:
+  - rm -fv $HOME/.ivy2/.sbt.ivy.lock
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find $HOME/.sbt -name "*.lock" -delete
+
 language: scala
 
 notifications:
