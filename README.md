@@ -3,9 +3,6 @@
 [![Issues](https://img.shields.io/github/issues/peregin/gps-overlay-on-video.svg)](https://github.com/peregin/gps-overlay-on-video/issues)
 [![GitHub release](https://img.shields.io/github/release/peregin/gps-overlay-on-video.svg)](https://github.com/peregin/gps-overlay-on-video/releases)
 
-
-![Build Stats](https://buildstats.info/travisci/chart/peregin/gps-overlay-on-video?branch=master&buildCount=25)
-
 GPS data overlay on videos
 ==========================
 _The Ultimate Cycling Software_
