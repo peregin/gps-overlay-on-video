@@ -30,16 +30,16 @@ resolvers ++= Seq(
   "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
-mainClass in assembly := Some(entryPoint)
-assemblyJarName in assembly := "gps-overlay-on-video.jar"
-assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
-assemblyMergeStrategy in assembly := {
+assembly / mainClass := Some(entryPoint)
+assembly / assemblyJarName := "gps-overlay-on-video.jar"
+assembly / assemblyOption := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
+assembly / assemblyMergeStrategy := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard
   case PathList("junit", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
-(test in assembly) := {}
+(assembly / test) := {}
 artifact in(Compile, assembly) := {
   val art = (artifact in(Compile, assembly)).value
   art.withClassifier(Some("assembly"))

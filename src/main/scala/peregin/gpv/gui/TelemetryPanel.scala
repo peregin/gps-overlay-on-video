@@ -16,27 +16,27 @@ import scala.swing.event.{SelectionChanged, ButtonClicked, MouseClicked}
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {
 
-  var telemetry = Telemetry.empty
+  var telemetry = Telemetry.empty()
 
   // file chooser widget
   val fileChooser = new FileChooserPanel("Load GPS data file:", openGpsData, ExtensionFilters.gps)
   add(fileChooser, "pushx, growx")
   // tile chooser dropdown
   case class TileOption(name: String, factory: DefaultTileFactory) {
-    override def toString = name
+    override def toString: String = name
   }
   val mapChooser = new ComboBox(Seq(
     TileOption("Aerial (Microsoft)", new MicrosoftTileFactory),
     TileOption("Open Street Map", new MapQuestTileFactory)
   ))
-  val mapType = new MigPanel("ins 0", "", "[grow, fill]") {
+  private val mapType = new MigPanel("ins 0", "", "[grow, fill]") {
     add(new Label("Map Type"), "wrap")
     add(mapChooser, "")
   }
   add(mapType, "wrap")
 
   val mapKit = new MapPanel
-  val mapKitWrapper = Component.wrap(mapKit)
+  private val mapKitWrapper = Component.wrap(mapKit)
   add(mapKit, "span 2, growx, wrap")
 
   val altitude = new AltitudePanel
@@ -44,7 +44,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
 
   val direction = new ComboBox(Seq("Forward", "Backward"))
   val spinner = new DurationSpinner
-  val elevationMode = new ButtonGroup() {
+  private val elevationMode = new ButtonGroup() {
     buttons += new RadioButton("Distance") {
       selected = true
       icon = new ImageIcon(Io.loadImage("images/distance.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH))
@@ -56,7 +56,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
       tooltip = "Time"
     }
   }
-  val controlPanel = new MigPanel("ins 0 5 0 5", "", "") {
+  private val controlPanel = new MigPanel("ins 0 5 0 5", "", "") {
     add(new Label("Shift"), "")
     add(direction, "")
     add(spinner, "align left")
@@ -111,7 +111,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
     direction.selection.index = if (setup.shift < 0) 1 else 0
   }
 
-  def getShift = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
+  def getShift: Long = spinner.duration * (if (direction.selection.index == 0) 1 else -1)
 
   // dispatched by the video controller, invoked from EDT
   def updateVideoProgress(videoTimeInMillis: Long): Unit = {
