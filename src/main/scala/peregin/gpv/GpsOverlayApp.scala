@@ -47,7 +47,7 @@ object GpsOverlayApp extends SimpleSwingApplication
       toolbar.add(new ImageButton("images/video.png", "Convert", convertProject()))
       add(toolbar, "span 2, wrap")
 
-      private var unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
+      private val unitPanel = new MigPanel("ins 0 5 0 5", "", "") {
         add(new Label("Units"), "")
         add(unitChooser, "")
       }
