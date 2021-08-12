@@ -15,7 +15,7 @@ import scala.swing.event.MouseClicked
 // map widget
 class MapPanel extends JXMapKit with Publisher with KnobPainter {
 
-  private var telemetry = Telemetry.empty
+  private var telemetry = Telemetry.empty()
   private var poi: Option[GeoPosition] = None
   private var progress: Option[GeoPosition] = None
 

@@ -69,16 +69,16 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       case Some(frame) =>
         log.debug(s"step to ts=${TimePrinter.printDuration(frame.tsInMillis)}")
         handleFrame(frame)
-        stay using frame
-      case _ => stay using EndOfStream
+        stay() using frame
+      case _ => stay() using EndOfStream
     }
 
     case Event(SeekCommand(percentage), _) => video.seek(percentage) match {
       case Some(seekFrame) =>
         log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
         handleFrame(seekFrame)
-        stay using seekFrame
-      case _ => stay using EndOfStream
+        stay() using seekFrame
+      case _ => stay() using EndOfStream
     }
 
     case Event(PlayCommand, data) =>
@@ -99,7 +99,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
         startSingleTimer("nextread", PlayCommand, delay millis)
-        stay using frame
+        stay() using frame
       case _ => goto(Idle) using EndOfStream
     }
 
@@ -113,8 +113,8 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
           video.resetDelay()
           //handleFrame(seekFrame)
           startSingleTimer("nextread", PlayCommand, 0 millis)
-          stay using seekFrame
-        case _ => stay using EndOfStream
+          stay() using seekFrame
+        case _ => stay() using EndOfStream
     }
 
     case Event(PauseCommand, data) =>
@@ -125,7 +125,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
   whenUnhandled {
     case Event(QueryIsRunning, _) =>
       // tells whether the player is still running or not
-      sender ! (stateName == Running)
+      sender() ! (stateName == Running)
       stay()
     case any =>
       log.warning(s"unhandled ${any.toString}")

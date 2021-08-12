@@ -37,7 +37,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
   Goodies.center(frame)
 
   def openVideoFile(file: File): Unit = {
-    val setup = Setup.empty
+    val setup = Setup.empty()
     setup.videoPath = Some(file.getAbsolutePath)
     log.info(s"opening $file")
     video.refresh(setup)

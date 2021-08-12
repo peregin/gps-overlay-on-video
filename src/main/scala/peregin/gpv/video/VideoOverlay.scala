@@ -10,7 +10,7 @@ class VideoOverlay(listener: VideoPlayer.Listener, durationInMillis: Long) exten
     val tsInMillis = event.getTimeUnit.toMillis(event.getTimeStamp)
     val percentage = if (durationInMillis > 0) tsInMillis * 100 / durationInMillis else 0
     val image = event.getImage
-    listener.videoEvent(tsInMillis, percentage, image)
+    listener.videoEvent(tsInMillis, percentage.toDouble, image)
 
     super.onVideoPicture(event)
   }
