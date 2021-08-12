@@ -14,9 +14,9 @@ scalaVersion := "2.13.6"
 
 val json4sVersion = "3.6.11"
 val akkaVersion = "2.6.14"
-val specs2Version = "4.10.5"
-val logbackVersion = "1.2.3"
-val batikVersion = "1.13" // svg manipulation
+val specs2Version = "4.12.3"
+val logbackVersion = "1.2.5"
+val batikVersion = "1.14" // svg manipulation
 val xmlVersion = "1.3.0"
 val jodaVersion = "2.10.10"
 
