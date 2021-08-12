@@ -31,8 +31,6 @@ class PercentageSlider extends Component with Orientable.Wrapper with Publisher 
   import javax.swing.UIManager
   import javax.swing.plaf.basic.BasicSliderUI
 
-  val defaults: UIDefaults = UIManager.getLookAndFeelDefaults
-  val sliderClass = defaults.getUIClass("SliderUI")
   val methodXValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
   methodXValForPos.setAccessible(true)
   val methodIsDragging = classOf[BasicSliderUI].getDeclaredMethod("isDragging")

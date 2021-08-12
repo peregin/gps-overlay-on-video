@@ -22,7 +22,7 @@ val jodaVersion = "2.10.10"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
-javaOptions ++= List(macDockNameOpt)
+javaOptions ++= List(macDockNameOpt, "--illegal-access=permit")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 resolvers ++= Seq(
