@@ -8,17 +8,17 @@ name := "telemetry-on-video"
 
 val entryPoint = "peregin.gpv.GpsOverlayApp"
 
-mainClass in Compile := Some(entryPoint)
+Compile / mainClass := Some(entryPoint)
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.7"
 
-val json4sVersion = "3.6.11"
-val akkaVersion = "2.6.14"
-val specs2Version = "4.12.3"
-val logbackVersion = "1.2.5"
+val json4sVersion = "4.0.3"
+val akkaVersion = "2.6.17"
+val specs2Version = "4.13.1"
+val logbackVersion = "1.2.7"
 val batikVersion = "1.14" // svg manipulation
 val xmlVersion = "1.3.0"
-val jodaVersion = "2.10.10"
+val jodaVersion = "2.10.13"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
@@ -32,7 +32,7 @@ resolvers ++= Seq(
 
 assembly / mainClass := Some(entryPoint)
 assembly / assemblyJarName := "gps-overlay-on-video.jar"
-assembly / assemblyOption := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
+assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
 assembly / assemblyMergeStrategy := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard
@@ -40,7 +40,7 @@ assembly / assemblyMergeStrategy := {
   case x => MergeStrategy.first
 }
 (assembly / test) := {}
-artifact in(Compile, assembly) := {
+artifact in(Compile, assembly) / artifact := {
   val art = (artifact in(Compile, assembly)).value
   art.withClassifier(Some("assembly"))
 }
