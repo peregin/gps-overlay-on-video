@@ -40,7 +40,7 @@ assembly / assemblyMergeStrategy := {
   case x => MergeStrategy.first
 }
 (assembly / test) := {}
-artifact in(Compile, assembly) / artifact := {
+artifact / artifact in(Compile, assembly) := {
   val art = (artifact in(Compile, assembly)).value
   art.withClassifier(Some("assembly"))
 }
