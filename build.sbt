@@ -17,8 +17,9 @@ val akkaVersion = "2.6.17"
 val specs2Version = "4.13.1"
 val logbackVersion = "1.2.7"
 val batikVersion = "1.14" // svg manipulation
-val xmlVersion = "1.3.0"
+val xmlVersion = "2.0.1"
 val jodaVersion = "2.10.13"
+val swingVersion = "2.1.1"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
@@ -97,7 +98,7 @@ def welcomeMessage = Def.setting {
 }
 
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % swingVersion
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % xmlVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
