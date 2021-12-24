@@ -58,6 +58,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info",
     ghreleaseRepoOrg := "peregin",
     ghreleaseRepoName := "gps-overlay-on-video",
+    ghreleaseNotes := (v => s"Release $v"),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
