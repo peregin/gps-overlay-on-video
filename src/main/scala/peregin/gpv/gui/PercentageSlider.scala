@@ -1,12 +1,11 @@
 package peregin.gpv.gui
 
 import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
-
 import javax.swing.JSlider
 import peregin.gpv.util.Logging
 
 import scala.swing.event.ComponentEvent
-import scala.swing.{Component, Orientable, Publisher}
+import scala.swing.{Component, Orientable, Orientation, Publisher}
 
 object SliderChanged {
   def unapply(a: SliderChanged): Option[(Component, Double)] = Some((a.source, a.percentage))
@@ -23,12 +22,13 @@ case class SliderChanged(override val source: Component, percentage: Double) ext
  * @author levi@peregin.com
  * @see javax.swing.JSlider
  */
-class PercentageSlider extends Component with Orientable.Wrapper with Publisher with Logging {
+class PercentageSlider extends Component with Orientable with Publisher with Logging {
 
   override lazy val peer: JSlider = new JSlider(0, 10000, 0) with SuperMixin
 
-  import javax.swing.UIDefaults
-  import javax.swing.UIManager
+  def orientation: Orientation.Value = Orientation(peer.getOrientation)
+  def orientation_=(o: Orientation.Value): Unit = peer.setOrientation(o.id)
+
   import javax.swing.plaf.basic.BasicSliderUI
 
   val methodXValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
