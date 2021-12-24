@@ -41,11 +41,11 @@ assembly / assemblyMergeStrategy := {
   case x => MergeStrategy.first
 }
 (assembly / test) := {}
-artifact / artifact in(Compile, assembly) := {
-  val art = (artifact in(Compile, assembly)).value
+Compile / assembly / artifact := {
+  val art = (Compile / assembly / artifact).value
   art.withClassifier(Some("assembly"))
 }
-addArtifact(artifact in(Compile, assembly), assembly)
+addArtifact(Compile / assembly / artifact, assembly)
 
 publishArtifact := false // it is done by the assembly plugin
 
@@ -58,7 +58,6 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info",
     ghreleaseRepoOrg := "peregin",
     ghreleaseRepoName := "gps-overlay-on-video",
-    ghreleaseNotes := (v => s"Release $v"),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
