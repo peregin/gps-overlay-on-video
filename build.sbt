@@ -33,7 +33,8 @@ resolvers ++= Seq(
 
 assembly / mainClass := Some(entryPoint)
 assembly / assemblyJarName := "gps-overlay-on-video.jar"
-assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
+assembly / assemblyOption := (assembly / assemblyOption).value
+  .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
 assembly / assemblyMergeStrategy := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard
