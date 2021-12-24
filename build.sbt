@@ -19,7 +19,7 @@ val logbackVersion = "1.2.10"
 val batikVersion = "1.14" // svg manipulation
 val xmlVersion = "2.0.1"
 val jodaVersion = "2.10.13"
-val swingVersion = "2.1.1"
+val swingVersion = "3.0.0"
 
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
