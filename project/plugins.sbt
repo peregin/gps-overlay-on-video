@@ -18,13 +18,13 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.1")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 
 // generate fat jar
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
 
 // code coverage
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.2")
 
 // Gerolf's release plugin
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
 
 // github publishing
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
