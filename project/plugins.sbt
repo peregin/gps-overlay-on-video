@@ -24,7 +24,7 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.2")
 
 // Gerolf's release plugin
-addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.1.0")
 
 // github publishing
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
