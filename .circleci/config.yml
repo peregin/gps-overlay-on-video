@@ -1,0 +1,45 @@
+version: 2.1
+
+defaults:
+  working_directory: ~/project
+  cache_key: &cache_key 'v1-{{ checksum "checksums.txt" }}'
+
+executors:
+  ci-executor:
+    docker:
+      - image: peregin/circleci:latest
+        auth:
+          username: peregin
+          password: $DOCKERHUB_PASSWORD
+        user: circleci
+    environment:
+      JVM_OPTS: -Xmx3072m
+
+jobs:
+  build:
+    executor: ci-executor
+    steps:
+      - checkout
+      - run: .circleci/cachekey.sh checksums.txt
+      - restore_cache:
+          key: *cache_key
+      - run: sbt Compile/compile Test/compile
+      - save_cache:
+          key: *cache_key
+          paths:
+            - ~/.m2
+            - ~/.ivy2
+            - ~/.sbt
+            - ~/.sbt/launchers
+            - ~/.cache/coursier
+            - ~/.npm
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+      - run: sbt Test/test
+
+workflows:
+  ci_cd:
+    jobs:
+      - build
