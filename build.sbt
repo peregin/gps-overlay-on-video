@@ -10,7 +10,7 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 Compile / mainClass := Some(entryPoint)
 
-scalaVersion := "2.13.7"
+scalaVersion := "2.13.8"
 
 val json4sVersion = "4.0.3"
 val akkaVersion = "2.6.18"
