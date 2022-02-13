@@ -18,7 +18,7 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.1")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 
 // generate fat jar
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.1")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.2.0")
 
 // code coverage
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.3")
