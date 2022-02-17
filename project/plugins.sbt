@@ -15,7 +15,7 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.2")
 
 // generates build information, timestamp
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 
 // generate fat jar
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.2.0")
