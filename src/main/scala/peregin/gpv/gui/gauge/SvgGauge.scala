@@ -1,23 +1,26 @@
 package peregin.gpv.gui.gauge
 
+import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
+import peregin.gpv.util.ImageConverter
+
 import java.awt._
 import java.awt.image.BufferedImage
 import java.util.concurrent.TimeUnit
 
-import com.google.common.cache.{CacheBuilder, CacheLoader}
-import peregin.gpv.util.{ImageConverter, Timed}
-
-object ImageCache extends Timed {
+object ImageCache {
 
   case class CacheKey(imagePath: String, w: Int, h: Int, gray: Int)
 
-  val cache = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(1, TimeUnit.DAYS).
-    build(new CacheLoader[CacheKey, BufferedImage] {
-      override def load(key: CacheKey): BufferedImage = timed(s"loading $key") {
+  val cache: LoadingCache[CacheKey, BufferedImage] = CacheBuilder
+    .newBuilder()
+    .maximumSize(1000)
+    .expireAfterWrite(1, TimeUnit.DAYS)
+    .build(new CacheLoader[CacheKey, BufferedImage] {
+      override def load(key: CacheKey): BufferedImage = {
         val svgImage = ImageConverter.loadSvg(key.imagePath, key.w, key.h)
         ImageConverter.fillColor(svgImage, key.gray, key.gray, key.gray)
       }
-  })
+    })
 
   def svgImage(imagePath: String, w: Int, h: Int, gray: Int): BufferedImage = {
     val key = CacheKey(imagePath, w, h, gray)
@@ -30,6 +33,7 @@ trait SvgGauge extends GaugePainter {
   def imagePath: String
 
   def valueText: String
+
   def unitText: String
 
   override def paint(g: Graphics2D, w: Int, h: Int) = {
