@@ -8,8 +8,8 @@ libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 // eclipse support
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.2.4")
 
-// to generate dependency graph of the libraries
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
+// it is sourced by sbt from 1.4.x
+addDependencyTreePlugin
 
 // check latest updates form maven
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
