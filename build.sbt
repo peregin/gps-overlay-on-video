@@ -13,7 +13,7 @@ Compile / mainClass := Some(entryPoint)
 scalaVersion := "2.13.10"
 
 val json4sVersion = "4.0.6"
-val akkaVersion = "2.6.20"
+val akkaVersion = "2.7.0"
 val specs2Version = "4.19.0"
 val logbackVersion = "1.4.5"
 val batikVersion = "1.16" // svg manipulation

@@ -5,9 +5,6 @@ resolvers += "oss snapshots" at "https://oss.sonatype.org/content/repositories/s
 // because of Java 11
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 
-// eclipse support
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.2.4")
-
 // it is sourced by sbt from 1.4.x
 addDependencyTreePlugin
 
