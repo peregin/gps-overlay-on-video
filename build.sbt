@@ -24,6 +24,7 @@ val swingVersion = "3.0.0"
 scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
 javaOptions ++= List(macDockNameOpt, "--illegal-access=permit")
+javacOptions ++= Seq("-source", "17", "-target", "17")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 resolvers ++= Seq(
