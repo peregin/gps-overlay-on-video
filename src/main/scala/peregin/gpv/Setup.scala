@@ -4,7 +4,6 @@ import java.io.FileWriter
 import peregin.gpv.util.JsonConverter
 import scala.io.Source
 
-
 object Setup {
 
   def save(setup: Setup): String = JsonConverter.generate(setup)
