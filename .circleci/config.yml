@@ -8,9 +8,6 @@ executors:
   ci-executor:
     docker:
       - image: peregin/circleci:latest
-        auth:
-          username: peregin
-          password: $DOCKERHUB_PASSWORD
         user: circleci
     environment:
       JVM_OPTS: -Xmx3072m

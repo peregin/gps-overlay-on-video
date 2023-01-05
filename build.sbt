@@ -21,9 +21,15 @@ val xmlVersion = "2.1.0"
 val jodaVersion = "2.12.2"
 val swingVersion = "3.0.0"
 
-scalacOptions ++= List("-target:jvm-1.8", "-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
+scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
-javaOptions ++= List(macDockNameOpt, "--illegal-access=permit")
+javaOptions ++= List(
+  macDockNameOpt,
+  "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
+  "--add-opens=java.base/java.lang=ALL-UNNAMED",
+  "--add-opens=java.base/java.util=ALL-UNNAMED",
+  "--add-opens=java.base/java.net=ALL-UNNAMED"
+)
 javacOptions ++= Seq("-source", "17", "-target", "17")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
