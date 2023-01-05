@@ -30,7 +30,7 @@ class MapPanel extends JXMapKit with Publisher with KnobPainter {
 
   getMainMap.addMouseListener(new MouseAdapter {
     override def mouseClicked(e: MouseEvent): Unit = {
-      publish(new MouseClicked(Component.wrap(MapPanel.this), e.getPoint, e.getModifiers, e.getClickCount, e.isPopupTrigger)(e))
+      publish(MouseClicked(Component.wrap(MapPanel.this), e.getPoint, e.getModifiers, e.getClickCount, e.isPopupTrigger)(e))
     }
   })
 

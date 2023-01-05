@@ -13,10 +13,10 @@ trait DigitalGauge extends GaugePainter with DigitalFont {
 
     val cy = h / 2
     val box = math.min(w, h)
-    val fs = box / 2
+    val fs = box.toFloat / 2
 
     // draw current speed
-    g.setFont(digitalFont.deriveFont(Font.BOLD, fs.toFloat))
+    g.setFont(digitalFont.deriveFont(Font.BOLD, fs))
     val text = valueText()
     val tb = g.getFontMetrics.getStringBounds(text, g)
     textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)

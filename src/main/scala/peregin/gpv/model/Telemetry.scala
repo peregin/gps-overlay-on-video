@@ -76,19 +76,19 @@ object Telemetry extends Timed with Logging {
 case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   val elevationBoundary = MinMax.extreme
-  val latitudeBoundary = MinMax.extreme
-  val longitudeBoundary = MinMax.extreme
-  val speedBoundary = MinMax.extreme
-  val bearingBoundary = MinMax.extreme
+  private[model] val latitudeBoundary = MinMax.extreme
+  private[model] val longitudeBoundary = MinMax.extreme
+  private[model] val speedBoundary = MinMax.extreme
+  private[model] val bearingBoundary = MinMax.extreme
   val gradeBoundary = MinMax.extreme
-  val cadenceBoundary = MinMax.extreme
-  val temperatureBoundary = MinMax.extreme
-  val heartRateBoundary = MinMax.extreme
-  val powerBoundary = MinMax.extreme
+  private[model] val cadenceBoundary = MinMax.extreme
+  private[model] val temperatureBoundary = MinMax.extreme
+  private[model] val heartRateBoundary = MinMax.extreme
+  private[model] val powerBoundary = MinMax.extreme
 
   private var centerPosition = TrackPoint.centerPosition
 
-  def analyze(): Unit = timed("analyze GPS data") {
+  private def analyze(): Unit = timed("analyze GPS data") {
     val n = track.size
     for (i <- 0 until n) {
       val point = track(i)
@@ -247,9 +247,9 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     )
   }
 
-  def interpolate(f: Double, left: Double, right: Double): Double = left + f * (right - left) / 100
+  private def interpolate(f: Double, left: Double, right: Double): Double = left + f * (right - left) / 100
 
-  def interpolate(f: Double, oLeft: Option[Double], oRight: Option[Double]): Option[Double] = (oLeft, oRight) match {
+  private def interpolate(f: Double, oLeft: Option[Double], oRight: Option[Double]): Option[Double] = (oLeft, oRight) match {
     case (Some(l), Some(r)) => Some(interpolate(f, l, r))
     case _ => None
   }

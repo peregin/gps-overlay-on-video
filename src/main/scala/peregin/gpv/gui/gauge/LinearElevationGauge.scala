@@ -18,7 +18,7 @@ trait LinearElevationGauge extends GaugePainter {
     val box = math.min(w, h)
     val boxWidth = box / 8
     val boxHeight = (box / 1.2).toInt
-    val strokeWidth = box / 40
+    val strokeWidth = box.toFloat / 40
 
     // draw altimeter box
     g.setColor(Color.black)
