@@ -121,7 +121,7 @@ libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
-libraryDependencies += "org.joda" % "joda-convert" % "2.2.2"
+libraryDependencies += "org.joda" % "joda-convert" % "2.2.3"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 libraryDependencies += "com.google.guava" % "guava" % "31.1-jre"
 // deprecated from Java 9, needs to be added when
