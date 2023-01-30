@@ -29,12 +29,12 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
   info(s"duration: ${TimePrinter.printDuration(durationInMillis)}")
 
   // query how many streams the call to open found
-  val numStreams = container.getNumStreams
+  private val numStreams = container.getNumStreams
 
   // and iterate through the streams to find the first video stream
-  var videoStreamId = -1
+  private var videoStreamId = -1
   var frameRate = 0d
-  var timeBase = 1d
+  private var timeBase = 1d
 
   var videoCoder: IStreamCoder = null
   for (i <- 0 until numStreams) {
@@ -68,11 +68,11 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
   val packet = IPacket.make()
 
 
-  def readPacket: Stream[PacketReply] = {
+  def readPacket: LazyList[PacketReply] = {
     if (container.readNextPacket(packet) >= 0) {
-      if (packet.getStreamIndex == videoStreamId) Stream.cons(readVideo, readPacket)
-      else Stream.cons(ReadInProgress, readPacket)
-    } else Stream.cons(EndOfStream, Stream.empty)
+      if (packet.getStreamIndex == videoStreamId) LazyList.cons(readVideo, readPacket)
+      else LazyList.cons(ReadInProgress, readPacket)
+    } else LazyList.cons(EndOfStream, LazyList.empty)
   }
 
   private[this] def readVideo: PacketReply = {
