@@ -12,6 +12,9 @@ Compile / mainClass := Some(entryPoint)
 
 scalaVersion := "2.13.10"
 
+// suppress warnings for unused settings introduced by plugins (e.g. github)
+Global / excludeLintKeys ++= Set(ghreleaseNotes)
+
 val json4sVersion = "4.0.6"
 val akkaVersion = "2.7.0"
 val specs2Version = "4.19.2"
