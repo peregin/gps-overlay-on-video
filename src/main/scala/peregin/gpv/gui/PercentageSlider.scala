@@ -31,9 +31,9 @@ class PercentageSlider extends Component with Orientable with Publisher with Log
 
   import javax.swing.plaf.basic.BasicSliderUI
 
-  val methodXValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
+  private val methodXValForPos = classOf[BasicSliderUI].getDeclaredMethod("valueForXPosition", classOf[Int])
   methodXValForPos.setAccessible(true)
-  val methodIsDragging = classOf[BasicSliderUI].getDeclaredMethod("isDragging")
+  private val methodIsDragging = classOf[BasicSliderUI].getDeclaredMethod("isDragging")
   methodIsDragging.setAccessible(true)
 
   @volatile private var sliderChangeFromApi = true
@@ -60,19 +60,17 @@ class PercentageSlider extends Component with Orientable with Publisher with Log
     override def mousePressed(e: MouseEvent): Unit = {
       val dragging = methodIsDragging.invoke(peer.getUI).asInstanceOf[Boolean]
       if (!dragging) {
-        lastEventX = e.getX()
+        lastEventX = e.getX
         val xSlideTo = calculatePercentage(lastEventX)
         percentage = xSlideTo // set the slider value
       }
     }
   })
 
-  peer.addChangeListener(new javax.swing.event.ChangeListener {
-    def stateChanged(e: javax.swing.event.ChangeEvent): Unit = {
-      if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
-        val xSlideTo = calculatePercentage(lastEventX)
-        publish(new SliderChanged(PercentageSlider.this, xSlideTo))
-      }
+  peer.addChangeListener((_: javax.swing.event.ChangeEvent) => {
+    if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
+      val xSlideTo = calculatePercentage(lastEventX)
+      publish(new SliderChanged(PercentageSlider.this, xSlideTo))
     }
   })
 
@@ -84,7 +82,7 @@ class PercentageSlider extends Component with Orientable with Publisher with Log
   }
 
   private def calculatePercentage(x: Int): Double = {
-    val xSlider = methodXValForPos.invoke(peer.getUI, new Integer(x)).asInstanceOf[Integer]
+    val xSlider = methodXValForPos.invoke(peer.getUI, Integer.valueOf(x)).asInstanceOf[Integer]
     xSlider.toDouble / 100
   }
 }
