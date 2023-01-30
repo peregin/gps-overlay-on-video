@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/peregin/gps-overlay-on-video/tree/master.svg?style=svg)](https://circleci.com/gh/peregin/gps-overlay-on-video/tree/master)
+[![CircleCI](https://circleci.com/gh/peregin/gps-overlay-on-video/tree/master.svg?style=shield)](https://circleci.com/gh/peregin/gps-overlay-on-video/tree/master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Issues](https://img.shields.io/github/issues/peregin/gps-overlay-on-video.svg)](https://github.com/peregin/gps-overlay-on-video/issues)
 [![GitHub release](https://img.shields.io/github/release/peregin/gps-overlay-on-video.svg)](https://github.com/peregin/gps-overlay-on-video/releases)
