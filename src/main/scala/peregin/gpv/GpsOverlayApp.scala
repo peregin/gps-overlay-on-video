@@ -169,6 +169,9 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def convertProject(): Unit = {
     log.debug("convert project")
+    setup.shift = telemetryPanel.getShift
+    setup.transparency = transparencySlider.percentage
+    setup.units = unitChooser.selection.item
     val template = templatePanel.getSelectedEntry.getOrElse(TemplateEntry("Cycling", new CyclingDashboard {}))
     val dialog = new ConverterDialog(setup, telemetryPanel.telemetry, template, frame)
     Goodies.center(dialog)
