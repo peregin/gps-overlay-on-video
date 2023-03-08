@@ -121,6 +121,7 @@ Useful links and information
 * [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula) and [Versine function](http://en.wikipedia.org/wiki/Versine)
 * [Slope calculation](https://www.calculator.net/slope-calculator.html)
 * [Fonts and graphics](http://www3.ntu.edu.sg/home/ehchua/programming/java/J4b_CustomGraphics.html)
+* [Latitude Longitude](https://cdn.ttgtmedia.com/rms/onlineimages/latitude_and_longitude-f.png)
 
 ### Generating new video with gps overlay
 

@@ -3,15 +3,14 @@ package peregin.gpv.gui
 import java.awt.Image
 import java.io.File
 import javax.swing.ImageIcon
-
 import org.jdesktop.swingx.mapviewer.DefaultTileFactory
 import peregin.gpv.Setup
-import peregin.gpv.gui.map.{MicrosoftTileFactory, MapQuestTileFactory, AltitudePanel, MapPanel}
+import peregin.gpv.gui.map.{AltitudePanel, MapPanel, MapQuestTileFactory, MicrosoftTileFactory, SwissTileFactory}
 import peregin.gpv.model.{Mode, Telemetry}
 import peregin.gpv.util.{Io, Logging, Timed}
 
 import scala.swing._
-import scala.swing.event.{SelectionChanged, ButtonClicked, MouseClicked}
+import scala.swing.event.{ButtonClicked, MouseClicked, SelectionChanged}
 
 
 class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[fill]") with Logging with Timed {

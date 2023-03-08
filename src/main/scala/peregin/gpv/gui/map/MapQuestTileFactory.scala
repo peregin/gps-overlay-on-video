@@ -2,6 +2,7 @@ package peregin.gpv.gui.map
 
 import org.jdesktop.swingx.mapviewer.{DefaultTileFactory, TileFactoryInfo}
 
+// open street map
 class MapQuestTileFactory extends DefaultTileFactory(new MapQuestTileInfo)
 
 object MapQuestTileInfo {
