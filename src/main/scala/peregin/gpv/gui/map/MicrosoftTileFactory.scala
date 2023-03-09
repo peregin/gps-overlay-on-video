@@ -19,11 +19,11 @@ object MicrosoftTileFactoryInfo {
 
 class MicrosoftTileFactoryInfo extends TileFactoryInfo(minZoom, maxZoom, mapZoom, tileSize, xr2l, yt2b, baseURL, null, null, null) {
 
-  override def getTileUrl(x: Int, y: Int, zoom: Int) = {
+  override def getTileUrl(x: Int, y: Int, zoom: Int): String = {
     baseURL + xyzoom2quadrants(x, y, zoom) + ".jpeg?g=" + VERSION
   }
 
-  def xyzoom2quadrants(x: Int, y: Int, zoom: Int) = {
+  def xyzoom2quadrants(x: Int, y: Int, zoom: Int): String = {
     val quad = new StringBuffer()
     var level = 1 << (maxZoom - zoom)
     var tx = x
