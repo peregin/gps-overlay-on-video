@@ -17,7 +17,7 @@ Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
 val json4sVersion = "4.0.6"
 val akkaVersion = "2.7.0"
-val specs2Version = "4.19.2"
+val specs2Version = "4.20.0"
 val logbackVersion = "1.4.6"
 val batikVersion = "1.16" // svg manipulation
 val xmlVersion = "2.1.0"
