@@ -16,7 +16,7 @@ scalaVersion := "2.13.10"
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
 val json4sVersion = "4.0.6"
-val akkaVersion = "2.7.0"
+val akkaVersion = "2.8.2"
 val specs2Version = "4.20.0"
 val logbackVersion = "1.4.7"
 val batikVersion = "1.16" // svg manipulation
@@ -84,7 +84,9 @@ lazy val root = (project in file(".")).
       setNextVersion,
       commitNextVersion,
       pushChanges // push the next version
-    )
+    ),
+    // because of: org.swinglabs:swingx-core           : 1.6.2-2 -> 1.6.2
+    dependencyUpdatesFilter -= moduleFilter(organization = "org.swinglabs", name = "swingx-core"),
   )
 
 onLoadMessage := welcomeMessage.value
