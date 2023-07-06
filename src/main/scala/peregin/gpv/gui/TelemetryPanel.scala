@@ -5,7 +5,7 @@ import java.io.File
 import javax.swing.ImageIcon
 import org.jdesktop.swingx.mapviewer.DefaultTileFactory
 import peregin.gpv.Setup
-import peregin.gpv.gui.map.{AltitudePanel, MapPanel, MapQuestTileFactory, MicrosoftTileFactory, SwissTileFactory}
+import peregin.gpv.gui.map.{AltitudePanel, MapPanel, MapQuestTileFactory, MicrosoftTileFactory}
 import peregin.gpv.model.{Mode, Telemetry}
 import peregin.gpv.util.{Io, Logging, Timed}
 
@@ -26,7 +26,7 @@ class TelemetryPanel(openGpsData: File => Unit) extends MigPanel("ins 2", "", "[
   }
   val mapChooser = new ComboBox(Seq(
     TileOption("Aerial (Microsoft)", new MicrosoftTileFactory),
-    TileOption("Open Street Map", new MapQuestTileFactory)
+    //TileOption("MapQuest", new MapQuestTileFactory),
   ))
   private val mapType = new MigPanel("ins 0", "", "[grow, fill]") {
     add(new Label("Map Type"), "wrap")
