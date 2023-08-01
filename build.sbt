@@ -128,7 +128,7 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
 libraryDependencies += "org.joda" % "joda-convert" % "2.2.3"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
-libraryDependencies += "com.google.guava" % "guava" % "32.1.1-jre"
+libraryDependencies += "com.google.guava" % "guava" % "32.1.2-jre"
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"
