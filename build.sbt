@@ -15,7 +15,7 @@ scalaVersion := "2.13.12"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val json4sVersion = "4.0.6"
+val json4sVersion = "4.0.7"
 val akkaVersion = "2.8.3"
 val specs2Version = "4.20.3"
 val logbackVersion = "1.4.14"
