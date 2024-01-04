@@ -63,11 +63,6 @@ run.sh
 ```
 The script will download the latest version published on github and will run it.
 
-if you have the `scala` environment installed, you can run it with:
-```shell script
-sbt run
-``` 
-
 ## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
 
