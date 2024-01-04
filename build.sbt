@@ -16,8 +16,8 @@ scalaVersion := "2.13.12"
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
 val json4sVersion = "4.0.7"
-val akkaVersion = "2.8.3"
-val specs2Version = "4.20.3"
+val akkaVersion = "2.8.5"
+val specs2Version = "4.20.4"
 val logbackVersion = "1.4.14"
 val batikVersion = "1.17" // svg manipulation
 val xmlVersion = "2.2.0"
@@ -46,9 +46,9 @@ assembly / assemblyJarName := "gps-overlay-on-video.jar"
 assembly / assemblyOption := (assembly / assemblyOption).value
   .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
 assembly / assemblyMergeStrategy := {
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-  case PathList("javax", "servlet", xs @ _*) => MergeStrategy.discard
-  case PathList("junit", xs @ _*) => MergeStrategy.discard
+  case PathList("META-INF", xs*) => MergeStrategy.discard
+  case PathList("javax", "servlet", xs*) => MergeStrategy.discard
+  case PathList("junit", xs*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
 (assembly / test) := {}
@@ -128,7 +128,7 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
 libraryDependencies += "org.joda" % "joda-convert" % "2.2.3"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
-libraryDependencies += "com.google.guava" % "guava" % "32.1.3-jre"
+libraryDependencies += "com.google.guava" % "guava" % "33.0.0-jre"
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"
