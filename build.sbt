@@ -46,9 +46,9 @@ assembly / assemblyJarName := "gps-overlay-on-video.jar"
 assembly / assemblyOption := (assembly / assemblyOption).value
   .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
 assembly / assemblyMergeStrategy := {
-  case PathList("META-INF", xs*) => MergeStrategy.discard
-  case PathList("javax", "servlet", xs*) => MergeStrategy.discard
-  case PathList("junit", xs*) => MergeStrategy.discard
+  case PathList("META-INF", _*) => MergeStrategy.discard
+  case PathList("javax", "servlet", _*) => MergeStrategy.discard
+  case PathList("junit", _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
 (assembly / test) := {}
