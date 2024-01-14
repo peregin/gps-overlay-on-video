@@ -21,7 +21,7 @@ val specs2Version = "4.20.4"
 val logbackVersion = "1.4.14"
 val batikVersion = "1.17" // svg manipulation
 val xmlVersion = "2.2.0"
-val jodaVersion = "2.12.5"
+val jodaVersion = "2.12.6"
 val swingVersion = "3.0.0"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
