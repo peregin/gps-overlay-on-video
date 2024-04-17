@@ -20,7 +20,7 @@ val akkaVersion = "2.8.5"
 val specs2Version = "4.20.5"
 val logbackVersion = "1.5.5"
 val batikVersion = "1.17" // svg manipulation
-val xmlVersion = "2.2.0"
+val xmlVersion = "2.3.0"
 val jodaVersion = "2.12.7"
 val swingVersion = "3.0.0"
 
