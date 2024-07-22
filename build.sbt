@@ -26,8 +26,11 @@ val swingVersion = "3.0.0"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
+
+run / fork := true
+
 javaOptions ++= List(
-  macDockNameOpt,
+  //macDockNameOpt, // supported on MacOs only
   "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
