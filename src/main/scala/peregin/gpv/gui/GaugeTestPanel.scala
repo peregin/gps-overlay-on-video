@@ -12,24 +12,24 @@ import scala.swing.Label
 /**
  * Created by levi on 26/12/14.
  */
-class GaugeTestPanel[T <: GaugeComponent with GaugePainter](factory: => T) extends MigPanel("ins 5, fill", "[fill]", "[fill]") {
+class GaugeTestPanel[T <: GaugeComponent](factory: => T) extends MigPanel("ins 5, fill", "[fill]", "[fill]") {
 
-  val gauges = List.fill(5)(factory)
-  gauges.foreach(_.debug = true)
+  val gauges: List[GaugeComponent] = List.fill(5)(factory)
+  gauges.foreach(_.gaugePainter.debug = true)
 
   val minSpinner = new JSpinner
-  minSpinner.setValue(gauges(0).defaultInput.boundary.min.toInt)
+  minSpinner.setValue(gauges(0).gaugePainter.defaultInput.boundary.min.toInt)
   minSpinner.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = minValueAdjusted()
   })
 
   val maxSpinner = new JSpinner
-  maxSpinner.setValue(gauges(0).defaultInput.boundary.max.toInt)
+  maxSpinner.setValue(gauges(0).gaugePainter.defaultInput.boundary.max.toInt)
   maxSpinner.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = maxValueAdjusted()
   })
 
-  val slider = new JSlider(gauges(0).defaultInput.boundary.min.toInt, gauges(0).defaultInput.boundary.max.toInt, gauges(0).defaultInput.current.toInt)
+  val slider = new JSlider(gauges(0).gaugePainter.defaultInput.boundary.min.toInt, gauges(0).gaugePainter.defaultInput.boundary.max.toInt, gauges(0).gaugePainter.defaultInput.current.toInt)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = curValueAdjusted()
   })
@@ -75,7 +75,7 @@ class GaugeTestPanel[T <: GaugeComponent with GaugePainter](factory: => T) exten
   def updateGui(min: Int, max: Int, cur: Int): Unit = {
     status.text = s"Current Value $cur"
     gauges.foreach{g =>
-      g.input = InputValue(cur, MinMax(min, max))
+      g.gaugePainter.input = InputValue(cur, MinMax(min, max))
       g.repaint()
     }
   }

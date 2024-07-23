@@ -7,7 +7,7 @@ import peregin.gpv.util.Trigo._
 import peregin.gpv.util.UnitConverter
 
 
-trait RadialSpeedGauge extends GaugePainter {
+class RadialSpeedGauge() extends GaugePainter {
 
   lazy val dummy: InputValue = InputValue(27.81, MinMax.max(62))
   override def defaultInput: InputValue = dummy

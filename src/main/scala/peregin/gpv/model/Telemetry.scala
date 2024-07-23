@@ -236,6 +236,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val cadence = interpolate(progress, left.extension.cadence, right.extension.cadence)
     val heartRate = interpolate(progress, left.extension.heartRate, right.extension.heartRate)
     val power = interpolate(progress, left.extension.power, right.extension.power)
+    val temperature = interpolate(progress, left.extension.temperature, right.extension.temperature)
     val firstTs = track.head.time.getMillis
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
@@ -243,7 +244,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
       cadence.map(InputValue(_, cadenceBoundary)),
       heartRate.map(InputValue(_, heartRateBoundary)),
-      power.map(InputValue(_, powerBoundary))
+      power.map(InputValue(_, powerBoundary)),
+      temperature.map(InputValue(_, temperatureBoundary))
     )
   }
 

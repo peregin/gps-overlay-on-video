@@ -6,7 +6,7 @@ import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import peregin.gpv.util.Trigo._
 
 
-trait CadenceGauge extends GaugePainter {
+class CadenceGauge extends GaugePainter {
 
   lazy val dummy = InputValue(81, MinMax(0, 123))
   override def defaultInput = dummy

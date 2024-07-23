@@ -15,6 +15,7 @@ scalaVersion := "2.13.14"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
+val jacksonVersion = "2.17.2"
 val json4sVersion = "4.0.7"
 val akkaVersion = "2.8.5"
 val specs2Version = "4.20.8"
@@ -124,7 +125,10 @@ libraryDependencies += "com.jgoodies" % "looks" % "2.2.2"
 libraryDependencies += "com.jgoodies" % "jgoodies-common" % "1.8.1"
 libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 libraryDependencies += "xuggle" % "xuggle-xuggler" % "5.4" from "https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/xuggle/xuggle-xuggler/5.4/xuggle-xuggler-5.4.jar"
+libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
+libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion

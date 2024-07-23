@@ -7,7 +7,7 @@ import peregin.gpv.model.{InputValue, MinMax, Sonda}
 import peregin.gpv.util.Trigo._
 
 
-trait RadialAzimuthGauge extends GaugePainter {
+class RadialAzimuthGauge extends GaugePainter {
 
   lazy val dummy: InputValue = InputValue(27.81, MinMax.max(360))
   override def defaultInput: InputValue = dummy

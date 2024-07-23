@@ -4,7 +4,7 @@ import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import peregin.gpv.util.UnitConverter
 
 
-trait DigitalElevationGauge extends DigitalGauge {
+class DigitalElevationGauge extends DigitalGauge {
 
   lazy val dummy = InputValue(689, MinMax(432, 1252))
   override def defaultInput = dummy

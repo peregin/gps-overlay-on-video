@@ -6,7 +6,7 @@ import peregin.gpv.util.UnitConverter
 import MinMax.RoundedDouble
 
 
-trait LinearElevationGauge extends GaugePainter {
+class LinearElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(728, MinMax(592, 1718))
   override def defaultInput = dummy

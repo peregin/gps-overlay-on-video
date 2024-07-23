@@ -9,20 +9,20 @@ import peregin.gpv.util.UnitConverter
 import scala.swing.Graphics2D
 
 
-trait ElevationChart extends ChartPainter with KnobPainter {
+class ElevationChart extends ChartPainter with KnobPainter {
 
-  protected var mode: Mode = Mode.DistanceBased
-  protected var poi: Option[Sonda] = None
-  protected var progress: Option[Sonda] = None
+  var mode: Mode = Mode.DistanceBased
+  var poi: Option[Sonda] = None
+  var progress: Option[Sonda] = None
 
   protected val elevFont = new Font("Arial", Font.BOLD, 10)
-  protected var metersWidth = 0
+  var metersWidth = 0
   protected var metersHalfHeight = 0
   protected var timeWidth = 0
 
   // shows the current elevation and grade on the middle of the chart
-  protected var showCurrentValuesOnChart = true
-  protected var showGrid = false
+  var showCurrentValuesOnChart = true
+  var showGrid = false
 
   def elevationMode = mode
 

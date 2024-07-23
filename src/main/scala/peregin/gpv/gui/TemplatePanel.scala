@@ -1,12 +1,11 @@
 package peregin.gpv.gui
 
 import java.awt.{Color, Component, Font, Graphics, Graphics2D}
-
 import javax.swing._
 import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
-import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard}
+import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard, YamlResourceDashboardLoader}
 import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
 import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 import peregin.gpv.util.Io
@@ -58,6 +57,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   model.addElement(TemplateEntry("Skiing", new SkiingDashboard {}))
   model.addElement(TemplateEntry("MotorBiking", new MotorBikingDashboard {}))
   model.addElement(TemplateEntry("Sailing", new SailingDashboard {}))
+  model.addElement(TemplateEntry("Complex Cycling", YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingComplexDashboard.yaml")))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
@@ -108,7 +108,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
       getSelectedEntry.flatMap(e => name2Dashboard.get(e.name)).foreach { d =>
         g.translate(0, height / 2)
         val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
-        d.paintDashboard(g.asInstanceOf[Graphics2D], width, width / 5, sample)
+        d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, sample)
       }
     }
   }
