@@ -4,48 +4,53 @@ gauges:
   - name: speed
     clazz: peregin.gpv.gui.gauge.RadialSpeedGauge
     x: 0.4
-    y: 0.9
-    width: &SCALE 0.1
-    height: *SCALE
-  - name: power
-    clazz: peregin.gpv.gui.gauge.SvgPowerGauge
-    x: 0.3
-    y: 0.9
-    width: *SCALE
-    height: *SCALE
+    y: &BOTTOM 0.8
+    width: &SIZE 0.2
+    height: *SIZE
   - name: cadence
     clazz: peregin.gpv.gui.gauge.CadenceGauge
-    x: 0.2
-    y: 0.9
-    width: *SCALE
-    height: *SCALE
+    x: 0.15
+    y: *BOTTOM
+    width: *SIZE
+    height: *SIZE
   - name: heartrate
     clazz: peregin.gpv.gui.gauge.SvgHeartRateGauge
-    x: 0.5
-    y: 0.9
-    width: *SCALE
-    height: *SCALE
+    x: 0.0
+    y: *BOTTOM
+    width: *SIZE
+    height: *SIZE
+  - name: power
+    clazz: peregin.gpv.gui.gauge.SvgPowerGauge
+    x: 0.25
+    y: *BOTTOM
+    width: *SIZE
+    height: *SIZE
   - name: grade
     clazz: peregin.gpv.gui.gauge.GradeGauge
     x: 0.6
-    y: 0.9
-    width: *SCALE
-    height: *SCALE
+    y: *BOTTOM
+    width: *SIZE
+    height: *SIZE
   - name: elevationProfile
     clazz: peregin.gpv.gui.gauge.ElevationChart
     x: 0.7
-    y: 0.9
-    width: 0.4
-    height: *SCALE
+    y: *BOTTOM
+    width: 0.5
+    height: *SIZE
   - name: temperature
     clazz: peregin.gpv.gui.gauge.TemperatureGauge
-    x: 0.9
+    x: 0.85
     y: 0.0
-    width: 0.1
-    height: 0.1
+    width: *SIZE
+    height: *SIZE
 #  - temperature:
 #      clazz: peregin.gpv.gui.gauge.TemperatureGauge
 #      x: 0.9
 #      y: 0.0
 #      size: 0.1
-
+  - name: digitalSpeed
+    clazz: peregin.gpv.gui.gauge.RadialAzimuthGauge
+    x: 0.85
+    y: 0.2
+    width: *SIZE
+    height: *SIZE

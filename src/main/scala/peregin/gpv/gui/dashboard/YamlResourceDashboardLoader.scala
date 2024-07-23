@@ -1,7 +1,6 @@
 package peregin.gpv.gui.dashboard
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.annotation.{JsonIdentityInfo, ObjectIdGenerators}
 import peregin.gpv.gui.gauge.GaugePainter
 import peregin.gpv.util.YamlConverter
 
@@ -9,7 +8,6 @@ import java.io.{FileNotFoundException, InputStream}
 
 
 object YamlResourceDashboardLoader {
-  private val mapper = new ObjectMapper(new YAMLFactory());
 
   def loadDashboard(inputStream: InputStream): Dashboard = {
     val resource: DashboardResource = YamlConverter.read[DashboardResource](inputStream)
@@ -39,10 +37,12 @@ object YamlResourceDashboardLoader {
     return dashboard
   }
 
+  @JsonIdentityInfo(generator = classOf[ObjectIdGenerators.None])
   case class GaugeResource(name: String, x: Double, y: Double, width: Double, height: Double, clazz: String) {
 
   }
 
+  @JsonIdentityInfo(generator = classOf[ObjectIdGenerators.None])
   case class DashboardResource(code: String, name: String, gauges: Seq[GaugeResource]) {
   }
 }

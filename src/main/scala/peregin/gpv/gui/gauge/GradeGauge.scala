@@ -6,11 +6,13 @@ import java.awt._
 
 
 class GradeGauge extends GaugePainter {
+  var elevation: InputValue = _;
 
   lazy val dummy: InputValue = InputValue(8.5, MinMax.max(100))
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = {
     input = sonda.grade
+    elevation = sonda.elevation;
   }
 
   override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
@@ -36,11 +38,15 @@ class GradeGauge extends GaugePainter {
     // draw the the ticks and units
     g.setColor(Color.white)
 
-    // draw current speed
+    // draw current grade
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
-    val text = f"${input.current}%2.1f%%"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, w / 4, h / 2)
+    val gradeText = f"${input.current}%2.1f%%"
+    textWidthShadow(g, gradeText, w / 4, h / 2)
+
+    // draw current grade
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
+    val eleText = f"${elevation.current}%2.0f m"
+    textWidthShadow(g, eleText, 0, h * 3 / 4)
 
   }
 }
