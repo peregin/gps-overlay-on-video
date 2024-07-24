@@ -4,6 +4,7 @@ import java.awt.{Color, Component, Font, Graphics, Graphics2D}
 import javax.swing._
 import javax.swing.event.ListSelectionEvent
 import org.jdesktop.swingx.JXList
+import peregin.gpv.Setup
 import peregin.gpv.gui.TemplatePanel.{Listener, TemplateEntry}
 import peregin.gpv.gui.dashboard.{CyclingDashboard, Dashboard, MotorBikingDashboard, SailingDashboard, SkiingDashboard, YamlResourceDashboardLoader}
 import peregin.gpv.gui.gauge.{ChartPainter, ElevationChart}
@@ -114,4 +115,15 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   }
 
   add(preview, "grow, push")
+
+  def refresh(setup: Setup): Unit = {
+    if (setup.dashboardCode.isDefined) {
+      for (i <- 0 until model.size()) {
+        if (model.get(i).name.equals(setup.dashboardCode.get)) {
+          templates.setSelectedIndex(i)
+          return
+        }
+      }
+    }
+  }
 }

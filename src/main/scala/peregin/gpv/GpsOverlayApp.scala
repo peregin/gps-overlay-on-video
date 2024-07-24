@@ -139,6 +139,7 @@ object GpsOverlayApp extends SimpleSwingApplication
             videoPanel.refresh(setup)
             telemetryPanel.refresh(setup, tm)
             transparencySlider.percentage = setup.transparency
+            templatePanel.refresh(setup)
             message(s"Project $path has been loaded")
           }
         }
@@ -164,6 +165,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
+    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.name)
     setup.saveFile(file.getAbsolutePath)
   }
 
