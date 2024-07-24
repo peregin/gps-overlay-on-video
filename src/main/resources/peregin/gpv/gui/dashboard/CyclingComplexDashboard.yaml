@@ -45,14 +45,14 @@ gauges:
     height: *SIZE
   - name: temperature
     clazz: peregin.gpv.gui.gauge.TemperatureGauge
-    x: 0.85
-    y: 0.2
+    x: 0.9
+    y: 0.15
     width: *SIZE
     height: *SIZE
   - name: azimuth
     clazz: peregin.gpv.gui.gauge.RadialAzimuthGauge
-    x: 0.85
-    y: 0.4
+    x: 0.88
+    y: 0.6
     width: *SIZE
     height: *SIZE
   - name: location

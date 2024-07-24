@@ -24,7 +24,7 @@ class AltitudePanel extends Panel with Logging {
     g.setColor(Color.white)
     g.fillRect(0, 0, width, height)
 
-    elevationChart.paint(g, width, height)
+    elevationChart.paint(g, size.height, width, height)
   }
 
   def sondaForPoint(pt: Point): Option[Sonda] = {

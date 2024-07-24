@@ -15,38 +15,26 @@ class GradeGauge extends GaugePainter {
     elevation = sonda.elevation;
   }
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
-
-    val box = math.min(w, h)
-    val strokeWidth = box / 5
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val slopeXs = Array(0, w / 4, w / 4)
     val slopeYs = Array(h / 2, h / 4, h / 2)
 
     // draw a slope triangle
-    g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
-    g.setColor(Color.black)
-    g.fillPolygon(slopeXs, slopeYs, slopeXs.length);
+    drawShadowed(g, h, (g0) => {
+      g0.drawPolygon(slopeXs, slopeYs, slopeXs.length);
+    })
 
-    // draw the border
-    g.setColor(Color.yellow)
-    val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10))
-    g.setStroke(borderStroke)
-    g.drawPolygon(slopeXs, slopeYs, slopeXs.length);
-
-    // draw the the ticks and units
-    g.setColor(Color.white)
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (h * 3 / 16).toFloat))
 
     // draw current grade
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
     val gradeText = f"${input.current}%2.1f%%"
-    textOnSemiTransparent(g, gradeText, w / 4 + 5, h / 2 - 10)
+    textWidthShadow(g, gradeText, w / 4 + 5, h / 2 - 10)
 
     // draw current grade
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
     val eleText = f"${elevation.current}% 4.0f m"
-    textOnSemiTransparent(g, eleText, 0, h * 3 / 4 + 10)
+    textWidthShadow(g, eleText, 0, h * 3 / 4 + 10)
 
   }
 }

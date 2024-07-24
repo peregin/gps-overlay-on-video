@@ -12,8 +12,8 @@ class CadenceGauge extends GaugePainter {
   override def defaultInput = dummy
   override def sample(sonda: Sonda): Unit = {sonda.cadence.foreach(input = _)}
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val strokeWidth = box / 5
@@ -88,7 +88,7 @@ class CadenceGauge extends GaugePainter {
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 6).toFloat))
     val text = f"${input.current}%2.0f"
     val tb = g.getFontMetrics.getStringBounds(text, g)
-    textOnSemiTransparent(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
     val utext = "rpm"

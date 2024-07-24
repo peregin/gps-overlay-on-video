@@ -38,8 +38,8 @@ class ElevationChart extends ChartPainter with KnobPainter {
   // default value to be shown
   override def defaultInput = InputValue(30, MinMax(0, 100))
 
-  override def paint(g: Graphics2D, width: Int, height: Int): Unit = {
-    super.paint(g, width, height)
+  override def paint(g: Graphics2D, devHeight: Int, width: Int, height: Int): Unit = {
+    super.paint(g, devHeight, width, height)
 
     val elevFm = g.getFontMetrics(elevFont)
     metersWidth = elevFm.stringWidth("3000 m")

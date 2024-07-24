@@ -28,26 +28,26 @@ trait CyclingDashboard extends Dashboard {
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
-    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    elevationChart.paint(g, imageHeight, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
     g.setTransform(stashBottom)
 
     // paint gauges and charts
-    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
     if (sonda.cadence.isDefined) {
-      cadenceGauge.paint(g, gaugeSize, gaugeSize, sonda)
+      cadenceGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
       g.translate(gaugeSize, 0)
     }
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {
       g.translate(0, gaugeSize2)
-      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
     if (sonda.power.isDefined) {
       if (sonda.heartRate.isDefined) g.translate(-gaugeSize2, -gaugeSize2)
-      powerGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      powerGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
   }
@@ -65,17 +65,17 @@ trait SkiingDashboard extends Dashboard {
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
-    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    elevationChart.paint(g, imageHeight, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
     g.setTransform(stashBottom)
 
     // paint gauges and charts
-    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {
       g.translate(0, gaugeSize2)
-      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
   }
@@ -95,17 +95,17 @@ trait MotorBikingDashboard extends Dashboard {
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
-    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    elevationChart.paint(g, imageHeight, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
     g.setTransform(stashBottom)
 
     // paint gauges and charts
-    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {
       g.translate(0, gaugeSize2)
-      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
   }
@@ -126,16 +126,16 @@ trait SailingDashboard extends Dashboard {
     g.setTransform(stashBottom)
 
     // paint gauges and charts
-    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
-    azimuthGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    azimuthGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
 
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {
       g.translate(0, gaugeSize2)
-      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
   }
@@ -157,34 +157,34 @@ trait CyclingComplexDashboardOld extends Dashboard {
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
-    elevationChart.paint(g, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
+    elevationChart.paint(g, imageHeight, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
     g.translate(-gaugeSize, 0)
     System.out.println(g.getTransform)
-    gradeChart.paint(g, gaugeSize, gaugeSize, sonda)
+    gradeChart.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.setTransform(stashBottom)
     if (sonda.temperature.isDefined) {
       g.translate(imageWidth - gaugeSize, -imageHeight + gaugeSize)
-      temperatureGauge.paint(g, gaugeSize, gaugeSize, sonda)
+      temperatureGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
       g.setTransform(stashBottom)
     }
 
     // paint gauges and charts
-    speedGauge.paint(g, gaugeSize, gaugeSize, sonda)
+    speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
     if (sonda.cadence.isDefined) {
-      cadenceGauge.paint(g, gaugeSize, gaugeSize, sonda)
+      cadenceGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
       g.translate(gaugeSize, 0)
     }
 
     val gaugeSize2 = gaugeSize / 2
     if (sonda.heartRate.isDefined) {
       g.translate(0, gaugeSize2)
-      heartRateGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
     if (sonda.power.isDefined) {
       if (sonda.heartRate.isDefined) g.translate(-gaugeSize2, -gaugeSize2)
-      powerGauge.paint(g, gaugeSize2, gaugeSize2, sonda)
+      powerGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
   }

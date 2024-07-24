@@ -15,7 +15,7 @@ class DynamicResourceDashboard(gauges: Seq[GaugeSetup]) extends Dashboard {
       val saved = g.getTransform
       g.setTransform(new AffineTransform())
       g.translate((gauge.x * imageWidth).toInt, (gauge.y * imageHeight).toInt)
-      gauge.gauge.paint(g, (imageHeight * gauge.width).toInt, (imageHeight * gauge.height).toInt, sonda)
+      gauge.gauge.paint(g, imageHeight, (imageHeight * gauge.width).toInt, (imageHeight * gauge.height).toInt, sonda)
       g.setTransform(saved)
     })
   }

@@ -1,8 +1,10 @@
 package peregin.gpv.gui.gauge
 
 import scala.swing._
-import java.awt.{RenderingHints, Color, Font, Dimension}
-import peregin.gpv.model.{Sonda, InputValue}
+import java.awt.{BasicStroke, Color, Dimension, Font, RenderingHints}
+import peregin.gpv.model.{InputValue, Sonda}
+
+import java.util.function.Consumer
 
 
 trait GaugePainter {
@@ -14,7 +16,7 @@ trait GaugePainter {
 
   def desiredSize = new Dimension(75, 75)
 
-  def paint(g: Graphics2D, w: Int, h: Int): Unit = {
+  def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
@@ -26,9 +28,9 @@ trait GaugePainter {
     }
   }
 
-  final def paint(g: Graphics2D, w: Int, h: Int, sonda: Sonda): Unit = {
+  final def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int, sonda: Sonda): Unit = {
     sample(sonda)
-    paint(g, w, h)
+    paint(g, devHeight, w, h)
   }
 
   // each implementation should extract the desired input data from the sonda
@@ -47,6 +49,24 @@ trait GaugePainter {
   def units: String = displayUnits
   def units_= (v: String): Unit = displayUnits = v
 
+  def lineWidth(g: Graphics2D, devHeight: Int): Int = {
+    math.ceil(devHeight / 360.0).toInt
+  }
+
+  def shadowWidth(g: Graphics2D, devHeight: Int): Int = {
+    return 1 + lineWidth(g, devHeight) * 2
+  }
+
+  def drawShadowed(g: Graphics2D, devHeight: Int, consumer: Consumer[Graphics2D]): Unit = {
+    // For 480, we want 2 pixels, for standard 1080, we want 3 pixels
+    g.setColor(new Color(0, 0, 0, 128))
+    g.setStroke(new BasicStroke(shadowWidth(g, devHeight)))
+    consumer.accept(g)
+    g.setColor(Color.yellow)
+    g.setStroke(new BasicStroke(lineWidth(g, devHeight)))
+    consumer.accept(g)
+  }
+
   def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow): Unit = {
     val ix = x.toInt
     val iy = y.toInt
@@ -64,6 +84,11 @@ trait GaugePainter {
     g.fillRect((x + rect.getX).toInt, (y + rect.getY).toInt, rect.width.toInt, rect.height.toInt)
     g.setColor(c)
     g.drawString(text, ix, iy)
+  }
+
+  def backgroundSemiTransparent(g: Graphics2D, x: Double, y: Double, w: Double, h: Double): Unit = {
+    g.setColor(new Color(0, 0, 0, 128))
+    g.fillRect(x.toInt, y.toInt, w.toInt, h.toInt)
   }
 
   def colorBasedOnInput: Color = input match {

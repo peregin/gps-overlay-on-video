@@ -10,9 +10,6 @@ import java.util
 
 class MapGauge extends ChartPainter {
   val PADDING: Int = 5;
-  val MAP_LINE_WIDTH: Int = 3;
-  val SHADOW_LINE_WIDTH: Int = 7;
-  val POSITION_RADIUS: Int = 5;
 
   var location: GeoPosition = _;
 
@@ -31,8 +28,8 @@ class MapGauge extends ChartPainter {
     longitudeBoundary = telemetry.longitudeBoundary
   }
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     if (latitudeBoundary == null || longitudeBoundary == null) {
       return
@@ -44,29 +41,29 @@ class MapGauge extends ChartPainter {
     val yBase = PADDING + ((latitudeBoundary.max - latitudeBoundary.min) * scale).toInt
 
     drawMap(g, w, h, scale, yBase)
+
+    val radius = (shadowWidth(g, devHeight) + 3) / 2
     g.setColor(Color.red)
     g.fillOval(
-      PADDING + longitudeToScreen(location.getLongitude, scale) - POSITION_RADIUS,
-      (yBase - latitudeToScreen(location.getLatitude, scale)) - POSITION_RADIUS,
-      POSITION_RADIUS * 2,
-      POSITION_RADIUS * 2,
+      PADDING + longitudeToScreen(location.getLongitude, scale) - radius,
+      (yBase - latitudeToScreen(location.getLatitude, scale)) - radius,
+      radius * 2,
+      radius * 2,
     )
   }
 
   private def drawMap(g: Graphics2D, w: Int, h: Int, scale: Double, yBase: Int): Unit = {
-    val xPoints: Array[Int] = Array.fill(101){0}
-    val yPoints: Array[Int] = Array.fill(101){0}
-    for (i <- 0 to 100) {
+    val sampling = math.min(math.max(telemetry.track.size / 10, 100), telemetry.track.size)
+    val xPoints: Array[Int] = Array.fill(sampling + 1){0}
+    val yPoints: Array[Int] = Array.fill(sampling + 1){0}
+    for (i <- 0 to sampling) {
       val current = telemetry.pointForProgress(i)
       xPoints(i) = PADDING + longitudeToScreen(current.position.getLongitude, scale)
       yPoints(i) = yBase - latitudeToScreen(current.position.getLatitude, scale)
     }
-    g.setStroke(new BasicStroke(SHADOW_LINE_WIDTH))
-    g.setColor(new Color(0, 0, 0, 128))
-    g.drawPolyline(xPoints, yPoints, xPoints.length)
-    g.setStroke(new BasicStroke(MAP_LINE_WIDTH))
-    g.setColor(Color.yellow)
-    g.drawPolyline(xPoints, yPoints, xPoints.length)
+    drawShadowed(g, h, (g0) => {
+      g.drawPolyline(xPoints, yPoints, xPoints.length)
+    })
   }
 
   private def longitudeToScreen(lon: Double, scale: Double): Int = {

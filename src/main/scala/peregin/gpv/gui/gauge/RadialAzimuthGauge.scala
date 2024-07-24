@@ -13,8 +13,8 @@ class RadialAzimuthGauge extends GaugePainter {
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = {input = sonda.bearing}
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val strokeWidth = box / 5

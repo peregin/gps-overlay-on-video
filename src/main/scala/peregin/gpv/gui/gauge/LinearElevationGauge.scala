@@ -12,8 +12,8 @@ class LinearElevationGauge extends GaugePainter {
   override def defaultInput = dummy
   override def sample(sonda: Sonda): Unit = input = sonda.elevation
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val boxWidth = box / 8

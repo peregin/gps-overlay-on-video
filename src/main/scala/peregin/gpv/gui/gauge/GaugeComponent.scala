@@ -13,6 +13,6 @@ class GaugeComponent(gaugePainter0: GaugePainter) extends Component {
   override def paint(g: Graphics2D): Unit = {
     // set transparency for testing
     // g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
-    gaugePainter.paint(g, peer.getWidth, peer.getHeight)
+    gaugePainter.paint(g, size.width, peer.getWidth, peer.getHeight)
   }
 }
