@@ -3,10 +3,9 @@ package peregin.gpv
 import java.awt.image.BufferedImage
 import java.awt.{Color, Dimension, Font}
 import java.io.File
-
 import javax.swing.BorderFactory
 import javax.swing.border.BevelBorder
-import com.xuggle.mediatool.ToolFactory
+import com.xuggle.mediatool.{IMediaWriter, ToolFactory}
 import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.DashboardPainter
@@ -42,6 +41,10 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   chooser.fileInput.text = setup.outputPath.getOrElse("")
 
   private val dashboardLabel = new Label(s"Dashboard: ${template.name}", EmptyIcon, Alignment.Left)
+
+  private var writer: IMediaWriter = _;
+
+  private var stopped = false;
 
   contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
     add(imagePanel, "grow, pushy, wrap")
@@ -111,7 +114,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
     val videoOutputFile = setup.outputPath.getOrElse("output file is not provided")
     log.info(s"video output file to $videoOutputFile")
-    val writer = ToolFactory.makeWriter(videoOutputFile, reader)
+    writer = ToolFactory.makeWriter(videoOutputFile, reader)
     val overlay = new VideoOverlay(this, durationInMillis)
     reader.addListener(overlay)
     overlay.addListener(writer)
@@ -125,9 +128,10 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
         generateButton.enabled = false
       }
 
-      while(reader.readPacket == null) {
+      while (!stopped && reader.readPacket == null) {
         // running in a loop
       }
+      writer.close()
     }
 
     converterFuture onComplete {
@@ -149,6 +153,9 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   private def handleClose(): Unit = {
     log.info("cancel or close")
     close()
+    if (writer != null) {
+      stopped = true;
+    }
   }
 
   override def seekEvent(percentage: Double): Unit = {}
