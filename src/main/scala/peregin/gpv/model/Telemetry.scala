@@ -76,8 +76,8 @@ object Telemetry extends Timed with Logging {
 case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   val elevationBoundary = MinMax.extreme
-  private[model] val latitudeBoundary = MinMax.extreme
-  private[model] val longitudeBoundary = MinMax.extreme
+  val latitudeBoundary = MinMax.extreme
+  val longitudeBoundary = MinMax.extreme
   private[model] val speedBoundary = MinMax.extreme
   private[model] val bearingBoundary = MinMax.extreme
   val gradeBoundary = MinMax.extreme
@@ -117,6 +117,20 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def maxTime: DateTime = track.last.time
 
   def totalDistance: Double = track.lastOption.map(_.distance).getOrElse(0d)
+
+  /**
+   * Retrieves exact track point for the given progress.
+   *
+   * @param progressInPerc
+   *      progress in track
+   *
+   * @return
+   *      track point for the given progress.
+   */
+  def pointForProgress(progressInPerc: Double): TrackPoint = {
+    val index = progressInPerc * track.size / 100
+    return track(math.min(index.toInt, track.size - 1))
+  }
 
   /**
    * Retrieves the interpolated distance for the given progress.

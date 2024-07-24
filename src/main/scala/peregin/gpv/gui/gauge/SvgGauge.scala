@@ -67,7 +67,7 @@ trait SvgGauge extends GaugePainter {
     // draw current value
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 4).toFloat))
     val tb = g.getFontMetrics.getStringBounds(valueText, g)
-    textWidthShadow(g, valueText, px + (w - tb.getWidth) / 2, (h + tb.getHeight) / 2)
+    textOnSemiTransparent(g, valueText, px + (w - tb.getWidth) / 2, (h + tb.getHeight) / 2)
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (box / 12).toFloat))
     val utb = g.getFontMetrics.getStringBounds(unitText, g)

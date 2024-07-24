@@ -4,7 +4,7 @@ import peregin.gpv.model.{InputValue, MinMax, Sonda}
 
 class SvgPowerGauge extends SvgGauge {
 
-  lazy val dummy = InputValue(121, MinMax(0, 453))
+  lazy val dummy = InputValue(121, MinMax(0, 2000))
   override def defaultInput = dummy
 
   override def sample(sonda: Sonda): Unit = sonda.power.foreach(input = _)

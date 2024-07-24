@@ -11,6 +11,14 @@ object GpsFormatter {
     return formatAxis("SN", lon)
   }
 
+  def subtractLongitude(l2: Double, l1: Double): Double = {
+    var result = l2 - l1;
+    if (result < 0) {
+      result += 360
+    }
+    return result
+  }
+
   private def formatAxis(negPos: String, n: Double): String = {
     var out: String = String.valueOf(negPos.charAt(if (n < 0) 0 else 1))
 

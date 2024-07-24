@@ -56,7 +56,7 @@ class ElevationChart extends ChartPainter with KnobPainter {
     val pxHeight = height - 20 - elevFm.getHeight
 
     // coordinates, only if the track is not empty
-    data.filter(_.track.nonEmpty).foreach{ telemetry =>
+    data.filter(_.track.nonEmpty).foreach { telemetry =>
       val mHeight = telemetry.elevationBoundary.diff
 
       // legend
@@ -76,10 +76,10 @@ class ElevationChart extends ChartPainter with KnobPainter {
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
         val sondaCandidate = mode match {
-            case Mode.DistanceBased => telemetry.distanceForProgress(f).map(telemetry.sondaForDistance)
-            case Mode.TimeBased => telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime)
-          }
-        sondaCandidate.foreach{ sonda =>
+          case Mode.DistanceBased => telemetry.distanceForProgress(f).map(telemetry.sondaForDistance)
+          case Mode.TimeBased => telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime)
+        }
+        sondaCandidate.foreach { sonda =>
           val v = sonda.elevation.current - telemetry.elevationBoundary.min
           val x = gridLeft + i
           val y = v * pxHeight / mHeight

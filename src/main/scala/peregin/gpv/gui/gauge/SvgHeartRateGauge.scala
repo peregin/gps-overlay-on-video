@@ -4,7 +4,7 @@ import peregin.gpv.model.{InputValue, MinMax, Sonda}
 
 class SvgHeartRateGauge extends SvgGauge {
 
-  lazy val dummy = InputValue(89, MinMax(62, 171))
+  lazy val dummy = InputValue(89, MinMax(30, 230))
   override def defaultInput = dummy
 
   override def sample(sonda: Sonda): Unit = sonda.heartRate.foreach(input = _)
