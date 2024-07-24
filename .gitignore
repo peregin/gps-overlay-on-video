@@ -20,4 +20,4 @@ build/
 *.bak
 *.swp
 RemoteSystemsTempFiles/
-
+hs_err_*.log
