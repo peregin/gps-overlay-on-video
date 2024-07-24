@@ -33,9 +33,9 @@ class TemperatureGauge extends GaugePainter {
 
       // draw current speed
       g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
-      val text = f"${input.current}%2.0f℃"
+      val text = f"${input.current}% 2.0f℃"
       val tb = g.getFontMetrics.getStringBounds(text, g)
-      textWidthShadow(g, text, w / 4 + w /8 + w / 32, h / 2 - h / 8)
+      textOnSemiTransparent(g, text, w / 4 + w /8 + w / 32, h / 2 - h / 8)
     }
   }
 }

@@ -56,6 +56,16 @@ trait GaugePainter {
     g.drawString(text, ix, iy)
   }
 
+  def textOnSemiTransparent(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow): Unit = {
+    val ix = x.toInt
+    val iy = y.toInt
+    g.setColor(new Color(0, 0, 0, 128))
+    val rect = g.getFontMetrics().getStringBounds(text, g).getBounds
+    g.fillRect((x + rect.getX).toInt, (y + rect.getY).toInt, rect.width.toInt, rect.height.toInt)
+    g.setColor(c)
+    g.drawString(text, ix, iy)
+  }
+
   def colorBasedOnInput: Color = input match {
     case _ if input.isInTop(10) => Color.red
     case _ if input.isInTop(20) => Color.yellow

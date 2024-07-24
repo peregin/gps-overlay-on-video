@@ -9,7 +9,7 @@ gauges:
     height: *SIZE
   - name: cadence
     clazz: peregin.gpv.gui.gauge.CadenceGauge
-    x: 0.15
+    x: 0.25
     y: *BOTTOM
     width: *SIZE
     height: *SIZE
@@ -21,7 +21,7 @@ gauges:
     height: *SIZE
   - name: power
     clazz: peregin.gpv.gui.gauge.SvgPowerGauge
-    x: 0.25
+    x: 0.15
     y: *BOTTOM
     width: *SIZE
     height: *SIZE
@@ -37,10 +37,16 @@ gauges:
     y: *BOTTOM
     width: 0.5
     height: *SIZE
+  - name: datetime
+    clazz: peregin.gpv.gui.gauge.DateTimeGauge
+    x: 0.8
+    y: 0.0
+    width: *SIZE
+    height: *SIZE
   - name: temperature
     clazz: peregin.gpv.gui.gauge.TemperatureGauge
     x: 0.85
-    y: 0.0
+    y: 0.2
     width: *SIZE
     height: *SIZE
 #  - temperature:
@@ -48,9 +54,15 @@ gauges:
 #      x: 0.9
 #      y: 0.0
 #      size: 0.1
-  - name: digitalSpeed
+  - name: azimuth
     clazz: peregin.gpv.gui.gauge.RadialAzimuthGauge
     x: 0.85
-    y: 0.2
+    y: 0.4
+    width: *SIZE
+    height: *SIZE
+  - name: location
+    clazz: peregin.gpv.gui.gauge.LonLatGauge
+    x: 0
+    y: 0
     width: *SIZE
     height: *SIZE

@@ -41,12 +41,12 @@ class GradeGauge extends GaugePainter {
     // draw current grade
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
     val gradeText = f"${input.current}%2.1f%%"
-    textWidthShadow(g, gradeText, w / 4, h / 2)
+    textOnSemiTransparent(g, gradeText, w / 4 + 5, h / 2 - 10)
 
     // draw current grade
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (h / 4).toFloat))
-    val eleText = f"${elevation.current}%2.0f m"
-    textWidthShadow(g, eleText, 0, h * 3 / 4)
+    val eleText = f"${elevation.current}% 4.0f m"
+    textOnSemiTransparent(g, eleText, 0, h * 3 / 4 + 10)
 
   }
 }
