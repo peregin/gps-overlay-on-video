@@ -15,6 +15,7 @@ object YamlResourceDashboardLoader {
       GaugeSetup(
         gauge.x,
         gauge.y,
+        gauge.size,
         gauge.width,
         gauge.height,
         getClass.getClassLoader.loadClass(gauge.clazz).getConstructor().newInstance().asInstanceOf[GaugePainter]
@@ -38,7 +39,7 @@ object YamlResourceDashboardLoader {
   }
 
   @JsonIdentityInfo(generator = classOf[ObjectIdGenerators.None])
-  case class GaugeResource(name: String, x: Double, y: Double, width: Double, height: Double, clazz: String) {
+  case class GaugeResource(name: String, x: Double, y: Double, size: Option[Double], width: Option[Double], height: Option[Double], clazz: String) {
 
   }
 

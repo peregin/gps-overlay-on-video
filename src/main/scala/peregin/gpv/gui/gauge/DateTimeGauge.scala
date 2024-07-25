@@ -32,7 +32,7 @@ class DateTimeGauge extends GaugePainter {
 //    g.setColor(Color.yellow)
 //    g.drawString(dateText, PADDING, h / 4)
 //    g.drawString(timeText, PADDING, h * 2 /4 + 1)
-    textWidthShadow(g, dateText, 0, dateBounds.getHeight)
-    textWidthShadow(g, timeText, 0, dateBounds.getHeight + timeBounds.getHeight)
+    textWidthShadow(g, dateText, w - dateBounds.getWidth, dateBounds.getHeight)
+    textWidthShadow(g, timeText, w - timeBounds.getWidth, dateBounds.getHeight + timeBounds.getHeight)
   }
 }

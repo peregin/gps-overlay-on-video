@@ -5,37 +5,32 @@ gauges:
     clazz: peregin.gpv.gui.gauge.RadialSpeedGauge
     x: 0.4
     y: &BOTTOM 0.8
-    width: &SIZE 0.2
-    height: *SIZE
+    size: &SIZE 0.2
   - name: cadence
     clazz: peregin.gpv.gui.gauge.CadenceGauge
     x: 0.25
     y: *BOTTOM
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: heartrate
     clazz: peregin.gpv.gui.gauge.SvgHeartRateGauge
-    x: 0.0
+    x: 0.05
     y: *BOTTOM
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: power
     clazz: peregin.gpv.gui.gauge.SvgPowerGauge
     x: 0.15
     y: *BOTTOM
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: grade
     clazz: peregin.gpv.gui.gauge.GradeGauge
-    x: 0.6
+    x: 0.54
     y: *BOTTOM
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: elevationProfile
     clazz: peregin.gpv.gui.gauge.ElevationChart
-    x: 0.7
+    x: 0.65
     y: *BOTTOM
-    width: 0.5
+    width: 0.33
     height: *SIZE
   - name: datetime
     clazz: peregin.gpv.gui.gauge.DateTimeGauge
@@ -47,20 +42,23 @@ gauges:
     clazz: peregin.gpv.gui.gauge.TemperatureGauge
     x: 0.9
     y: 0.15
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
+  - name: progress
+    clazz: peregin.gpv.gui.gauge.DistanceAndDurationGauge
+    x: 0.8
+    y: 0.3
+    width: 0.2
+    height: 0.1
   - name: azimuth
     clazz: peregin.gpv.gui.gauge.RadialAzimuthGauge
     x: 0.88
     y: 0.6
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: location
     clazz: peregin.gpv.gui.gauge.LonLatGauge
     x: 0
     y: 0
-    width: *SIZE
-    height: *SIZE
+    size: *SIZE
   - name: map
     clazz: peregin.gpv.gui.gauge.MapGauge
     x: 0.0
