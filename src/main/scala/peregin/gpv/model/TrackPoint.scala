@@ -2,8 +2,9 @@ package peregin.gpv.model
 
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
-import peregin.gpv.util.TimePrinter
+import peregin.gpv.util.{SeqUtil, TimePrinter}
 import peregin.gpv.util.Trigo._
+
 import math._
 
 
@@ -29,7 +30,7 @@ case class TrackPoint(position: GeoPosition,
                       time: DateTime,
                       extension: GarminExtension) {
 
-  // total distance up to this track point
+  // total distance in kilometers up to this track point
   var distance = 0d
   // distance between the previous and current track points
   var segment = 0d
@@ -43,14 +44,17 @@ case class TrackPoint(position: GeoPosition,
   def analyze(next: TrackPoint, prevs: Seq[TrackPoint]): Unit = {
     segment = distanceTo(next)
     next.distance = distance + segment
-    val dt = (next.time.getMillis - time.getMillis).toDouble / TrackPoint.millisToHours
-    if (dt != 0d) speed = segment / dt
-    // smoother grade calculation, consider the previous point as well, otherwise some outliers are being introduced
-    val (gradeSegment, firstElevation) = {
-      if (prevs.isEmpty) (segment, elevation)
-      else (prevs.map(_.segment).sum + segment, prevs.head.elevation)
-    }
-    if (gradeSegment > 0) grade = (next.elevation - firstElevation) / (gradeSegment * 10)
+
+    // smoother speed calculation, consider up to 3 seconds back and 1 point forward:
+    val firstSpeed: TrackPoint = SeqUtil.findReverseTill(prevs, (p: TrackPoint) => this.time.getMillis - p.time.getMillis <= 3000).getOrElse(this)
+    val dt = (next.time.getMillis - firstSpeed.time.getMillis).toDouble / TrackPoint.millisToHours
+    if (dt != 0d) speed = (next.distance - firstSpeed.distance) / dt
+
+    // smoother grade calculation, consider up to 9 seconds back and 1 point forward:
+    val firstElevation: TrackPoint = SeqUtil.findReverseTill(prevs, (p: TrackPoint) => this.time.getMillis - p.time.getMillis <= 9000).getOrElse(this)
+    val distanceElevation = next.distance - firstElevation.distance
+    if (distanceElevation > 0) grade = (next.elevation - firstElevation.elevation) / distanceElevation * (100 / 1000.0)
+
     bearing = bearingTo(next)
   }
 
