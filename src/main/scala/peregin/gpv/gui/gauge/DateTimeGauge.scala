@@ -4,11 +4,14 @@ import peregin.gpv.model.{InputValue, Sonda}
 
 import java.awt._
 import java.time.{LocalDateTime, ZoneId}
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.temporal.ChronoField
+import java.util.Locale
 
 
 class DateTimeGauge extends GaugePainter {
   val PADDING: Int = 5;
+  val TIME_FORMATTER: DateTimeFormatter = (new DateTimeFormatterBuilder).appendValue(ChronoField.HOUR_OF_DAY, 2).appendLiteral(':').appendValue(ChronoField.MINUTE_OF_HOUR, 2).appendLiteral(':').appendValue(ChronoField.SECOND_OF_MINUTE, 2).toFormatter(Locale.ROOT)
 
   var localTime: LocalDateTime = _;
   override def defaultInput: InputValue = null
@@ -21,8 +24,8 @@ class DateTimeGauge extends GaugePainter {
 
     // draw current time
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (h * 3 / 16).toFloat))
-    val dateText = f"${DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)}%s"
-    val timeText = f"${DateTimeFormatter.ISO_LOCAL_TIME.format(localTime)}%s"
+    val dateText = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+    val timeText = TIME_FORMATTER.format(localTime)
 
     val dateBounds = g.getFontMetrics().getStringBounds("9999-99-99 ", g)
     val timeBounds = g.getFontMetrics().getStringBounds("99:99:99 ", g)
