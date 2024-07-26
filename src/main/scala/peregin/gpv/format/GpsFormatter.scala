@@ -32,7 +32,7 @@ object GpsFormatter {
     out += String.format("%02.0f'", minute)
     remain = 60*(remain - minute)
 
-    out += String.format("%07.4f\"", remain)
+    out += String.format("%04.1f\"", remain)
 
     return out;
   }
