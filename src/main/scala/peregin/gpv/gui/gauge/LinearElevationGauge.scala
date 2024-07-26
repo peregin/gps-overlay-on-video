@@ -6,14 +6,14 @@ import peregin.gpv.util.UnitConverter
 import MinMax.RoundedDouble
 
 
-trait LinearElevationGauge extends GaugePainter {
+class LinearElevationGauge extends GaugePainter {
 
   lazy val dummy = InputValue(728, MinMax(592, 1718))
   override def defaultInput = dummy
   override def sample(sonda: Sonda): Unit = input = sonda.elevation
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val boxWidth = box / 8

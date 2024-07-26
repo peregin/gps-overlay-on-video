@@ -47,7 +47,7 @@ trait DashboardPainter {
       g.translate(0, height - boxSize)
 
       // paint dashboard
-      dashboard.paintDashboard(g, width, boxSize, sonda)
+      dashboard.paintDashboard(g, width, height, boxSize, sonda)
 
       // restore any kind of transformations until this point
       g.setTransform(stash)

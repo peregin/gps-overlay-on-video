@@ -21,7 +21,7 @@ object Setup {
     load(json)
   }
 
-  def empty() = new Setup(None, None, None, None, None, None)
+  def empty() = new Setup(None, None, None, None, None, None, None)
 }
 
 case class Setup(var videoPath: Option[String],
@@ -29,7 +29,9 @@ case class Setup(var videoPath: Option[String],
                  var outputPath: Option[String],
                  var shiftTimestamp: Option[Long],
                  var dashboardTransparency: Option[Double],
-                 var dashboardUnits: Option[String]) {
+                 var dashboardUnits: Option[String],
+                 var dashboardCode: Option[String]
+                ) {
 
   def save: String = Setup.save(this)
   def saveFile(path: String): Unit = Setup.saveFile(path, this)

@@ -19,8 +19,8 @@ trait DebugGauge extends GaugePainter {
     current = Some(sonda)
   }
 
-  override def paint(g: Graphics2D, w: Int, h: Int) = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int) = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val cy = h / 2

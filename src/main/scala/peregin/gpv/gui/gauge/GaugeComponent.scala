@@ -1,19 +1,18 @@
 package peregin.gpv.gui.gauge
 
-import scala.swing.{Graphics2D, Component}
+import scala.swing.{Component, Dimension, Graphics2D}
 
 
 // used for testing
-class GaugeComponent extends Component {
-  this: GaugePainter =>
+class GaugeComponent(gaugePainter0: GaugePainter) extends Component {
 
-  debug = true
+  def gaugePainter: GaugePainter = gaugePainter0
 
-  override def preferredSize = desiredSize
+  override def preferredSize: Dimension = gaugePainter.desiredSize
 
   override def paint(g: Graphics2D): Unit = {
     // set transparency for testing
     // g.setComposite(AlphaComposite.SrcOver.derive(0.5f))
-    paint(g, peer.getWidth, peer.getHeight)
+    gaugePainter.paint(g, size.width, peer.getWidth, peer.getHeight)
   }
 }

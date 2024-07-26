@@ -3,7 +3,7 @@ package peregin.gpv.gui.gauge
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
 import peregin.gpv.util.UnitConverter
 
-trait SvgDistanceGauge extends SvgGauge {
+class SvgDistanceGauge extends SvgGauge {
 
   lazy val dummy = InputValue(80.21, MinMax(0, 123.4))
   override def defaultInput = dummy

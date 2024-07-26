@@ -136,9 +136,10 @@ object GpsOverlayApp extends SimpleSwingApplication
             val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
             val tm = telemetry.getOrElse(Telemetry.empty())
             message("Updating...")
-            videoPanel.refresh(setup)
+            templatePanel.refresh(setup)
             telemetryPanel.refresh(setup, tm)
             transparencySlider.percentage = setup.transparency
+            videoPanel.refresh(setup)
             message(s"Project $path has been loaded")
           }
         }
@@ -164,6 +165,7 @@ object GpsOverlayApp extends SimpleSwingApplication
     log.debug(s"saving ${file.getAbsolutePath}")
     setup.shift = telemetryPanel.getShift
     setup.transparency = transparencySlider.percentage
+    setup.dashboardCode = templatePanel.getSelectedEntry.map(entry => entry.name)
     setup.saveFile(file.getAbsolutePath)
   }
 

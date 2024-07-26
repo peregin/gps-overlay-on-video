@@ -9,20 +9,20 @@ import peregin.gpv.util.UnitConverter
 import scala.swing.Graphics2D
 
 
-trait ElevationChart extends ChartPainter with KnobPainter {
+class ElevationChart extends ChartPainter with KnobPainter {
 
-  protected var mode: Mode = Mode.DistanceBased
-  protected var poi: Option[Sonda] = None
-  protected var progress: Option[Sonda] = None
+  var mode: Mode = Mode.DistanceBased
+  var poi: Option[Sonda] = None
+  var progress: Option[Sonda] = None
 
   protected val elevFont = new Font("Arial", Font.BOLD, 10)
-  protected var metersWidth = 0
+  var metersWidth = 0
   protected var metersHalfHeight = 0
   protected var timeWidth = 0
 
   // shows the current elevation and grade on the middle of the chart
-  protected var showCurrentValuesOnChart = true
-  protected var showGrid = false
+  var showCurrentValuesOnChart = true
+  var showGrid = false
 
   def elevationMode = mode
 
@@ -38,8 +38,8 @@ trait ElevationChart extends ChartPainter with KnobPainter {
   // default value to be shown
   override def defaultInput = InputValue(30, MinMax(0, 100))
 
-  override def paint(g: Graphics2D, width: Int, height: Int): Unit = {
-    super.paint(g, width, height)
+  override def paint(g: Graphics2D, devHeight: Int, width: Int, height: Int): Unit = {
+    super.paint(g, devHeight, width, height)
 
     val elevFm = g.getFontMetrics(elevFont)
     metersWidth = elevFm.stringWidth("3000 m")
@@ -56,7 +56,7 @@ trait ElevationChart extends ChartPainter with KnobPainter {
     val pxHeight = height - 20 - elevFm.getHeight
 
     // coordinates, only if the track is not empty
-    data.filter(_.track.nonEmpty).foreach{ telemetry =>
+    data.filter(_.track.nonEmpty).foreach { telemetry =>
       val mHeight = telemetry.elevationBoundary.diff
 
       // legend
@@ -76,10 +76,10 @@ trait ElevationChart extends ChartPainter with KnobPainter {
       for (i <- 0 until pxWidth) {
         val f = i.toDouble * 100 / pxWidth // use double value for the percentage
         val sondaCandidate = mode match {
-            case Mode.DistanceBased => telemetry.distanceForProgress(f).map(telemetry.sondaForDistance)
-            case Mode.TimeBased => telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime)
-          }
-        sondaCandidate.foreach{ sonda =>
+          case Mode.DistanceBased => telemetry.distanceForProgress(f).map(telemetry.sondaForDistance)
+          case Mode.TimeBased => telemetry.timeForProgress(f).map(telemetry.sondaForAbsoluteTime)
+        }
+        sondaCandidate.foreach { sonda =>
           val v = sonda.elevation.current - telemetry.elevationBoundary.min
           val x = gridLeft + i
           val y = v * pxHeight / mHeight

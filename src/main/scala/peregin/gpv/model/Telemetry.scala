@@ -76,8 +76,8 @@ object Telemetry extends Timed with Logging {
 case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   val elevationBoundary = MinMax.extreme
-  private[model] val latitudeBoundary = MinMax.extreme
-  private[model] val longitudeBoundary = MinMax.extreme
+  val latitudeBoundary = MinMax.extreme
+  val longitudeBoundary = MinMax.extreme
   private[model] val speedBoundary = MinMax.extreme
   private[model] val bearingBoundary = MinMax.extreme
   val gradeBoundary = MinMax.extreme
@@ -117,6 +117,20 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def maxTime: DateTime = track.last.time
 
   def totalDistance: Double = track.lastOption.map(_.distance).getOrElse(0d)
+
+  /**
+   * Retrieves exact track point for the given progress.
+   *
+   * @param progressInPerc
+   *      progress in track
+   *
+   * @return
+   *      track point for the given progress.
+   */
+  def pointForProgress(progressInPerc: Double): TrackPoint = {
+    val index = progressInPerc * track.size / 100
+    return track(math.min(index.toInt, track.size - 1))
+  }
 
   /**
    * Retrieves the interpolated distance for the given progress.
@@ -236,6 +250,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val cadence = interpolate(progress, left.extension.cadence, right.extension.cadence)
     val heartRate = interpolate(progress, left.extension.heartRate, right.extension.heartRate)
     val power = interpolate(progress, left.extension.power, right.extension.power)
+    val temperature = interpolate(progress, left.extension.temperature, right.extension.temperature)
     val firstTs = track.head.time.getMillis
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
@@ -243,7 +258,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
       cadence.map(InputValue(_, cadenceBoundary)),
       heartRate.map(InputValue(_, heartRateBoundary)),
-      power.map(InputValue(_, powerBoundary))
+      power.map(InputValue(_, powerBoundary)),
+      temperature.map(InputValue(_, temperatureBoundary))
     )
   }
 

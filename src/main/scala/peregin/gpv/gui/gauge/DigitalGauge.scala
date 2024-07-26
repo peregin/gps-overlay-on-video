@@ -8,8 +8,8 @@ trait DigitalGauge extends GaugePainter with DigitalFont {
   def valueText(): String
   def unitText(): String
 
-  override def paint(g: Graphics2D, w: Int, h: Int) = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int) = {
+    super.paint(g, devHeight, w, h)
 
     val cy = h / 2
     val box = math.min(w, h)

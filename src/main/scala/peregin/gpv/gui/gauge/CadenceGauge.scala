@@ -6,14 +6,14 @@ import peregin.gpv.model.{Sonda, MinMax, InputValue}
 import peregin.gpv.util.Trigo._
 
 
-trait CadenceGauge extends GaugePainter {
+class CadenceGauge extends GaugePainter {
 
   lazy val dummy = InputValue(81, MinMax(0, 123))
   override def defaultInput = dummy
   override def sample(sonda: Sonda): Unit = {sonda.cadence.foreach(input = _)}
 
-  override def paint(g: Graphics2D, w: Int, h: Int): Unit = {
-    super.paint(g, w, h)
+  override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    super.paint(g, devHeight, w, h)
 
     val box = math.min(w, h)
     val strokeWidth = box / 5

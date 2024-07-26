@@ -18,7 +18,7 @@ object GaugeManualTest extends SimpleSwingApplication with Logging {
   private val frame = new MainFrame {
     title = s"Gauge Test Container - built ${BuildInfo.buildTime}"
     contents = new GaugeTestPanel({
-      val comp = new GaugeComponent with ElevationChart // SvgElevationGauge //SvgDistanceGauge //SvgPowerGauge //SvgHeartRateGauge // IconicHeartRateGauge //RadialSpeedGauge
+      val comp = new GaugeComponent(new ElevationChart) // SvgElevationGauge //SvgDistanceGauge //SvgPowerGauge //SvgHeartRateGauge // IconicHeartRateGauge //RadialSpeedGauge
       comp match {
         case chart: ChartPainter => chart.telemetry = sample
         case _ => // it is not needed to update the track
