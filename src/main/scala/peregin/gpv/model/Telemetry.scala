@@ -1,10 +1,9 @@
 package peregin.gpv.model
 
 import java.io.{File, InputStream}
-
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
-import peregin.gpv.util.{Io, Logging, Timed}
+import peregin.gpv.util.{Io, Logging, SeqUtil, Timed}
 
 import scala.annotation.tailrec
 import scala.util.Try
@@ -182,6 +181,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val lastV = convertFunc(last)
     if (v <= firstV) 0d
     else if (v >= lastV) 100d
+    else if (lastV == firstV) 0d
     else (v - firstV) * 100 / (lastV - firstV)
   }
 
@@ -210,33 +210,11 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
   // binary search then interpolate
   private def search(t: Double, convertFunc: TrackPoint => Double): Sonda = {
-    val tn = track.size
-    if (tn < 2) Sonda.empty
-    else {
-      // find the closest track point with a simple binary search
-      // eventually to improve the performance by searching on percentage of time between the endpoints of the list
-      @tailrec
-      def findNearestIndex(list: Seq[TrackPoint], t: Double, ix: Int): Int = {
-        val n = list.size
-        if (n < 2) ix
-        else {
-          val c = n / 2
-          val tp = list(c)
-          if (t < convertFunc(tp)) findNearestIndex(list.slice(0, c), t, ix)
-          else findNearestIndex(list.slice(c, n), t, ix + c)
-        }
-      }
-      val ix = findNearestIndex(track, t, 0)
-      val tr = track(ix)
-      val (left, right) = ix match {
-        case 0 => (tr, track(1))
-        case last if last >= tn - 1 => (track(tn - 2), tr)
-        case _ if t < convertFunc(tr) => (tr, track(ix + 1))
-        case _ => (track(ix - 1), tr)
-      }
-      val progress = progressForValue(t, left, right, convertFunc)
-      interpolate(progress, left, right).withTrackIndex(ix)
-    }
+    val previousIdx: Int = math.max(SeqUtil.floorIndex(track, t, convertFunc, java.lang.Double.compare), 0)
+    val nextIndex = math.min(previousIdx + 1, track.size - 1)
+    val (left, right) = (track(previousIdx), track(nextIndex))
+    val progress = progressForValue(t, left, right, convertFunc)
+    interpolate(progress, left, right).withTrackIndex(previousIdx)
   }
 
   private def interpolate(progress: Double, left: TrackPoint, right: TrackPoint): Sonda = {
@@ -247,6 +225,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       interpolate(progress, left.position.getLatitude, right.position.getLatitude),
       interpolate(progress, left.position.getLongitude, right.position.getLongitude)
     )
+    val speed = interpolate(progress, left.speed, right.speed)
     val cadence = interpolate(progress, left.extension.cadence, right.extension.cadence)
     val heartRate = interpolate(progress, left.extension.heartRate, right.extension.heartRate)
     val power = interpolate(progress, left.extension.power, right.extension.power)
@@ -255,7 +234,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
-      InputValue(distance, MinMax(0, totalDistance)), InputValue(left.speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
+      InputValue(distance, MinMax(0, totalDistance)), InputValue(speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
       cadence.map(InputValue(_, cadenceBoundary)),
       heartRate.map(InputValue(_, heartRateBoundary)),
       power.map(InputValue(_, powerBoundary)),
@@ -269,4 +248,6 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     case (Some(l), Some(r)) => Some(interpolate(f, l, r))
     case _ => None
   }
+
+  private def compareDouble(a: Double, b: Double): Int = java.lang.Double.compare(a, b)
 }
