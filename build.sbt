@@ -129,7 +129,6 @@ libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
 libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
-libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
 libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
