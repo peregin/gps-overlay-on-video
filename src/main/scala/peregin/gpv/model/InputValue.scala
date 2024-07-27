@@ -2,6 +2,7 @@ package peregin.gpv.model
 
 object InputValue {
 
+  def empty = new InputValue(0d, MinMax.empty)
   def zero = new InputValue(0d, MinMax.zero)
 }
 

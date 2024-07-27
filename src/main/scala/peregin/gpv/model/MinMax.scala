@@ -3,6 +3,7 @@ package peregin.gpv.model
 import MinMax._
 
 object MinMax {
+  def empty = new MinMax(0, 100)
   def zero = new MinMax(0, 0)
   def extreme = new MinMax(Double.MaxValue, Double.MinValue)
   def max(max: Double) = new MinMax(0, max)

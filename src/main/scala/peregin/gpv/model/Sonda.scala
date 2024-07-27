@@ -9,15 +9,15 @@ object Sonda {
 
   def zeroAt(t: DateTime): Sonda = new Sonda(t, InputValue.zero,
     new GeoPosition(0, 0),
-    InputValue.zero, InputValue.zero,
-    InputValue.zero, InputValue.zero, InputValue.zero,
+    InputValue.empty, InputValue.empty,
+    InputValue.empty, InputValue.empty, InputValue.empty,
     None, None, None, None
   )
 
   def sample(): Sonda = new Sonda(
     time = DateTime.now(), elapsedTime = InputValue.zero,
     location = new GeoPosition(47.366074, 8.541264), // Buerkliplatz, Zurich, Switzerland
-    elevation = InputValue(480, MinMax.max(640)), grade = InputValue.zero,
+    elevation = InputValue(480, MinMax.max(640)), grade = InputValue.empty,
     distance = InputValue(4, MinMax.max(12)), speed = InputValue(32, MinMax.max(61)),
     bearing = InputValue(90, MinMax.max(360)),
     cadence = Some(InputValue(81, MinMax.max(100))),
