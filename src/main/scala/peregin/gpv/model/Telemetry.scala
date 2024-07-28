@@ -100,7 +100,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       point.extension.power.foreach(powerBoundary.sample)
       if (i < n - 1) {
         val nextPoint = track(i + 1)
-        val prevPoints = track.slice(0.max(i - 10), 0.max(i - 1))
+        val prevPoints = track.slice(0.max(i - 10), 0.max(i))
         point.analyze(nextPoint, prevPoints)
         speedBoundary.sample(point.speed)
         bearingBoundary.sample(point.bearing)
@@ -220,7 +220,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   private def interpolate(progress: Double, left: TrackPoint, right: TrackPoint): Sonda = {
     val t = new DateTime(interpolate(progress, left.time.getMillis, right.time.getMillis).toLong)
     val elevation = interpolate(progress, left.elevation, right.elevation)
-    val distance = left.distance + interpolate(progress, 0, left.segment)
+    val distance = interpolate(progress, left.distance, right.distance)
     val location = new GeoPosition(
       interpolate(progress, left.position.getLatitude, right.position.getLatitude),
       interpolate(progress, left.position.getLongitude, right.position.getLongitude)
