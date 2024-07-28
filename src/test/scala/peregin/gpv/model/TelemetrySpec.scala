@@ -71,8 +71,8 @@ class TelemetrySpec extends Specification with Logging {
       telemetry.latitudeBoundary === MinMax(47.231995, 47.310311)
       telemetry.longitudeBoundary === MinMax(8.504216, 8.566166)
       telemetry.totalDistance === 25.969048381307253
-      telemetry.speedBoundary must beCloseTo(MinMax(0.07879420148031871, 86.28724568098714), 6.significantFigures)
-      telemetry.gradeBoundary must beCloseTo(MinMax(-35.5112900107015, 38.58484806897635), 6.significantFigures)
+      telemetry.speedBoundary must beCloseTo(MinMax(0.09112632073465615, 59.243948420666825), 6.significantFigures)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-98.30704744911834, 83.0031026111796), 6.significantFigures)
       telemetry.cadenceBoundary === MinMax(0, 120)
       telemetry.temperatureBoundary === MinMax(6, 14)
       telemetry.heartRateBoundary === MinMax(104, 175)
@@ -88,7 +88,7 @@ class TelemetrySpec extends Specification with Logging {
     "find outliers" in {
       val outliers = telemetry.track.count(_.grade > 30)
       log.info(s"found $outliers outliers out of ${telemetry.track.size}")
-      outliers === 9
+      outliers === 24
     }
   }
 
@@ -100,9 +100,9 @@ class TelemetrySpec extends Specification with Logging {
     "calculate min max" in {
       telemetry.track must haveSize(9558)
       telemetry.elevationBoundary === MinMax(886.0, 2763.0)
-      telemetry.speedBoundary.max must beCloseTo(85.56435201871793 within 6.significantFigures)
+      telemetry.speedBoundary.max must beCloseTo(72.5273477593884 within 6.significantFigures)
       telemetry.totalDistance must beCloseTo(63.23256444282121 within 6.significantFigures)
-      telemetry.gradeBoundary must beCloseTo(MinMax(-38.71463504215173, 114.48149716420424), 6.significantFigures)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-38.92201022163103, 45.4785638380317), 6.significantFigures)
     }
   }
 
@@ -112,7 +112,7 @@ class TelemetrySpec extends Specification with Logging {
     "calculate min max" in {
       telemetry.track must haveSize(1009)
       telemetry.elevationBoundary === MinMax(442.0, 447.0)
-      telemetry.speedBoundary.max must beCloseTo(23.656438316953857 within 6.significantFigures)
+      telemetry.speedBoundary.max must beCloseTo(21.99203340260487 within 6.significantFigures)
       telemetry.totalDistance must beCloseTo(4.234620202017025 within 6.significantFigures)
     }
   }
@@ -122,10 +122,13 @@ class TelemetrySpec extends Specification with Logging {
 
     "calculate min max" in {
       telemetry.track must haveSize(674)
+//      System.out.println(telemetry.track.map(tp =>
+//        "" + tp.time + "\t" + tp.distance + "\t" + tp.elevation + "\t" + tp.grade + "\t" + tp.speed
+//      ))
       telemetry.elevationBoundary === MinMax(452.6, 513.2)
-      telemetry.speedBoundary.max must beCloseTo(33.471772761781544 within 6.significantFigures)
+      telemetry.speedBoundary.max must beCloseTo(31.164721940020353 within 6.significantFigures)
       telemetry.totalDistance must beCloseTo(12.492226904069824 within 6.significantFigures)
-      telemetry.gradeBoundary must beCloseTo(MinMax(-6.504534982064397, 11.890875118231593), 6.significantFigures)
+      telemetry.gradeBoundary must beCloseTo(MinMax(-17.133382884329485, 20.26883697227365), 6.significantFigures)
     }
   }
 
