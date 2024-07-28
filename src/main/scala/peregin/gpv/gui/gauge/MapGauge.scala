@@ -53,16 +53,17 @@ class MapGauge extends ChartPainter {
   }
 
   private def drawMap(g: Graphics2D, w: Int, h: Int, scale: Double, yBase: Int): Unit = {
-    val sampling = math.min(math.max(telemetry.track.size / 10, 100), telemetry.track.size)
+    // Collect points every 5 seconds, 100 at least but track size at max:
+    val sampling = math.min(math.max(telemetry.track.size / 5, 100), telemetry.track.size)
     val xPoints: Array[Int] = Array.fill(sampling + 1){0}
     val yPoints: Array[Int] = Array.fill(sampling + 1){0}
     for (i <- 0 to sampling) {
-      val current = telemetry.pointForProgress(i)
+      val current = telemetry.pointForProgress(100.0 * i / sampling)
       xPoints(i) = PADDING + longitudeToScreen(current.position.getLongitude, scale)
       yPoints(i) = yBase - latitudeToScreen(current.position.getLatitude, scale)
     }
     drawShadowed(g, h, (g0) => {
-      g.drawPolyline(xPoints, yPoints, xPoints.length)
+      g0.drawPolyline(xPoints, yPoints, xPoints.length)
     })
   }
 
