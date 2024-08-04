@@ -14,7 +14,7 @@ trait DelayController extends Logging {
 
   def markDelay(videoTsInMillis: Long): Long = {
     val now = System.currentTimeMillis()
-    val delay = (prevVideoTs, prevClockTs) match {
+    var delay = (prevVideoTs, prevClockTs) match {
       case (Some(prevVideoTsInMillis), Some(prevClockTsInMillis)) =>
         val elapsedVideo = videoTsInMillis - prevVideoTsInMillis
         val elapsedClock = now - prevClockTsInMillis
@@ -23,7 +23,14 @@ trait DelayController extends Logging {
       case _ => 0 // ignore not initialized state
     }
     prevVideoTs = Some(videoTsInMillis)
-    prevClockTs = Some(now)
+    // allow up to 300 ms lags in video processing.  If lower, reset back to 0
+    if (delay < -300) {
+      delay = 0
+    }
+    else if (delay > 1000) {
+      delay = 0
+    }
+    prevClockTs = Some(now + delay)
     delay.max(0)
   }
 
