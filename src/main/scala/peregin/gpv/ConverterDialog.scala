@@ -44,6 +44,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
   private var writer: IMediaWriter = _;
 
+  private var startTimeMs: Long = _;
   private var stopped = false;
 
   contents = new MigPanel("ins 5, fill", "[fill]", "[fill]") {
@@ -119,6 +120,8 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     reader.addListener(overlay)
     overlay.addListener(writer)
 
+    startTimeMs = System.currentTimeMillis()
+
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
     val converterFuture = Future {
@@ -167,9 +170,10 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     if (tick - mark >= 2000) {
 
       Swing.onEDT {
+        val speed: Double = tsInMillis / Math.max(System.currentTimeMillis() - startTimeMs, 1.0)
         progressBar.value = percentage.toInt
         imagePanel.show(image)
-        progressBar.label = s"${TimePrinter.printDuration(tsInMillis)}"
+        progressBar.label = f"${TimePrinter.printDuration(tsInMillis)}   ${speed}%.3f×"
       }
 
       mark = tick
