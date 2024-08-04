@@ -24,6 +24,7 @@ val batikVersion = "1.17" // svg manipulation
 val xmlVersion = "2.3.0"
 val jodaVersion = "2.12.7"
 val swingVersion = "3.0.0"
+val javacvVersion = "1.5.10"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
@@ -41,7 +42,6 @@ javacOptions ++= Seq("-source", "17", "-target", "17")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 resolvers ++= Seq(
-  "Xuggle Repo" at "https://xuggle.googlecode.com/svn/trunk/repo/share/java/",
   "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
 )
 
@@ -124,7 +124,8 @@ libraryDependencies += "org.swinglabs" % "swingx-ws" % "1.0"
 libraryDependencies += "com.jgoodies" % "looks" % "2.2.2"
 libraryDependencies += "com.jgoodies" % "jgoodies-common" % "1.8.1"
 libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
-libraryDependencies += "xuggle" % "xuggle-xuggler" % "5.4" from "https://files.liferay.com/mirrors/xuggle.googlecode.com/svn/trunk/repo/share/java/xuggle/xuggle-xuggler/5.4/xuggle-xuggler-5.4.jar"
+libraryDependencies += "org.bytedeco" % "javacv" % javacvVersion
+libraryDependencies += "org.bytedeco" % "javacv-platform" % javacvVersion
 libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion

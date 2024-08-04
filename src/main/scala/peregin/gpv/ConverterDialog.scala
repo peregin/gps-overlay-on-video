@@ -1,20 +1,21 @@
 package peregin.gpv
 
+import org.bytedeco.javacv.{FFmpegFrameGrabber, FFmpegFrameRecorder, Frame, Java2DFrameConverter}
+
 import java.awt.image.BufferedImage
 import java.awt.{Color, Dimension, Font}
 import java.io.File
-import javax.swing.BorderFactory
+import javax.swing.{BorderFactory, JSlider}
 import javax.swing.border.BevelBorder
-import com.xuggle.mediatool.{IMediaWriter, ToolFactory}
 import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.DashboardPainter
 import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Logging, TimePrinter}
-import peregin.gpv.video.{VideoOverlay, VideoPlayer}
+import peregin.gpv.video.VideoPlayer
 
 import scala.swing.Swing.EmptyIcon
-import scala.swing._
+import scala.swing.{Alignment, Button, Dialog, Label, ProgressBar, Separator, Swing, Window}
 import scala.swing.event.ButtonClicked
 import scala.util.{Failure, Success}
 
@@ -24,7 +25,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
   title = "Converter"
   modal = true
-  preferredSize = new Dimension(400, 340)
+  preferredSize = new Dimension(400, 440)
   // setup painter
   dash = template.dashboard
 
@@ -37,12 +38,12 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
   private var mark = 0L // measures the generation time
 
+  private val bitrateSelection = new JSlider(0, 10000, setup.bitrateRatio.getOrElse(10000));
+  bitrateSelection.addChangeListener(event => updateBitrate(bitrateSelection.getValue))
   private val chooser = new FileChooserPanel("File name of the new video:", save, ExtensionFilters.video, false)
   chooser.fileInput.text = setup.outputPath.getOrElse("")
 
   private val dashboardLabel = new Label(s"Dashboard: ${template.name}", EmptyIcon, Alignment.Left)
-
-  private var writer: IMediaWriter = _;
 
   private var startTimeMs: Long = _;
   private var stopped = false;
@@ -55,6 +56,11 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     }, "wrap")
     add(new Separator(), "growx, wrap")
     add(dashboardLabel, "align left, wrap")
+    add(new Separator(), "growx, wrap")
+    add(new MigPanel("ins 2, align center", "[center]", "") {
+      add(new Label("Bitrate ratio:"), "pushx, align left")
+      add(bitrateSelection, "pushx, growx")
+    }, "wrap")
     add(new Separator(), "growx, wrap")
     add(chooser, "wrap")
     add(new Separator(), "growx, wrap")
@@ -101,24 +107,25 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     log.info(s"save to $path")
   }
 
+  def updateBitrate(bitrate10k: Int) = {
+    setup.bitrateRatio = Some(bitrate10k)
+  }
+
   private def handleGenerate(): Unit = {
     log.info("generate...")
     mark = 0L
+
     val videoInputFile = setup.videoPath.getOrElse("video file is not configured")
+    val videoOutputFile = setup.outputPath.getOrElse("output file is not provided")
+
     log.info(s"reading video file from $videoInputFile")
-    val reader = ToolFactory.makeReader(videoInputFile)
-    reader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR)
-    reader.open()
-    val container = reader.getContainer
-    val durationInMillis = container.getDuration / 1000
+    val reader = new FFmpegFrameGrabber(videoInputFile)
+    reader.start()
+    val durationInMillis = reader.getLengthInTime / 1000
     durationLabel.text = s"${TimePrinter.printDuration(durationInMillis)}"
 
-    val videoOutputFile = setup.outputPath.getOrElse("output file is not provided")
     log.info(s"video output file to $videoOutputFile")
-    writer = ToolFactory.makeWriter(videoOutputFile, reader)
-    val overlay = new VideoOverlay(this, durationInMillis)
-    reader.addListener(overlay)
-    overlay.addListener(writer)
+    val writer = createWriterFromReader(videoOutputFile, reader)
 
     startTimeMs = System.currentTimeMillis()
 
@@ -131,10 +138,15 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
         generateButton.enabled = false
       }
 
-      while (!stopped && reader.readPacket == null) {
-        // running in a loop
-      }
+      convertVideoBody(
+        reader,
+        writer,
+        (timeInMs, image) => videoEvent(timeInMs, timeInMs * 100.0 / durationInMillis, image),
+        () => stopped
+      )
+      writer.flush()
       writer.close()
+      reader.close()
     }
 
     converterFuture onComplete {
@@ -156,9 +168,73 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   private def handleClose(): Unit = {
     log.info("cancel or close")
     close()
-    if (writer != null) {
-      stopped = true;
+    stopped = true;
+  }
+
+  private def createWriterFromReader(filename: String, grabber: FFmpegFrameGrabber): FFmpegFrameRecorder = {
+    val recorder = new FFmpegFrameRecorder(filename, grabber.getImageWidth, grabber.getImageHeight, grabber.getAudioChannels)
+    recorder.setFormat("mp4")
+    recorder.setOption("threads", "4")
+    recorder.setOption("c", "copy")
+    recorder.setFrameRate(grabber.getFrameRate)
+
+    if (grabber.hasVideo) {
+      recorder.setVideoMetadata(grabber.getVideoMetadata)
+      recorder.setVideoCodec(grabber.getVideoCodec)
+      recorder.setVideoBitrate((grabber.getVideoBitrate * (setup.bitrateRatio.getOrElse(10000) / 10000.0)).toInt)
+      recorder.setVideoOption("tune", "film")
+      recorder.setVideoOption("threads", "4")
+      recorder.setVideoOption("frame-threads", "4")
+      recorder.setVideoOption("threadslice", "4")
+      recorder.setVideoOption("slicethread", "4")
+      recorder.setVideoOption("thread_slice", "4")
+      recorder.setVideoOption("slice_thread", "4")
+      //recorder.setVideoOption("preset", "ultrafast")
+
     }
+    if (grabber.hasAudio) {
+      recorder.setAudioChannels(grabber.getAudioChannels)
+      recorder.setAudioMetadata(grabber.getAudioMetadata)
+      recorder.setAudioCodec(grabber.getAudioCodec)
+      recorder.setAudioBitrate(grabber.getAudioBitrate)
+    }
+
+    recorder.start()
+    recorder
+  }
+
+  private def convertVideoBody(
+                                grabber: FFmpegFrameGrabber,
+                                recorder: FFmpegFrameRecorder,
+                                painter: (Long, BufferedImage) => Unit,
+                                stopIndicator: () => Boolean
+                              ): Boolean = {
+    var frame: Frame = null
+    var bufferedImage: BufferedImage = null
+    var imageType = -1
+    var stopped: Boolean = false;
+    while ({ stopped = stopIndicator(); !stopped } && { frame = grabber.grab; frame != null }) {
+      if (frame.`type` eq Frame.Type.VIDEO) {
+        if (imageType != Java2DFrameConverter.getBufferedImageType(frame)) {
+          imageType = Java2DFrameConverter.getBufferedImageType(frame)
+          bufferedImage = new BufferedImage(grabber.getImageWidth, grabber.getImageHeight, imageType)
+        }
+        // Convert OpenCV frame to BufferedImage
+        Java2DFrameConverter.copy(frame, bufferedImage)
+        // Paint
+        painter(frame.timestamp / 1000, bufferedImage)
+        // Convert BufferedImage back to OpenCV frame
+        val modifiedFrame = frame.clone
+        Java2DFrameConverter.copy(bufferedImage, modifiedFrame)
+        // Record the modified frame
+        recorder.record(modifiedFrame)
+      }
+      else {
+        recorder.record(frame)
+      }
+    }
+
+    !stopped
   }
 
   override def seekEvent(percentage: Double): Unit = {}
