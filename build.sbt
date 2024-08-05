@@ -30,13 +30,14 @@ val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
 
 run / fork := true
 
-javaOptions ++= List(
+val moreJavaOptions = Seq(
   //macDockNameOpt, // supported on MacOs only
   "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
   "--add-opens=java.base/java.net=ALL-UNNAMED"
 )
+javaOptions ++= moreJavaOptions
 javacOptions ++= Seq("-source", "17", "-target", "17")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
@@ -48,7 +49,7 @@ resolvers ++= Seq(
 assembly / mainClass := Some(entryPoint)
 assembly / assemblyJarName := "gps-overlay-on-video.jar"
 assembly / assemblyOption := (assembly / assemblyOption).value
-  .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = Seq(macDockNameOpt), shebang = false)))
+  .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = moreJavaOptions, shebang = false)))
 assembly / assemblyMergeStrategy := {
   case PathList("META-INF", _*) => MergeStrategy.discard
   case PathList("javax", "servlet", _*) => MergeStrategy.discard
