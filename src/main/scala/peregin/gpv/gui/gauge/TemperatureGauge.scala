@@ -23,7 +23,7 @@ class TemperatureGauge extends GaugePainter {
         g.drawArc(w / 4, h / 8, w / 8, h / 8, 0, 180)
         g.drawLine(w / 4, h / 8 + h / 16, w / 4, h / 2)
         g.drawLine(w / 4 + w / 8, h / 8 + h / 16, w / 4 + w / 8, h / 2)
-        g.drawArc(w / 4 - w / 16, h / 2, w / 4, h / 4, 60, -300)
+        g.drawArc(w / 4 - w / 16, h / 2 - h / 64, w / 4, h / 4, 60, -300)
       })
 
       // draw current speed
