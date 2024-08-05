@@ -72,18 +72,6 @@ class RadialAzimuthGauge extends GaugePainter {
       g.drawLine(polarX(cx, r, angle), polarY(cy, r, angle), polarX(cx, r - tickLength, angle), polarY(cy, r - tickLength, angle))
     }
 
-
-    // draw current azimuth
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
-    val text = f"${input.current}%3.0f"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
-    // draw unit
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
-//    val utext = UnitConverter.speedUnits(units)
-//    val utb = g.getFontMetrics.getStringBounds(utext, g)
-//    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 1.5)
-
     // draw pointer
     g.setColor(Color.black)
     var cr = (longTickLength / 2).toInt + 1
@@ -102,6 +90,17 @@ class RadialAzimuthGauge extends GaugePainter {
     g.drawLine(cx + 1, cy + 1, px + 1, py + 1)
     g.setColor(Color.yellow)
     g.drawLine(cx, cy, px, py)
+    
+    // draw current azimuth
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
+    val text = f"${input.current}%3.0f"
+    val tb = g.getFontMetrics.getStringBounds(text, g)
+    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    // draw unit
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
+//    val utext = UnitConverter.speedUnits(units)
+//    val utb = g.getFontMetrics.getStringBounds(utext, g)
+//    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 1.5)
 
   }
 }

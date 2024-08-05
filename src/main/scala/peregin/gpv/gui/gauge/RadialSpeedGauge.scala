@@ -87,17 +87,6 @@ class RadialSpeedGauge() extends GaugePainter {
     arc = new Arc2D.Double(x, y, dia, dia, start + 200, extent - 200, Arc2D.OPEN)
     g.draw(arc)
 
-    // draw current speed
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
-    val text = f"${UnitConverter.speed(input.current, units)}%2.1f"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
-    // draw unit
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
-    val utext = UnitConverter.speedUnits(units)
-    val utb = g.getFontMetrics.getStringBounds(utext, g)
-    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 1.5)
-
     // draw pointer
     g.setColor(Color.black)
     var cr = (longTickLength / 2).toInt + 1
@@ -117,5 +106,15 @@ class RadialSpeedGauge() extends GaugePainter {
     g.setColor(Color.yellow)
     g.drawLine(cx, cy, px, py)
 
+    // draw current speed
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
+    val text = f"${UnitConverter.speed(input.current, units)}%2.1f"
+    val tb = g.getFontMetrics.getStringBounds(text, g)
+    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    // draw unit
+    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
+    val utext = UnitConverter.speedUnits(units)
+    val utb = g.getFontMetrics.getStringBounds(utext, g)
+    textWidthShadow(g, utext, (w - utb.getWidth) / 2, cy + box / 2 - utb.getHeight * 1.5)
   }
 }
