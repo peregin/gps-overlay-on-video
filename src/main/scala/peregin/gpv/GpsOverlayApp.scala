@@ -25,6 +25,9 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   log.info("initializing...")
 
+  // alternative to -Xdock:name on MacOs:
+  System.setProperty("com.apple.mrj.application.apple.menu.about.name", "GPS Overlay on video")
+
   Goodies.initLookAndFeel()
 
   private var setup = Setup.empty()
