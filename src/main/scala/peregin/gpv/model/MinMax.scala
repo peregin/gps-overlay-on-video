@@ -34,7 +34,7 @@ case class MinMax(var min: Double, var max: Double) {
 
   def sample(sample: Double): Unit = {
     if (sample < min) min = sample
-    else if (sample > max) max = sample
+    if (sample > max) max = sample
   }
 
   def mean: Double = (max + min) / 2

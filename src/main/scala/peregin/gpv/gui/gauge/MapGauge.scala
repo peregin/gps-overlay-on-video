@@ -4,8 +4,7 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import peregin.gpv.format.GpsFormatter
 import peregin.gpv.model.{InputValue, MinMax, Sonda, Telemetry}
 
-import java.awt.{BasicStroke, Color, Graphics2D}
-import java.util
+import java.awt.{Color, Graphics2D}
 
 
 class MapGauge extends ChartPainter {
@@ -15,6 +14,7 @@ class MapGauge extends ChartPainter {
 
   var longitudeBoundary: MinMax = _;
   var latitudeBoundary: MinMax = _;
+  var scaleLongitude: Double = _;
 
   override def defaultInput: InputValue = null
   override def sample(sonda: Sonda): Unit = {
@@ -26,6 +26,15 @@ class MapGauge extends ChartPainter {
 
     latitudeBoundary = telemetry.latitudeBoundary
     longitudeBoundary = telemetry.longitudeBoundary
+
+    // In case we sail in Pacific Ocean, swap the min/max to range from Asia to America
+    if (longitudeBoundary.min - longitudeBoundary.max < -180) {
+      longitudeBoundary = MinMax(longitudeBoundary.max, longitudeBoundary.min)
+    }
+
+    // longitude circumference changes based on roughly cos(latitude), we want to scale to make the map scale based on distance:
+    val majorLatitude = if ((latitudeBoundary.min > 0) != (latitudeBoundary.max > 0)) 0 else Math.min(Math.abs(latitudeBoundary.min), Math.abs(latitudeBoundary.max));
+    scaleLongitude = Math.cos(Math.toRadians(majorLatitude))
   }
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
@@ -34,10 +43,8 @@ class MapGauge extends ChartPainter {
     if (latitudeBoundary == null || longitudeBoundary == null) {
       return
     }
-    val scaleX = (w - 2 * PADDING) / GpsFormatter.subtractLongitude(longitudeBoundary.max, longitudeBoundary.min)
-    val scaleY = (h - 2 * PADDING) / (latitudeBoundary.max - latitudeBoundary.min)
-    val scale = math.min(scaleX, scaleY)
 
+    val scale = screenScale(w, h)
     val yBase = PADDING + ((latitudeBoundary.max - latitudeBoundary.min) * scale).toInt
 
     drawMap(g, w, h, scale, yBase)
@@ -50,6 +57,12 @@ class MapGauge extends ChartPainter {
       radius * 2,
       radius * 2,
     )
+  }
+
+  private def screenScale(w: Int, h: Int): Double = {
+    val scaleX = (w - 2 * PADDING) / Math.max(GpsFormatter.subtractLongitude(longitudeBoundary.max, longitudeBoundary.min) * scaleLongitude, 0.001)
+    val scaleY = (h - 2 * PADDING) / Math.max(latitudeBoundary.max - latitudeBoundary.min, 0.001)
+    math.min(scaleX, scaleY)
   }
 
   private def drawMap(g: Graphics2D, w: Int, h: Int, scale: Double, yBase: Int): Unit = {
@@ -67,11 +80,11 @@ class MapGauge extends ChartPainter {
     })
   }
 
-  private def longitudeToScreen(lon: Double, scale: Double): Int = {
-    return (GpsFormatter.subtractLongitude(lon, longitudeBoundary.min) * scale).toInt;
+  private[gauge] def longitudeToScreen(lon: Double, scale: Double): Int = {
+    return (GpsFormatter.subtractLongitude(lon, longitudeBoundary.min) * scaleLongitude * scale).toInt;
   }
 
-  private def latitudeToScreen(lat: Double, scale: Double): Int = {
+  private[gauge] def latitudeToScreen(lat: Double, scale: Double): Int = {
     return ((lat - latitudeBoundary.min) * scale).toInt;
   }
 }

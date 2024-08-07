@@ -56,8 +56,12 @@ object Telemetry extends Timed with Logging {
     // Important: points are stored in a <b>Vector</b>, allows to efficiently access an element at an arbitrary position
     // and retrieving the size is O(1)
 
-    log.info(s"found ${points.size} track points")
-    val data = new Telemetry(points)
+    loadWith(points)
+  }
+
+  def loadWith(track: Seq[TrackPoint]): Telemetry = {
+    log.info(s"found ${track.size} track points")
+    val data = new Telemetry(track)
     data.analyze()
     log.info(f"elevation boundary: ${data.elevationBoundary}, max speed: ${data.speedBoundary.max}%.02f")
     data
