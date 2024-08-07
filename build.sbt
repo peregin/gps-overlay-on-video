@@ -25,6 +25,7 @@ val xmlVersion = "2.3.0"
 val jodaVersion = "2.12.7"
 val swingVersion = "3.0.0"
 val javacvVersion = "1.5.10"
+val geotoolsVersion = "31.3"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
@@ -43,7 +44,8 @@ javacOptions ++= Seq("-source", "17", "-target", "17")
 
 transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
 resolvers ++= Seq(
-  "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
+  "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/",
+  "GeoTools Repository" at "https://repo.osgeo.org/repository/release/",
 )
 
 assembly / mainClass := Some(entryPoint)
@@ -137,6 +139,7 @@ libraryDependencies += "joda-time" % "joda-time" % jodaVersion
 libraryDependencies += "org.joda" % "joda-convert" % "2.2.3"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
 libraryDependencies += "com.google.guava" % "guava" % "33.2.1-jre"
+libraryDependencies += "org.geotools" % "gt-referencing" % geotoolsVersion exclude("javax.media", "jai_core")
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 libraryDependencies += "org.specs2" %% "specs2-core" % specs2Version % "test"

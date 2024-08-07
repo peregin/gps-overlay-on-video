@@ -1,18 +1,15 @@
 package peregin.gpv.gui.gauge
 
-import org.jdesktop.swingx.mapviewer.GeoPosition
-import org.joda.time.DateTime
 import org.specs2.mutable.Specification
-import peregin.gpv.model.{GarminExtension, Telemetry, TrackPoint}
+import peregin.gpv.model.TelemetryTestUtil
 
-import scala.collection.mutable.ArrayBuffer
 
 class MapGaugeSpec extends Specification {
   stopOnFail
 
   "crossing equator" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       -80, -80,
       +80, +80,
     )
@@ -28,7 +25,7 @@ class MapGaugeSpec extends Specification {
 
   "low latitude" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +10, -80,
       +80, +80,
     )
@@ -45,7 +42,7 @@ class MapGaugeSpec extends Specification {
 
   "pole latitude" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +80, 80,
       +88, 88,
     )
@@ -62,7 +59,7 @@ class MapGaugeSpec extends Specification {
 
   "constant longitude" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +0, 10,
       +10, 10,
     )
@@ -75,7 +72,7 @@ class MapGaugeSpec extends Specification {
 
   "constant latitude" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +0, 0,
       +0, 10,
     )
@@ -88,7 +85,7 @@ class MapGaugeSpec extends Specification {
 
   "single point" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +0, 0,
     )
 
@@ -100,7 +97,7 @@ class MapGaugeSpec extends Specification {
 
   "crossing longitude 180" should {
     val mapGauge: MapGauge = new MapGauge()
-    mapGauge.telemetry = buildTelemetry(
+    mapGauge.telemetry = TelemetryTestUtil.buildTelemetry(
       +10, 170,
       +30, -170,
     )
@@ -113,18 +110,5 @@ class MapGaugeSpec extends Specification {
       mapGauge.latitudeToScreen(15, 50) must beCloseTo(250, 1)
       mapGauge.longitudeToScreen(175, 50) must beCloseTo(246, 1)
     }
-  }
-
-  private def buildTelemetry(positions: Double*): Telemetry = {
-    val telemetry: Telemetry = Telemetry.loadWith(buildTrack(positions: _*))
-    telemetry
-  }
-
-  private def buildTrack(positions: Double*): Seq[TrackPoint] = {
-    val tps: ArrayBuffer[TrackPoint] = new ArrayBuffer[TrackPoint];
-    for (i <- 0 until positions.length by 2) {
-      tps.addOne(TrackPoint(new GeoPosition(positions(i + 0), positions(i + 1)), 0, new DateTime(i * 1000L), GarminExtension.empty))
-    }
-    tps.toSeq
   }
 }
