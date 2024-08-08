@@ -4,10 +4,9 @@ import java.awt.image.BufferedImage
 import java.io.File
 
 import peregin.gpv.Setup
-import peregin.gpv.util.{Io, Logging, TimePrinter}
+import peregin.gpv.util.{Logging, TimePrinter}
 import peregin.gpv.video.{VideoPlayer, VideoPlayerFactory}
 
-import scala.swing.event.ValueChanged
 import scala.swing.{Label, Swing}
 
 
