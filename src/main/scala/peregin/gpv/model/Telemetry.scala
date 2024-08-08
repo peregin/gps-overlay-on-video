@@ -227,8 +227,9 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val distance = interpolate(progress, left.distance, right.distance)
     val location = new GeoPosition(
       interpolate(progress, left.position.getLatitude, right.position.getLatitude),
-      interpolate(progress, left.position.getLongitude, right.position.getLongitude)
+      interpolateCircular(progress, left.position.getLongitude, right.position.getLongitude, TrackPoint.longitudeRange)
     )
+    val bearing = interpolateCircular(progress, left.bearing, right.bearing, TrackPoint.azimuthRange)
     val speed = interpolate(progress, left.speed, right.speed)
     val cadence = interpolate(progress, left.extension.cadence, right.extension.cadence)
     val heartRate = interpolate(progress, left.extension.heartRate, right.extension.heartRate)
@@ -238,7 +239,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
       location,
       InputValue(elevation, elevationBoundary), InputValue(left.grade, gradeBoundary),
-      InputValue(distance, MinMax(0, totalDistance)), InputValue(speed, speedBoundary), InputValue(left.bearing, bearingBoundary),
+      InputValue(distance, MinMax(0, totalDistance)), InputValue(speed, speedBoundary), InputValue(bearing, bearingBoundary),
       cadence.map(InputValue(_, cadenceBoundary)),
       heartRate.map(InputValue(_, heartRateBoundary)),
       power.map(InputValue(_, powerBoundary)),
@@ -253,5 +254,27 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     case _ => None
   }
 
-  private def compareDouble(a: Double, b: Double): Int = java.lang.Double.compare(a, b)
+  /**
+   * Interpolates data in circular unit, such as bearing (0 - 360) or longitude (-180 - +180)
+   */
+  private def interpolateCircular(f: Double, left: Double, right: Double, range: MinMax): Double = {
+    val rangeFull = range.max - range.min
+    val rangeHalf = rangeFull / 2
+    var diff = right - left
+    if (diff < -rangeHalf) {
+      diff += rangeFull
+    }
+    else if (diff >= rangeHalf) {
+      diff -= rangeFull
+    }
+    var result = left + f * diff / 100
+    if (result < range.min) {
+      result += rangeFull
+    }
+    else if (result >= range.max) {
+      result -= rangeFull
+    }
+    result
+  }
+
 }

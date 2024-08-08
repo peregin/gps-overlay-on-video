@@ -1,5 +1,6 @@
 package peregin.gpv.model
 
+import org.geotools.referencing.GeodeticCalculator
 import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.{SeqUtil, TimePrinter}
@@ -9,16 +10,14 @@ import math._
 
 
 object TrackPoint {
-
-  // Distances from points on the surface to the center range from 6353 km to 6384 km.
-  // Several different ways of modeling the Earth as a sphere each yield a mean radius of 6371 kilometers.
-  val earthRadius = 6371d
-
   // The default position shown in the map when no GPS data is loaded.
   // Buerkliplatz, Zurich, Switzerland
   val centerPosition = new GeoPosition(47.366074, 8.541264)
 
   val millisToHours = 1000 * 60 * 60
+
+  val longitudeRange = MinMax(-180, +180)
+  val azimuthRange = MinMax(0, 360)
 }
 
 /**
@@ -66,22 +65,27 @@ case class TrackPoint(position: GeoPosition,
   def haversineDistanceTo(that: TrackPoint): Double = haversineDistanceTo(that.position)
 
   def haversineDistanceTo(gp: GeoPosition): Double = {
-    val deltaPhi = (position.getLatitude - gp.getLatitude).toRadians
-    val deltaLambda = (position.getLongitude - gp.getLongitude).toRadians
-    val a = square(sin(deltaPhi / 2)) +
-      cos(gp.getLatitude.toRadians) * cos(position.getLatitude.toRadians) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
-    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    TrackPoint.earthRadius * c
+    val calculator = new GeodeticCalculator();
+
+    calculator.setStartingGeographicPoint(this.position.getLongitude, this.position.getLatitude);
+    calculator.setDestinationGeographicPoint(gp.getLongitude, gp.getLatitude);
+
+    calculator.getOrthodromicDistance / 1000.0
   }
 
   def bearingTo(that: TrackPoint): Double = bearingTo(that.position)
 
   def bearingTo(gp: GeoPosition): Double = {
-    val dLon: Double = position.getLongitude - gp.getLongitude
-    val y: Double = Math.sin(dLon) * Math.cos(gp.getLatitude)
-    val x: Double = Math.cos(position.getLatitude) * Math.sin(gp.getLatitude) - Math.sin(position.getLatitude) * Math.cos(gp.getLatitude) * Math.cos(dLon)
-    val deg = 360 - ((Math.toDegrees(Math.atan2(y, x)) + 360) % 360)
-    if (deg == 360.0) 0.0 else deg
+    val calculator = new GeodeticCalculator();
+
+    calculator.setStartingGeographicPoint(this.position.getLongitude, this.position.getLatitude);
+    calculator.setDestinationGeographicPoint(gp.getLongitude, gp.getLatitude);
+
+    var azimuth = calculator.getAzimuth(); // This returns azimuth in degrees (clockwise from north)
+    if (azimuth < 0) {
+      azimuth += 360.0;
+    }
+    azimuth
   }
 
   def distanceTo(that: TrackPoint): Double = {
