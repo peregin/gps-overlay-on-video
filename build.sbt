@@ -53,7 +53,11 @@ assembly / assemblyJarName := "gps-overlay-on-video.jar"
 assembly / assemblyOption := (assembly / assemblyOption).value
   .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = moreJavaOptions, shebang = false)))
 assembly / assemblyMergeStrategy := {
-  case PathList("META-INF", _*) => MergeStrategy.discard
+  case PathList("META-INF", ps @ _*) if ps.last.endsWith(".SF") || ps.last.endsWith(".RSA") || ps.last.endsWith(".DES") => MergeStrategy.discard
+  case PathList("META-INF", "services", _*) => MergeStrategy.filterDistinctLines
+  case PathList("META-INF", "maven", _*) => MergeStrategy.discard
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("META-INF", _*) => MergeStrategy.first
   case PathList("javax", "servlet", _*) => MergeStrategy.discard
   case PathList("junit", _*) => MergeStrategy.discard
   case x => MergeStrategy.first
