@@ -42,7 +42,8 @@ gauges:
     clazz: peregin.gpv.gui.gauge.TemperatureGauge
     x: 0.9
     y: 0.15
-    size: *SIZE
+    width: 0.1
+    height: *SIZE
   - name: progress
     clazz: peregin.gpv.gui.gauge.DistanceAndDurationGauge
     x: 0.8
