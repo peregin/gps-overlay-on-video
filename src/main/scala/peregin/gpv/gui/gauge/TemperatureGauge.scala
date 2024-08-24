@@ -1,8 +1,8 @@
 package peregin.gpv.gui.gauge
 
-import peregin.gpv.model.{InputValue, MinMax, Sonda}
+import peregin.gpv.model.{InputValue, Sonda}
 
-import java.awt._
+import java.awt.{Font, Graphics2D}
 
 
 class TemperatureGauge extends GaugePainter {
@@ -16,6 +16,7 @@ class TemperatureGauge extends GaugePainter {
     if (input != null) {
       super.paint(g, devHeight, w, h)
 
+      // draw temperature
       g.setFont(gaugeFont.deriveFont(Font.BOLD, (h * 3 / 16).toFloat))
       val textBounds = g.getFontMetrics().getStringBounds(" 99°C", g)
       val text = f"${input.current}% 2.0f°C"
@@ -30,8 +31,6 @@ class TemperatureGauge extends GaugePainter {
         g.drawLine(x + h / 16 + 1, h / 8 + h / 16, x + h / 16 + 1, h / 2)
         g.drawArc(x - h / 8, h / 2 - h / 64, h / 4, h / 4, 60, -300)
       })
-
-      // draw current speed
     }
   }
 }
