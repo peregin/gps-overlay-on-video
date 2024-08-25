@@ -1,5 +1,6 @@
 package peregin.gpv
 
+import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.javacv.{FFmpegFrameGrabber, FFmpegFrameRecorder, Frame, Java2DFrameConverter}
 
 import java.awt.image.BufferedImage
@@ -29,6 +30,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   // setup painter
   dash = template.dashboard
 
+  private val UNSUPPORTED_VIDEO_CODECS_TO_BITRATE_SCALE = Map(avcodec.AV_CODEC_ID_H265 -> 2.0)
   private val imagePanel = new ImagePanel
   private val generateButton = new Button("Generate")
   private val closeButton = new Button("Cancel")
@@ -180,8 +182,14 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
     if (grabber.hasVideo) {
       recorder.setVideoMetadata(grabber.getVideoMetadata)
-      recorder.setVideoCodec(grabber.getVideoCodec)
-      recorder.setVideoBitrate((grabber.getVideoBitrate * (setup.bitrateRatio.getOrElse(10000) / 10000.0)).toInt)
+      val qualityScale = UNSUPPORTED_VIDEO_CODECS_TO_BITRATE_SCALE.get(grabber.getVideoCodec)
+      if (qualityScale.isEmpty) {
+        recorder.setVideoCodec(grabber.getVideoCodec)
+      }
+      else {
+        recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264)
+      }
+      recorder.setVideoBitrate((grabber.getVideoBitrate * qualityScale.getOrElse(1.0) * setup.bitrateRatio.getOrElse(10000) / 10000.0).toInt)
       recorder.setVideoOption("tune", "film")
       recorder.setVideoOption("threads", "4")
       recorder.setVideoOption("frame-threads", "4")
