@@ -198,8 +198,8 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   override def seekEvent(percentage: Double): Unit = {}
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
-    paintGauges(telemetryPanel.telemetry, tsInMillis, image, telemetryPanel.getShift, transparencySlider.percentage, unitChooser.selection.item)
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit = {
+    paintGauges(telemetryPanel.telemetry, tsInMillis, image, rotation, telemetryPanel.getShift, transparencySlider.percentage, unitChooser.selection.item)
     Swing.onEDT(telemetryPanel.updateVideoProgress(tsInMillis))
   }
 

@@ -2,9 +2,10 @@ package peregin.gpv.gui.dashboard
 
 import java.awt.AlphaComposite
 import java.awt.image.BufferedImage
-
 import peregin.gpv.gui.gauge._
 import peregin.gpv.model.Telemetry
+
+import java.awt.geom.AffineTransform
 
 trait DashboardPainter {
 
@@ -14,7 +15,7 @@ trait DashboardPainter {
   def dash: Dashboard = dashboard
   def dash_= (d: Dashboard): Unit = dashboard = d
 
-  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, shiftInMillis: Long, transparencyInPercentage: Double, units: String): Unit = {
+  def paintGauges(telemetry: Telemetry, tsInMillis: Long, image: BufferedImage, rotation: Double, shiftInMillis: Long, transparencyInPercentage: Double, units: String): Unit = {
 
     val g = image.createGraphics
 
@@ -36,15 +37,21 @@ trait DashboardPainter {
       val stash = g.getTransform
 
       // adjusted to the size of the image proportionally
-      val width = image.getWidth
-      val height = image.getHeight
+      val width = if (rotation == 0 || Math.abs(rotation) == 180) image.getWidth else image.getHeight
+      val height = if (rotation == 0 || Math.abs(rotation) == 180) image.getHeight else image.getWidth
       val f = height match {
         case p360 if p360 <= 360 => 4
         case _ => 5
       }
       val boxSize = (width min height) / f
-      // shift to the bottom
-      g.translate(0, height - boxSize)
+
+      val at = new AffineTransform()
+      // And we rotate about the center of the image...
+      val x = width / 2
+      val y = height / 2
+      at.translate((height - image.getHeight) / 2, (width - image.getWidth) / 2)
+      at.rotate(Math.toRadians(rotation), x, y)
+      g.transform(at)
 
       // paint dashboard
       dashboard.paintDashboard(g, width, height, boxSize, sonda)

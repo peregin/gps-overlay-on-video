@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage
 object VideoPlayer {
   trait Listener {
 
-    def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit
+    def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit
     def seekEvent(percentage: Double): Unit
 
     def videoStopped(): Unit
