@@ -5,10 +5,11 @@ import org.bytedeco.javacv.{FFmpegFrameGrabber, Frame, Java2DFrameConverter}
 import java.awt.image.BufferedImage
 import peregin.gpv.util.{Logging, TimePrinter}
 
+
 sealed trait PacketReply
 case object ReadInProgress extends PacketReply
 case object EndOfStream extends PacketReply
-case class FrameIsReady(tsInMillis: Long, percentage: Double, keyFrame: Boolean, image: BufferedImage) extends PacketReply
+case class FrameIsReady(tsInMillis: Long, percentage: Double, keyFrame: Boolean, image: BufferedImage, rotation: Double) extends PacketReply
 
 class SeekableVideoStream(url: String) extends DelayController with Logging {
 
@@ -41,7 +42,7 @@ class SeekableVideoStream(url: String) extends DelayController with Logging {
       image = new BufferedImage(frame.imageWidth, frame.imageHeight, imageType)
     }
     Java2DFrameConverter.copy(frame, image)
-    return Some(FrameIsReady(frame.timestamp / 1000, frame.timestamp * (100.0 / 1000.0) / durationInMillis, frame.keyFrame, image))
+    return Some(FrameIsReady(frame.timestamp / 1000, frame.timestamp * (100.0 / 1000.0) / durationInMillis, frame.keyFrame, image, grabber.getDisplayRotation))
   }
 
 

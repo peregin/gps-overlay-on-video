@@ -1,22 +1,27 @@
 package peregin.gpv.gui
 
-import java.awt.{Color, Graphics, Image}
+import peregin.gpv.util.ImageConverter
+
+import java.awt.geom.AffineTransform
+import java.awt.{Color, Graphics, Graphics2D, Image}
 import javax.swing.JPanel
 
 
 class ImagePanel extends JPanel {
   var image: Option[Image] = None
   var topImage: Option[Image] = None
+  var rotation: Double = 0.0
 
-  def show(im: Image): Unit = {
-    show(im, None)
+  def show(im: Image, rotation: Double): Unit = {
+    show(im, None, rotation)
   }
 
   // imTop expected to have the same size as im
   // allows to paint a normal and top layer
-  def show(im: Image, imTop: Option[Image]): Unit = {
+  def show(im: Image, imTop: Option[Image], rotation: Double): Unit = {
     image = Some(im)
     topImage = imTop
+    this.rotation = rotation
     repaint()
   }
 
@@ -27,8 +32,9 @@ class ImagePanel extends JPanel {
     g.fillRect(0, 0, width, height)
 
     image.foreach { normalLayer =>
-      val iw = normalLayer.getWidth(null)
-      val ih = normalLayer.getHeight(null)
+      val rotated = ImageConverter.rotateImage(normalLayer, rotation)
+      val iw = rotated.getWidth(null)
+      val ih = rotated.getHeight(null)
 
       // the image needs to be scaled to fit to the display area
       val (w, h) = if (iw > width || ih > height) {
@@ -38,10 +44,10 @@ class ImagePanel extends JPanel {
       val x = (width - w) / 2
       val y = (height - h) / 2
       //debug(s"(w, h) = ($w, $h)")
-      g.drawImage(normalLayer, x, y, x + w, y + h, 0, 0, iw, ih, null)
+      g.drawImage(rotated, x, y, x + w, y + h, 0, 0, iw, ih, null)
 
-      topImage.foreach{topLayer =>
-        g.drawImage(topLayer, x, y, x + w, y + h, 0, 0, iw, ih, null)
+      topImage.foreach { topLayer =>
+        g.drawImage(ImageConverter.rotateImage(topLayer, rotation), x, y, x + w, y + h, 0, 0, iw, ih, null)
       }
     }
   }

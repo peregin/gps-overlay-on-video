@@ -107,7 +107,6 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
       g.fillRect(0, 0, width, height)
 
       getSelectedEntry.flatMap(e => name2Dashboard.get(e.name)).foreach { d =>
-        g.translate(0, height / 2)
         val sample = if (d.isInstanceOf[MotorBikingDashboard]) motorBikeSample else regularSample
         d.paintDashboard(g.asInstanceOf[Graphics2D], width, height, width / 5, sample)
       }

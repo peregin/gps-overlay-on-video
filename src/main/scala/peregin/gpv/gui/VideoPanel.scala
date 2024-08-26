@@ -43,6 +43,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
 
   @volatile private var player: Option[VideoPlayer] = None
   @volatile private var lastRawImage: Option[BufferedImage] = None // without overlay
+  private var lastRotation = 0.0
 
   def refresh(setup: Setup): Unit = {
     chooser.fileInput.text = setup.videoPath.getOrElse("")
@@ -71,7 +72,7 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
         val ts = TimePrinter.text2Duration(elapsed.text)
         val total = TimePrinter.text2Duration(duration.text)
         val percentage = (ts * 100).toDouble / total
-        videoEvent(ts, percentage, rawImage)
+        videoEvent(ts, percentage, rawImage, lastRotation)
       }
     }
   }
@@ -80,13 +81,14 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     slider.percentage = percentage
   }
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit = {
     lastRawImage = Some(image)
+    lastRotation = rotation
     val topImage = new BufferedImage(image.getWidth, image.getHeight, BufferedImage.TYPE_INT_ARGB)
     // first allow the listeners to modify the image, then show it
-    listener.videoEvent(tsInMillis, percentage, topImage)
+    listener.videoEvent(tsInMillis, percentage, topImage, rotation)
     Swing.onEDT{
-      imagePanel.show(image, Some(topImage))
+      imagePanel.show(image, Some(topImage), rotation)
       slider.percentage = percentage
       elapsed.text = s"${TimePrinter.printDuration(tsInMillis)}"
       duration.text = s"${TimePrinter.printDuration(player.map(_.duration))}"

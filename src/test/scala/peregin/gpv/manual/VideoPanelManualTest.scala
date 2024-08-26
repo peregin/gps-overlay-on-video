@@ -19,7 +19,7 @@ object VideoPanelManualTest extends SimpleSwingApplication with Logging {
 
   val video = new VideoPanel(openVideoFile, new VideoPlayer.Listener() {
     override def seekEvent(percentage: Double): Unit = {}
-    override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {}
+    override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit = {}
     override def videoStarted(): Unit = {}
     override def videoStopped(): Unit = {}
   }) with SeekableVideoPlayerFactory

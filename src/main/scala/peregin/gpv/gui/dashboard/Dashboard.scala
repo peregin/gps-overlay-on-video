@@ -26,6 +26,7 @@ trait CyclingDashboard extends Dashboard {
 
   override def paintDashboard(g: Graphics2D, imageWidth: Int, imageHeight: Int, gaugeSize: Int, sonda: Sonda): Unit = {
     // paint elevation to the right
+    g.translate(0, imageHeight - gaugeSize)
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
     elevationChart.paint(g, imageHeight, gaugeSize * 3, gaugeSize * 3 / 4, sonda)
@@ -62,6 +63,7 @@ trait SkiingDashboard extends Dashboard {
   override def gauges(): Seq[GaugePainter] = Seq(speedGauge, elevationChart, heartRateGauge)
 
   override def paintDashboard(g: Graphics2D, imageWidth: Int, imageHeight: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    g.translate(0, imageHeight - gaugeSize)
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
@@ -92,6 +94,7 @@ trait MotorBikingDashboard extends Dashboard {
   override def gauges(): Seq[GaugePainter] = Seq(speedGauge, elevationChart, heartRateGauge)
 
   override def paintDashboard(g: Graphics2D, imageWidth: Int, imageHeight: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    g.translate(0, imageHeight - gaugeSize)
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)
@@ -120,6 +123,7 @@ trait SailingDashboard extends Dashboard {
   override def gauges(): Seq[GaugePainter] = Seq(speedGauge, azimuthGauge, heartRateGauge)
 
   override def paintDashboard(g: Graphics2D, imageWidth: Int, imageHeight: Int, gaugeSize: Int, sonda: Sonda): Unit = {
+    g.translate(0, imageHeight - gaugeSize)
     // paint elevation to the right
     val stashBottom = g.getTransform
     g.translate(imageWidth - gaugeSize * 3, gaugeSize / 4)

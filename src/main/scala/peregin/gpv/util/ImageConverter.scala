@@ -1,9 +1,10 @@
 package peregin.gpv.util
 
 import java.awt.image.{BufferedImage, IndexColorModel}
-
 import org.apache.batik.transcoder.image.ImageTranscoder
 import org.apache.batik.transcoder.{SVGAbstractTranscoder, TranscoderInput, TranscoderOutput}
+
+import java.awt.Image
 
 object ImageConverter {
 
@@ -56,5 +57,22 @@ object ImageConverter {
     val g = Array.fill(size)(n.toByte)
     val b = Array.fill(size)(n.toByte)
     new IndexColorModel(4, size, r, g, b)
+  }
+
+  def rotateImage(image: Image, rotation: Double): Image = {
+    if (rotation == 0) {
+      return image
+    }
+    val result = new BufferedImage(
+      if (Math.abs(rotation) == 180) image.getWidth(null) else image.getHeight(null),
+      if (Math.abs(rotation) == 180) image.getHeight(null) else image.getWidth(null),
+      BufferedImage.TYPE_INT_ARGB
+    )
+    val g = result.createGraphics()
+    g.rotate(Math.toRadians(-rotation), result.getWidth(null) / 2, result.getHeight(null) / 2)
+    g.translate((result.getWidth(null) - image.getWidth(null)) / 2, (result.getHeight(null) - image.getHeight(null)) / 2)
+    g.drawImage(image, 0, 0, null)
+    g.dispose()
+    result
   }
 }

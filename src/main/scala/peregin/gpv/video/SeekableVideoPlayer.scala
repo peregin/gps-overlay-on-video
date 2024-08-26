@@ -36,8 +36,8 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
   }
 
   // FIXME: callback from the actor, subscribe to events instead of callback
-  private[video] def handleFrame(frame: FrameIsReady): Unit = {
-    listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
+  private[video] def handleFrame(frame: FrameIsReady, rotation: Double): Unit = {
+    listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image, rotation)
   }
 
   val system = ActorSystem("gpv")
@@ -95,7 +95,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
     case Event(PlayCommand, _) =>
       cancelTimer("nextread") // if something was piled up, remove it from the queue
       video.readNextFrame match {
-      case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _)) =>
+      case Some(frame @ FrameIsReady(tsInMillis, percentage, keyFrame, _, _)) =>
         handleFrame(frame)
         val delay = video.markDelay(tsInMillis)
         startSingleTimer("nextread", PlayCommand, delay millis)
@@ -141,7 +141,7 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
   initialize()
 
   private def handleFrame(frame: FrameIsReady): Unit = {
-    listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image)
+    listener.videoEvent(frame.tsInMillis, frame.percentage, frame.image, frame.rotation)
   }
 
   private def handleSeek(percentage: Double): Unit = {

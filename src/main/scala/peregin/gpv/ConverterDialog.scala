@@ -143,7 +143,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
       convertVideoBody(
         reader,
         writer,
-        (timeInMs, image) => videoEvent(timeInMs, timeInMs * 100.0 / durationInMillis, image),
+        (timeInMs, image, rotation) => videoEvent(timeInMs, timeInMs * 100.0 / durationInMillis, image, rotation),
         () => stopped
       )
       writer.flush()
@@ -181,6 +181,8 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     recorder.setFrameRate(grabber.getFrameRate)
 
     if (grabber.hasVideo) {
+      // Keep the rotation from original video, so all the other data including audio match the orientation
+      recorder.setDisplayRotation(grabber.getDisplayRotation)
       recorder.setVideoMetadata(grabber.getVideoMetadata)
       val qualityScale = UNSUPPORTED_VIDEO_CODECS_TO_BITRATE_SCALE.get(grabber.getVideoCodec)
       if (qualityScale.isEmpty) {
@@ -214,7 +216,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   private def convertVideoBody(
                                 grabber: FFmpegFrameGrabber,
                                 recorder: FFmpegFrameRecorder,
-                                painter: (Long, BufferedImage) => Unit,
+                                painter: (Long, BufferedImage, Double) => Unit,
                                 stopIndicator: () => Boolean
                               ): Boolean = {
     var frame: Frame = null
@@ -230,7 +232,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
         // Convert OpenCV frame to BufferedImage
         Java2DFrameConverter.copy(frame, bufferedImage)
         // Paint
-        painter(frame.timestamp / 1000, bufferedImage)
+        painter(frame.timestamp / 1000, bufferedImage, grabber.getDisplayRotation)
         // Convert BufferedImage back to OpenCV frame
         val modifiedFrame = frame.clone
         Java2DFrameConverter.copy(bufferedImage, modifiedFrame)
@@ -247,16 +249,16 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
   override def seekEvent(percentage: Double): Unit = {}
 
-  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage): Unit = {
-    paintGauges(telemetry, tsInMillis, image, setup.shift, setup.transparency, setup.units)
+  override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit = {
+    paintGauges(telemetry, tsInMillis, image, rotation, setup.shift, setup.transparency, setup.units)
 
     val tick = System.currentTimeMillis
     if (tick - mark >= 2000) {
 
       Swing.onEDT {
-        val speed: Double = tsInMillis / Math.max(System.currentTimeMillis() - startTimeMs, 1.0)
+        val speed: Double = tsInMillis / Math.max(System.currentTimeMillis() - startTimeMs, 1).toDouble
         progressBar.value = percentage.toInt
-        imagePanel.show(image)
+        imagePanel.show(image, rotation)
         progressBar.label = f"${TimePrinter.printDuration(tsInMillis)}   ${speed}%.3f×"
       }
 
