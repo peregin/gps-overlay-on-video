@@ -11,7 +11,7 @@ class SetupSpec extends Specification with Logging {
 
   "an instance of the setup" should {
     "be serialized and deserialized" in {
-      val s1 = Setup(Some("video/path"), Some("telemetry/path"), None, Some(10L), Some(60d), Some("Metric"), None, Some(10000))
+      val s1 = Setup(Some("video/path"), Some("telemetry/path"), None, Some(10L), Some(60d), Some("Metric"), None, Some(10000), Seq())
       val json = s1.save
       log.debug(s"json:\n$json\n")
       val s2 = Setup.load(json)

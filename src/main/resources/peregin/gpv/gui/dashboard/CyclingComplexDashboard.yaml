@@ -66,3 +66,9 @@ gauges:
     y: 0.2
     width: 0.3
     height: 0.5
+  - name: map
+    clazz: peregin.gpv.gui.gauge.CaptionGauge
+    x: 0.1
+    y: 0.02
+    width: 0.8
+    height: 0.05

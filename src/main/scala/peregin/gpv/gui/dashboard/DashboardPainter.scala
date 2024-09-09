@@ -28,6 +28,7 @@ trait DashboardPainter {
       gp.units = units
       gp match {
         case painter: ChartPainter =>
+          painter.transparency = transparencyInPercentage
           painter.telemetry = telemetry
         case _ =>
       }

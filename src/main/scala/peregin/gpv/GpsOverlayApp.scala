@@ -4,17 +4,17 @@ import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
-
 import javax.swing._
 import info.BuildInfo
 import org.jdesktop.swingx._
 import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
-import peregin.gpv.model.Telemetry
+import peregin.gpv.model.{Telemetry, VideoCaption}
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
 
+import java.time.ZonedDateTime
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
 
@@ -141,6 +141,7 @@ object GpsOverlayApp extends SimpleSwingApplication
             message("Analyzing telemetry...")
             val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
             val tm = telemetry.getOrElse(Telemetry.empty())
+            tm.setCaptions(setup.captions)
             message("Updating...")
             templatePanel.refresh(setup)
             telemetryPanel.refresh(setup, tm)

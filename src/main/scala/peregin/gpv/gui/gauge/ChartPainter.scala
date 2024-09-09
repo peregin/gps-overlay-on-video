@@ -12,4 +12,7 @@ trait ChartPainter extends GaugePainter {
 
   def telemetry: Telemetry = data.getOrElse(Telemetry.empty())
   def telemetry_= (on: Telemetry): Unit = data = Some(on)
+
+  def transparency: Float = 1.0f
+  def transparency_= (transparencyInPercentage: Double): Unit = {}
 }
