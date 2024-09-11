@@ -30,6 +30,7 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   Goodies.initLookAndFeel()
 
+  private var projectFile: Option[File] = None
   private var setup = Setup.empty()
 
   private val videoPanel = new VideoPanel(openVideoData, this) with SeekableVideoPlayerFactory
@@ -123,11 +124,13 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def openProject(): Unit = timed("open project") {
     val chooser = new FileChooser()
+    chooser.selectedFile = projectFile.orNull
     chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Open project:"
     if (chooser.showOpenDialog(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
       val file = chooser.selectedFile
       val path = file.getAbsolutePath
+      projectFile = Some(file)
       debug(s"opening $path")
       Goodies.showBusy(frame) {
         Swing.onEDT {
@@ -152,6 +155,7 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def saveProject(): Unit = {
     val chooser = new FileChooser()
+    chooser.selectedFile = projectFile.orNull
     chooser.fileFilter = ExtensionFilters.project
     chooser.title = "Save project:"
     if (chooser.showSaveDialog(GpsOverlayApp.frame.contents.head) == FileChooser.Result.Approve) {
@@ -160,6 +164,7 @@ object GpsOverlayApp extends SimpleSwingApplication
           (file.exists() && Dialog.showConfirmation(frame.contents.head, "Do you want to overwrite the file?", "File already exists", Dialog.Options.YesNo) ==  Dialog.Result.Yes)) {
         saveProject(file)
         message(s"Project file has been saved to ${file.getAbsolutePath}")
+        projectFile = Some(file)
       }
     }
   }
