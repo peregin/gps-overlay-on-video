@@ -5,7 +5,9 @@ import org.jdesktop.swingx.mapviewer.GeoPosition
 import org.joda.time.DateTime
 import peregin.gpv.util.{Io, Logging, SeqUtil, Timed}
 
-import scala.annotation.tailrec
+import java.time.Instant
+import scala.collection.mutable.ArrayBuffer
+import scala.math.Ordered.orderingToOrdered
 import scala.util.Try
 import scala.xml.{Node, XML}
 
@@ -82,7 +84,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
   private[model] val speedBoundary = MinMax.extreme
-  private[model] val bearingBoundary = MinMax.extreme
+  private[model] val bearingBoundary = MinMax(0, 360)
   val gradeBoundary = MinMax.extreme
   private[model] val cadenceBoundary = MinMax.extreme
   private[model] val temperatureBoundary = MinMax.extreme
@@ -146,7 +148,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
    * Retrieves the interpolated time for the given progress.
    */
   def timeForProgress(progressInPerc: Double): Option[DateTime] = {
-    val millis = valueForProgress(progressInPerc, (tp: TrackPoint) => tp.time.getMillis)
+    val millis = valueForProgress(progressInPerc, (tp: TrackPoint) => tp.time.getMillis.toDouble)
     millis.map(v => new DateTime(v.toLong))
   }
 
@@ -167,7 +169,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
    * Retrieves a progress between 0 and 100 according to the time elapsed.
    */
   def progressForTime(t: DateTime): Double = (track.headOption, track.lastOption) match {
-    case (Some(first), Some(last)) => progressForValue(t.getMillis, first, last, (tp: TrackPoint) => tp.time.getMillis)
+    case (Some(first), Some(last)) => progressForValue(t.getMillis.toDouble, first, last, (tp: TrackPoint) => tp.time.getMillis.toDouble)
     case _ => 0d
   }
 
@@ -208,7 +210,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     }
   }
 
-  def sondaForAbsoluteTime(t: DateTime): Sonda = search(t.getMillis, (tp: TrackPoint) => tp.time.getMillis)
+  def sondaForAbsoluteTime(t: DateTime): Sonda = searchTime(t.getMillis.toDouble, (tp: TrackPoint) => tp.time.getMillis.toDouble)
 
   def sondaForDistance(d: Double): Sonda = search(d, (tp: TrackPoint) => tp.distance)
 
@@ -221,8 +223,35 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     interpolate(progress, left, right).withTrackIndex(previousIdx)
   }
 
+  // binary search by time, then interpolate
+  // returns reasonably empty data if before beginning of track
+  private def searchTime(t: Double, convertFunc: TrackPoint => Double): Sonda = {
+    val previousIdx: Int = SeqUtil.floorIndex(track, t, convertFunc, java.lang.Double.compare)
+    if (previousIdx < 0) {
+      return Sonda(
+        new DateTime(t.toLong),
+        InputValue((t.toLong - track.head.time.getMillis) / 1000.0, MinMax(0, (track.last.time.getMillis - track.head.time.getMillis).toDouble)),
+        track.head.position,
+        InputValue(track.head.elevation, elevationBoundary),
+        InputValue(0, gradeBoundary),
+        InputValue(0, MinMax(0, totalDistance)),
+        InputValue(0, speedBoundary),
+        InputValue(0, bearingBoundary),
+        None,
+        None,
+        None,
+        None,
+      )
+        .withTrackIndex(0)
+    }
+    val nextIndex = math.min(previousIdx + 1, track.size - 1)
+    val (left, right) = (track(previousIdx), track(nextIndex))
+    val progress = progressForValue(t, left, right, convertFunc)
+    interpolate(progress, left, right).withTrackIndex(previousIdx)
+  }
+
   private def interpolate(progress: Double, left: TrackPoint, right: TrackPoint): Sonda = {
-    val t = new DateTime(interpolate(progress, left.time.getMillis, right.time.getMillis).toLong)
+    val t = new DateTime(interpolate(progress, left.time.getMillis.toDouble, right.time.getMillis.toDouble).toLong)
     val elevation = interpolate(progress, left.elevation, right.elevation)
     val distance = interpolate(progress, left.distance, right.distance)
     val location = new GeoPosition(
@@ -237,7 +266,7 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val temperature = interpolate(progress, left.extension.temperature, right.extension.temperature)
     val grade = interpolate(progress, left.grade, right.grade)
     val firstTs = track.head.time.getMillis
-    Sonda(t, InputValue(t.getMillis - firstTs, MinMax(0, track.last.time.getMillis - firstTs)),
+    Sonda(t, InputValue((t.getMillis - firstTs).toDouble, MinMax(0, (track.last.time.getMillis - firstTs).toDouble)),
       location,
       InputValue(elevation, elevationBoundary), InputValue(grade, gradeBoundary),
       InputValue(distance, MinMax(0, totalDistance)), InputValue(speed, speedBoundary), InputValue(bearing, bearingBoundary),
