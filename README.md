@@ -29,7 +29,7 @@ java --add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED -jar gps-overla
 ```
 There are other options to run the application see [How to run it](#how-to-run-it) section.
 
-When running under windows make sure to use 32bit java JDK/JRE (due to bugs in the xuggle library when running in 64bit)
+When running make sure to use 64-bit java JDK/JRE (no video binaries included for 32-bit).
 
 ## Overview
 

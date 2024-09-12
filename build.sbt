@@ -34,6 +34,7 @@ run / fork := true
 
 val moreJavaOptions = Seq(
   //macDockNameOpt, // supported on MacOs only
+  "-Xmx1G",
   "--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED",
   "--add-opens=java.base/java.lang=ALL-UNNAMED",
   "--add-opens=java.base/java.util=ALL-UNNAMED",
