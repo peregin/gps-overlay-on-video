@@ -93,6 +93,8 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   private[model] val heartRateBoundary = MinMax.extreme
   private[model] val powerBoundary = MinMax.extreme
 
+  private var sortedCaptions: Seq[VideoCaption] = Seq()
+
   private var centerPosition = TrackPoint.centerPosition
 
   private def analyze(): Unit = timed("analyze GPS data") {
@@ -122,6 +124,11 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
       }
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
+  }
+
+  def setCaptions(captions: Seq[VideoCaption]): Unit = {
+    // Currently only times with GPS are supported:
+    this.sortedCaptions = captions.filter(_.start.isDefined).sortBy(message => message.start)
   }
 
   def centerGeoPosition: GeoPosition = centerPosition
@@ -221,6 +228,24 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   def sondaForAbsoluteTime(t: DateTime): Sonda = searchTime(t.getMillis.toDouble, (tp: TrackPoint) => tp.time.getMillis.toDouble)
 
   def sondaForDistance(d: Double): Sonda = search(d, (tp: TrackPoint) => tp.distance)
+
+  def captionsForTime(time: Instant): Seq[VideoCaption] = {
+    val first = SeqUtil.floorIndex(sortedCaptions, time, (message: VideoCaption) => message.start.get, (t1: Instant, t2: Instant) => t1.compare(t2))
+    if (first < 0) {
+      return Seq()
+    }
+    val found = ArrayBuffer[VideoCaption]()
+    for (i <- first until sortedCaptions.size) {
+      val message = sortedCaptions(i)
+      if (time.isBefore(message.start.get)) {
+        return found.toSeq
+      }
+      if (time.isBefore(message.start.get.plusMillis((message.duration * 1000).toInt))) {
+        found.addOne(message)
+      }
+    }
+    found.toSeq
+  }
 
   // binary search then interpolate
   private def search(t: Double, convertFunc: TrackPoint => Double): Sonda = {

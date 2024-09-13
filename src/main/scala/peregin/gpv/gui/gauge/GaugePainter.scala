@@ -70,7 +70,7 @@ trait GaugePainter {
   def textWidthShadow(g: Graphics2D, text: String, x: Double, y: Double, c: Color = Color.yellow): Unit = {
     val ix = x.toInt
     val iy = y.toInt
-    g.setColor(Color.black)
+    g.setColor(new Color(0, 0, 0, c.getAlpha))
     g.drawString(text, ix + 1, iy + 1)
     g.setColor(c)
     g.drawString(text, ix, iy)

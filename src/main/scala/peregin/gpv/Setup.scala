@@ -1,7 +1,10 @@
 package peregin.gpv
 
+import peregin.gpv.model.VideoCaption
+
 import java.io.FileWriter
 import peregin.gpv.util.JsonConverter
+
 import scala.io.Source
 
 object Setup {
@@ -21,7 +24,7 @@ object Setup {
     load(json)
   }
 
-  def empty() = new Setup(None, None, None, None, None, None, None, None)
+  def empty() = new Setup(None, None, None, None, None, None, None, None, Seq())
 }
 
 case class Setup(var videoPath: Option[String],
@@ -31,7 +34,8 @@ case class Setup(var videoPath: Option[String],
                  var dashboardTransparency: Option[Double],
                  var dashboardUnits: Option[String],
                  var dashboardCode: Option[String],
-                 var bitrateRatio: Option[Int]
+                 var bitrateRatio: Option[Int],
+                 var captions: Seq[VideoCaption]
                 ) {
 
   def save: String = Setup.save(this)
