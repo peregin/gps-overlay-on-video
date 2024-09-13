@@ -9,7 +9,7 @@ import peregin.gpv.util.UnitConverter
 
 class RadialSpeedGauge() extends GaugePainter {
 
-  lazy val dummy: InputValue = InputValue(27.81, MinMax.max(62))
+  lazy val dummy: InputValue = InputValue(Some(27.81), MinMax.max(62))
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = {input = sonda.speed}
 
@@ -26,7 +26,7 @@ class RadialSpeedGauge() extends GaugePainter {
     val start = -45
     val extent = 270
     var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
-    g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
+    g.setStroke(new BasicStroke(strokeWidth.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
     g.setColor(Color.black)
     g.draw(arc)
 
@@ -36,7 +36,7 @@ class RadialSpeedGauge() extends GaugePainter {
     y = (h - dia) / 2
     arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
     g.setColor(Color.white)
-    val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10))
+    val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10).toFloat)
     g.setStroke(borderStroke)
     g.draw(arc)
 
@@ -48,7 +48,7 @@ class RadialSpeedGauge() extends GaugePainter {
     val ticks = input.boundary.tenths
     val longTickLength = math.max(2, r / 10)
     val smallTickLength = math.max(1, longTickLength / 2)
-    val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20))
+    val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20).toFloat)
     g.setFont(gaugeFont.deriveFont((longTickLength + 2).toFloat))
     val ticksWithNumber = if (input.boundary.max > 180) 30 else if (input.boundary.max > 100) 20 else 10
     for (t <- 0 to ticks) {
@@ -95,22 +95,25 @@ class RadialSpeedGauge() extends GaugePainter {
     cr -= 1
     g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
 
-    val pointerAngle = - extent - start + input.current * extent / input.boundary.tenths
-    val pointer = r - strokeWidth / 1.2
-    val pointerStroke = new BasicStroke(math.max(2, strokeWidth / 5), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f)
-    g.setStroke(pointerStroke)
-    val px = polarX(cx, pointer, pointerAngle)
-    val py = polarY(cy, pointer, pointerAngle)
-    g.setColor(Color.black)
-    g.drawLine(cx + 1, cy + 1, px + 1, py + 1)
-    g.setColor(Color.yellow)
-    g.drawLine(cx, cy, px, py)
+    if (input.current.isDefined) {
+      val pointerAngle = -extent - start + input.current.get * extent / input.boundary.tenths
+      val pointer = r - strokeWidth / 1.2
+      val pointerStroke = new BasicStroke(math.max(2, strokeWidth / 5).toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f)
+      g.setStroke(pointerStroke)
+      val px = polarX(cx, pointer, pointerAngle)
+      val py = polarY(cy, pointer, pointerAngle)
+      g.setColor(Color.black)
+      g.drawLine(cx + 1, cy + 1, px + 1, py + 1)
+      g.setColor(Color.yellow)
+      g.drawLine(cx, cy, px, py)
 
-    // draw current speed
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
-    val text = f"${UnitConverter.speed(input.current, units)}%2.1f"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+      // draw current speed
+      g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 4.7).toFloat))
+      val text = f"${UnitConverter.speed(input.current.get, units)}%2.1f"
+      val tb = g.getFontMetrics.getStringBounds(text, g)
+      textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    }
+
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
     val utext = UnitConverter.speedUnits(units)

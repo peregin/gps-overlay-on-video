@@ -8,9 +8,9 @@ import peregin.gpv.util.Trigo._
 
 class CadenceGauge extends GaugePainter {
 
-  lazy val dummy = InputValue(81, MinMax(0, 123))
+  lazy val dummy = InputValue(Some(81), MinMax(0, 123))
   override def defaultInput = dummy
-  override def sample(sonda: Sonda): Unit = {sonda.cadence.foreach(input = _)}
+  override def sample(sonda: Sonda): Unit = { input = sonda.cadence }
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
@@ -25,7 +25,7 @@ class CadenceGauge extends GaugePainter {
     val start = 65
     val extent = 160
     var arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
-    g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
+    g.setStroke(new BasicStroke(strokeWidth.toFloat, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
     g.setColor(Color.black)
     g.draw(arc)
 
@@ -35,20 +35,22 @@ class CadenceGauge extends GaugePainter {
     y = (h - dia) / 2
     arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
     g.setColor(Color.white)
-    val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10))
+    val borderStroke = new BasicStroke(math.max(2, strokeWidth / 10).toFloat)
     g.setStroke(borderStroke)
     g.draw(arc)
 
-    // draw moving arc, showing the actual cadence
-    g.setColor(colorBasedOnInput)
-    val pdia = box - strokeWidth * 1.5
-    val px = (w - pdia) / 2
-    val py = (h - pdia) / 2
-    val pointerAngle = -135
-    val pointerLength = -input.current * extent / input.boundary.tenths
-    arc = new Arc2D.Double(px, py, pdia, pdia, pointerAngle, pointerLength, Arc2D.OPEN)
-    g.setStroke(new BasicStroke(math.max(2, strokeWidth / 4), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
-    g.draw(arc)
+    if (input.current.isDefined) {
+      // draw moving arc, showing the actual cadence
+      g.setColor(colorBasedOnInput)
+      val pdia = box - strokeWidth * 1.5
+      val px = (w - pdia) / 2
+      val py = (h - pdia) / 2
+      val pointerAngle = -135
+      val pointerLength = -input.current.get * extent / input.boundary.tenths
+      arc = new Arc2D.Double(px, py, pdia, pdia, pointerAngle, pointerLength, Arc2D.OPEN)
+      g.setStroke(new BasicStroke(math.max(2, strokeWidth / 4), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
+      g.draw(arc)
+    }
 
     // draw the the ticks and units
     g.setColor(Color.white)
@@ -84,11 +86,14 @@ class CadenceGauge extends GaugePainter {
     arc = new Arc2D.Double(x, y, dia, dia, start, extent, Arc2D.OPEN)
     g.draw(arc)
 
-    // draw current speed
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 6).toFloat))
-    val text = f"${input.current}%2.0f"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    if (input.current.isDefined) {
+      // draw current speed
+      g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 6).toFloat))
+      val text = f"${input.current.get}%2.0f"
+      val tb = g.getFontMetrics.getStringBounds(text, g)
+      textWidthShadow(g, text, (w - tb.getWidth) / 2, cy + box / 2 - tb.getHeight * 1.2)
+    }
+
     // draw unit
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (longTickLength * 2).toFloat))
     val utext = "rpm"

@@ -29,7 +29,7 @@ class GaugeTestPanel[T <: GaugeComponent](factory: => T) extends MigPanel("ins 5
     override def stateChanged(e: ChangeEvent) = maxValueAdjusted()
   })
 
-  val slider = new JSlider(gauges(0).gaugePainter.defaultInput.boundary.min.toInt, gauges(0).gaugePainter.defaultInput.boundary.max.toInt, gauges(0).gaugePainter.defaultInput.current.toInt)
+  val slider = new JSlider(gauges(0).gaugePainter.defaultInput.boundary.min.toInt, gauges(0).gaugePainter.defaultInput.boundary.max.toInt, gauges(0).gaugePainter.defaultInput.current.getOrElse(0d).toInt)
   slider.addChangeListener(new ChangeListener {
     override def stateChanged(e: ChangeEvent) = curValueAdjusted()
   })
@@ -75,7 +75,7 @@ class GaugeTestPanel[T <: GaugeComponent](factory: => T) extends MigPanel("ins 5
   def updateGui(min: Int, max: Int, cur: Int): Unit = {
     status.text = s"Current Value $cur"
     gauges.foreach{g =>
-      g.gaugePainter.input = InputValue(cur, MinMax(min, max))
+      g.gaugePainter.input = InputValue(Some(cur), MinMax(min, max))
       g.repaint()
     }
   }

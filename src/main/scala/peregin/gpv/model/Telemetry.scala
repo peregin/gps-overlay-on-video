@@ -80,6 +80,8 @@ object Telemetry extends Timed with Logging {
 
 case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
 
+  val ALLOW_GPS_GAP_MS = 5_000;
+
   val elevationBoundary = MinMax.extreme
   val latitudeBoundary = MinMax.extreme
   val longitudeBoundary = MinMax.extreme
@@ -111,6 +113,12 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
         speedBoundary.sample(point.speed)
         bearingBoundary.sample(point.bearing)
         gradeBoundary.sample(point.grade)
+      }
+      else if (i > 0) {
+        val previous = track(i - 1)
+        point.speed = previous.speed
+        point.bearing = previous.bearing
+        point.grade = previous.grade
       }
     }
     centerPosition = new GeoPosition(latitudeBoundary.mean, longitudeBoundary.mean)
@@ -226,28 +234,63 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
   // binary search by time, then interpolate
   // returns reasonably empty data if before beginning of track
   private def searchTime(t: Double, convertFunc: TrackPoint => Double): Sonda = {
-    val previousIdx: Int = SeqUtil.floorIndex(track, t, convertFunc, java.lang.Double.compare)
+    var invalid = 0; // 0 is valid, 1 is middle but no GPS, 2 is out of track
+    var previousIdx: Int = SeqUtil.floorIndex(track, t, convertFunc, java.lang.Double.compare)
     if (previousIdx < 0) {
-      return Sonda(
-        new DateTime(t.toLong),
-        InputValue((t.toLong - track.head.time.getMillis) / 1000.0, MinMax(0, (track.last.time.getMillis - track.head.time.getMillis).toDouble)),
-        track.head.position,
-        InputValue(track.head.elevation, elevationBoundary),
-        InputValue(0, gradeBoundary),
-        InputValue(0, MinMax(0, totalDistance)),
-        InputValue(0, speedBoundary),
-        InputValue(0, bearingBoundary),
-        None,
-        None,
-        None,
-        None,
-      )
-        .withTrackIndex(0)
+      invalid = 2;
+      previousIdx = 0;
+    }
+    else if (t == convertFunc(track(previousIdx))) {
+      // ok, at the edge
+    }
+    else if (previousIdx == track.size - 1) {
+      invalid = 2;
+    }
+    else if (convertFunc(track(previousIdx + 1)) - convertFunc(track(previousIdx)) > ALLOW_GPS_GAP_MS) {
+      invalid = 1;
     }
     val nextIndex = math.min(previousIdx + 1, track.size - 1)
     val (left, right) = (track(previousIdx), track(nextIndex))
     val progress = progressForValue(t, left, right, convertFunc)
-    interpolate(progress, left, right).withTrackIndex(previousIdx)
+    val middle = interpolate(progress, left, right).withTrackIndex(previousIdx)
+    if (invalid > 0) {
+      return Sonda(
+        new DateTime(t.toLong),
+        InputValue(Some((t.toLong - track.head.time.getMillis) / 1000.0), MinMax(0, (track.last.time.getMillis - track.head.time.getMillis).toDouble)),
+        middle.location,
+        middle.elevation,
+        InputValue(None, gradeBoundary),
+        middle.distance,
+        InputValue(None, speedBoundary),
+        if (invalid == 1) middle.bearing else InputValue(None, bearingBoundary),
+        InputValue(None, cadenceBoundary),
+        InputValue(None, heartRateBoundary),
+        InputValue(None, powerBoundary),
+        middle.temperature
+      )
+        .withTrackIndex(previousIdx)
+    }
+    else if (previousIdx == 0) {
+      return Sonda(
+        middle.time,
+        middle.elapsedTime,
+        middle.location,
+        middle.elevation,
+        middle.grade,
+        middle.distance,
+        middle.speed,
+        InputValue(None, bearingBoundary),
+        middle.cadence,
+        middle.heartRate,
+        middle.power,
+        middle.temperature
+      )
+        .withTrackIndex(previousIdx)
+    }
+    else {
+      return middle
+      .withTrackIndex(previousIdx)
+    }
   }
 
   private def interpolate(progress: Double, left: TrackPoint, right: TrackPoint): Sonda = {
@@ -266,14 +309,18 @@ case class Telemetry(track: Seq[TrackPoint]) extends Timed with Logging {
     val temperature = interpolate(progress, left.extension.temperature, right.extension.temperature)
     val grade = interpolate(progress, left.grade, right.grade)
     val firstTs = track.head.time.getMillis
-    Sonda(t, InputValue((t.getMillis - firstTs).toDouble, MinMax(0, (track.last.time.getMillis - firstTs).toDouble)),
+    Sonda(t,
+      InputValue(Some((t.getMillis - firstTs).toDouble), MinMax(0, (track.last.time.getMillis - firstTs).toDouble)),
       location,
-      InputValue(elevation, elevationBoundary), InputValue(grade, gradeBoundary),
-      InputValue(distance, MinMax(0, totalDistance)), InputValue(speed, speedBoundary), InputValue(bearing, bearingBoundary),
-      cadence.map(InputValue(_, cadenceBoundary)),
-      heartRate.map(InputValue(_, heartRateBoundary)),
-      power.map(InputValue(_, powerBoundary)),
-      temperature.map(InputValue(_, temperatureBoundary))
+      InputValue(Some(elevation), elevationBoundary),
+      InputValue(Some(grade), gradeBoundary),
+      InputValue(Some(distance), MinMax(0, totalDistance)),
+      InputValue(Some(speed), speedBoundary),
+      InputValue(Some(bearing), bearingBoundary),
+      InputValue(cadence, cadenceBoundary),
+      InputValue(heartRate, heartRateBoundary),
+      InputValue(power, powerBoundary),
+      InputValue(temperature, temperatureBoundary)
     )
   }
 

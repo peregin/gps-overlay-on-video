@@ -26,7 +26,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
 
   title = "Converter"
   modal = true
-  preferredSize = new Dimension(400, 440)
+  preferredSize = new Dimension(800, 600)
   // setup painter
   dash = template.dashboard
 

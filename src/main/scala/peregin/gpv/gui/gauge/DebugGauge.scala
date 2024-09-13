@@ -39,7 +39,7 @@ trait DebugGauge extends GaugePainter {
     // start drawing debug info
     var text = current.map(_.time).getOrElse(DateTime.now()).toString("HH:mm:ss.SSS")
     textWidthShadow(g, s"GPS Time: $text", tx, ty, Color.white)
-    text = printDuration(current.map(_.elapsedTime.current.toLong))
+    text = printDuration(current.map(_.elapsedTime.current.get.toLong))
     textWidthShadow(g, s"GPS Elapsed: $text", tx, ty + fh, Color.white)
     text = printDuration(current.map(_.videoProgress))
     textWidthShadow(g, s"VID Elapsed: $text", tx, ty + 2 * fh, Color.white)

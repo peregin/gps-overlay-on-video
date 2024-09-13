@@ -8,7 +8,7 @@ import java.awt._
 class GradeGauge extends GaugePainter {
   var elevation: InputValue = _;
 
-  lazy val dummy: InputValue = InputValue(8.5, MinMax.max(100))
+  lazy val dummy: InputValue = InputValue(Some(8.5), MinMax.max(100))
   override def defaultInput: InputValue = dummy
   override def sample(sonda: Sonda): Unit = {
     input = sonda.grade
@@ -28,13 +28,17 @@ class GradeGauge extends GaugePainter {
 
     g.setFont(gaugeFont.deriveFont(Font.BOLD, (h * 3 / 16).toFloat))
 
-    // draw current grade
-    val gradeText = f"${input.current}%2.1f%%"
-    textWidthShadow(g, gradeText, w / 4 + 5, h / 2 - 10)
+    if (input.current.isDefined) {
+      // draw current grade
+      val gradeText = f"${input.current.get}%2.1f%%"
+      textWidthShadow(g, gradeText, w / 4 + 5, h / 2 - 10)
+    }
 
-    // draw current grade
-    val eleText = f"${elevation.current}% 4.0f m"
-    textWidthShadow(g, eleText, 0, h * 3 / 4 + 10)
+    if (elevation.current.isDefined) {
+      // draw current elevation
+      val eleText = f"${elevation.current.get}% 4.0f m"
+      textWidthShadow(g, eleText, 0, h * 3 / 4 + 10)
+    }
 
   }
 }

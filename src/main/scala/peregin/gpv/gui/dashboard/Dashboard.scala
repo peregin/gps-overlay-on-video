@@ -35,19 +35,19 @@ trait CyclingDashboard extends Dashboard {
     // paint gauges and charts
     speedGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
     g.translate(gaugeSize, 0)
-    if (sonda.cadence.isDefined) {
+    if (sonda.cadence.current.isDefined) {
       cadenceGauge.paint(g, imageHeight, gaugeSize, gaugeSize, sonda)
       g.translate(gaugeSize, 0)
     }
 
     val gaugeSize2 = gaugeSize / 2
-    if (sonda.heartRate.isDefined) {
+    if (sonda.heartRate.current.isDefined) {
       g.translate(0, gaugeSize2)
       heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
-    if (sonda.power.isDefined) {
-      if (sonda.heartRate.isDefined) g.translate(-gaugeSize2, -gaugeSize2)
+    if (sonda.power.current.isDefined) {
+      if (sonda.heartRate.current.isDefined) g.translate(-gaugeSize2, -gaugeSize2)
       powerGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
     }
@@ -75,7 +75,7 @@ trait SkiingDashboard extends Dashboard {
     g.translate(gaugeSize, 0)
 
     val gaugeSize2 = gaugeSize / 2
-    if (sonda.heartRate.isDefined) {
+    if (sonda.heartRate.current.isDefined) {
       g.translate(0, gaugeSize2)
       heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
@@ -86,7 +86,7 @@ trait SkiingDashboard extends Dashboard {
 trait MotorBikingDashboard extends Dashboard {
 
   private val speedGauge = new RadialSpeedGauge {
-    override lazy val dummy: InputValue = InputValue(181, MinMax.max(230))
+    override lazy val dummy: InputValue = InputValue(Some(181), MinMax.max(230))
   }
   private val elevationChart = new ElevationChart {}
   private val heartRateGauge = new SvgHeartRateGauge {}
@@ -106,7 +106,7 @@ trait MotorBikingDashboard extends Dashboard {
     g.translate(gaugeSize, 0)
 
     val gaugeSize2 = gaugeSize / 2
-    if (sonda.heartRate.isDefined) {
+    if (sonda.heartRate.current.isDefined) {
       g.translate(0, gaugeSize2)
       heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)
@@ -137,7 +137,7 @@ trait SailingDashboard extends Dashboard {
 
 
     val gaugeSize2 = gaugeSize / 2
-    if (sonda.heartRate.isDefined) {
+    if (sonda.heartRate.current.isDefined) {
       g.translate(0, gaugeSize2)
       heartRateGauge.paint(g, imageHeight, gaugeSize2, gaugeSize2, sonda)
       g.translate(gaugeSize2, 0)

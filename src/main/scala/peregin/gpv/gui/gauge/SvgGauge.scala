@@ -56,8 +56,10 @@ trait SvgGauge extends GaugePainter {
     g.drawImage(whiteImage, px, py, null)
 
     // fill the heart based on the current value
-    val pointerHeight = (input.current - input.boundary.min) * sy / input.boundary.diff
-    g.clipRect(px, py + sy - pointerHeight.toInt, sx, pointerHeight.toInt)
+    if (input.current.isDefined) {
+      val pointerHeight = (input.current.get - input.boundary.min) * sy / input.boundary.diff
+      g.clipRect(px, py + sy - pointerHeight.toInt, sx, pointerHeight.toInt)
+    }
 
     val grayImage = ImageCache.svgImage(imagePath, sx, sy, 150)
     g.drawImage(grayImage, px, py, null)
