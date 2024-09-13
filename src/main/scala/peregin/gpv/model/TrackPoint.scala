@@ -31,7 +31,7 @@ case class TrackPoint(position: GeoPosition,
 
   // total distance in kilometers up to this track point
   var distance = 0d
-  // distance between the previous and current track points
+  // distance between the current and next track points
   var segment = 0d
   // average speed of travelling form the previous to current track point
   var speed = 0d
@@ -54,7 +54,7 @@ case class TrackPoint(position: GeoPosition,
     val distanceElevation = next.distance - firstElevation.distance
     if (distanceElevation > 0) grade = (next.elevation - firstElevation.elevation) / distanceElevation * (100 / 1000.0)
 
-    bearing = bearingTo(next)
+    bearing = if (segment == 0) 0 else bearingTo(next)
   }
 
   // The return value is the distance expressed in kilometers.

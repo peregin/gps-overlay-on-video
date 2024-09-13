@@ -8,7 +8,7 @@ import MinMax.RoundedDouble
 
 class LinearElevationGauge extends GaugePainter {
 
-  lazy val dummy = InputValue(728, MinMax(592, 1718))
+  lazy val dummy = InputValue(Some(728), MinMax(592, 1718))
   override def defaultInput = dummy
   override def sample(sonda: Sonda): Unit = input = sonda.elevation
 
@@ -26,18 +26,21 @@ class LinearElevationGauge extends GaugePainter {
     val cy = (h - boxHeight) / 2
     g.fillRect(cx, cy, boxWidth, boxHeight)
 
-    // draw current altitude
-    g.setColor(colorBasedOnInput)
     val ticks = input.boundary.hundredths
-    val vy = ((input.current - input.boundary.min.roundDownToHundredth) * boxHeight / ticks).toInt
-    g.fillRect(cx + boxWidth / 4, cy + boxHeight - vy, (boxWidth / 1.8).toInt, vy)
+
+    if (input.current.isDefined) {
+      // draw current altitude
+      g.setColor(colorBasedOnInput)
+      val vy = ((input.current.get - input.boundary.min.roundDownToHundredth) * boxHeight / ticks).toInt
+      g.fillRect(cx + boxWidth / 4, cy + boxHeight - vy, (boxWidth / 1.8).toInt, vy)
+    }
 
     // draw the border of the box
     g.setColor(Color.white)
     g.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, null, 0.0f))
     g.drawRect(cx, (h - boxHeight) / 2, boxWidth, boxHeight)
 
-    // draw the the ticks and units
+    // draw the ticks and units
     g.setColor(Color.white)
     val longTickLength = math.max(2, strokeWidth)
     val tickStroke = new BasicStroke(math.max(1, strokeWidth / 20))
@@ -53,15 +56,18 @@ class LinearElevationGauge extends GaugePainter {
     }
 
     // draw current altitude
-    val ry = h / 2
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, boxWidth.toFloat))
-    val text = f"${UnitConverter.elevation(input.current, units)}%1.0f"
-    val tb = g.getFontMetrics.getStringBounds(text, g)
-    textWidthShadow(g, text, (w - tb.getWidth) / 2, ry + tb.getHeight / 2)
-    // draw unit
-    g.setFont(gaugeFont.deriveFont(Font.BOLD, strokeWidth.toFloat))
-    val utext = UnitConverter.elevationUnits(units)
-    val utb = g.getFontMetrics.getStringBounds(utext, g)
-    textWidthShadow(g, utext, (w - utb.getWidth) / 2, ry + tb.getHeight / 2 + utb.getHeight)
+    if (input.current.isDefined) {
+      val ry = h / 2
+      g.setFont(gaugeFont.deriveFont(Font.BOLD, boxWidth.toFloat))
+      val text = f"${UnitConverter.elevation(input.current.get, units)}%1.0f"
+      val tb = g.getFontMetrics.getStringBounds(text, g)
+      textWidthShadow(g, text, (w - tb.getWidth) / 2, ry + tb.getHeight / 2)
+
+      // draw unit
+      g.setFont(gaugeFont.deriveFont(Font.BOLD, strokeWidth.toFloat))
+      val utext = UnitConverter.elevationUnits(units)
+      val utb = g.getFontMetrics.getStringBounds(utext, g)
+      textWidthShadow(g, utext, (w - utb.getWidth) / 2, ry + tb.getHeight / 2 + utb.getHeight)
+    }
   }
 }

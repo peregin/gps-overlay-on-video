@@ -27,7 +27,7 @@ class DistanceAndDurationGauge extends ChartPainter {
 
   override def sample(sonda: Sonda): Unit = {
     currentTime = sonda.time.toDate.toInstant
-    currentDistance = sonda.distance.current
+    currentDistance = sonda.distance.current.get
   }
 
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {

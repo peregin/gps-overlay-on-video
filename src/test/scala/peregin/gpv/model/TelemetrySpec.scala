@@ -29,6 +29,12 @@ class TelemetrySpec extends Specification with Logging {
     track(1).segment = 180
     val telemetry = Telemetry(track)
 
+    "copy to last point" in {
+      telemetry.track.last.speed === telemetry.track(telemetry.track.size - 2).speed
+      telemetry.track.last.bearing === telemetry.track(telemetry.track.size - 2).bearing
+      telemetry.track.last.grade === telemetry.track(telemetry.track.size - 2).grade
+    }
+
     "interpolate time" in {
       telemetry.progressForTime(new DateTime(2014, 6, 1, 10, 0)) === 0
       telemetry.progressForTime(new DateTime(2014, 6, 1, 10, 30)) === 50
@@ -38,21 +44,62 @@ class TelemetrySpec extends Specification with Logging {
     "interpolate elevation" in {
       val sonda = telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 30))
       sonda.time === new DateTime(2014, 6, 1, 10, 30)
-      sonda.elevation.current === 150
+      sonda.elevation.current.get === 150
 
-      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 9, 0)).elevation.current === 100
-      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 0)).elevation.current === 100
-      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 11, 0)).elevation.current === 200
-      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 12, 0)).elevation.current === 200
-      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 15)).elevation.current === 125
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 9, 0)).elevation.current.get === 100
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 0)).elevation.current.get === 100
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 11, 0)).elevation.current.get === 200
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 12, 0)).elevation.current.get === 200
+      telemetry.sondaForAbsoluteTime(new DateTime(2014, 6, 1, 10, 15)).elevation.current.get === 125
     }
 
     "interpolate distance" in {
-      telemetry.sondaForDistance(-10).distance.current === 0
-      telemetry.sondaForDistance(0).distance.current === 0
-      telemetry.sondaForDistance(100).distance.current === 100
-      telemetry.sondaForDistance(200).distance.current === 200
-      telemetry.sondaForDistance(300).distance.current === 200
+      telemetry.sondaForDistance(-10).distance.current.get === 0
+      telemetry.sondaForDistance(0).distance.current.get === 0
+      telemetry.sondaForDistance(100).distance.current.get === 100
+      telemetry.sondaForDistance(200).distance.current.get === 200
+      telemetry.sondaForDistance(300).distance.current.get === 200
+    }
+  }
+
+  "telemetry with holes" should {
+    val telemetry = TelemetryTestUtil.buildTelemetry(
+      0, 0,
+      10, 10,
+      -10, 20,
+    )
+
+    "bearing ignored for first point" in {
+      val sonda = telemetry.sondaForRelativeTime(500)
+      sonda.get.bearing.current.isDefined === false
+    }
+
+    "data empty before start" in {
+      val sonda = telemetry.sondaForRelativeTime(-500)
+      sonda.get.location !== null
+      sonda.get.elevation.current.isDefined === true
+      sonda.get.grade.current.isDefined === false
+      sonda.get.distance.current.isDefined === true
+      sonda.get.speed.current.isDefined === false
+      sonda.get.bearing.current.isDefined === false
+      sonda.get.cadence.current.isDefined === false
+      sonda.get.heartRate.current.isDefined === false
+      sonda.get.power.current.isDefined === false
+      sonda.get.temperature.current.isDefined === true
+    }
+
+    "data empty after end" in {
+      val sonda = telemetry.sondaForRelativeTime(2_500)
+      sonda.get.location !== null
+      sonda.get.elevation.current.isDefined === true
+      sonda.get.grade.current.isDefined === false
+      sonda.get.distance.current.isDefined === true
+      sonda.get.speed.current.isDefined === false
+      sonda.get.bearing.current.isDefined === false
+      sonda.get.cadence.current.isDefined === false
+      sonda.get.heartRate.current.isDefined === false
+      sonda.get.power.current.isDefined === false
+      sonda.get.temperature.current.isDefined === true
     }
   }
 
@@ -162,6 +209,7 @@ class TelemetrySpec extends Specification with Logging {
 
   "bearing crosses north" should {
     val telemetry = TelemetryTestUtil.buildTelemetry(
+      0, 0,
       0, 10,
       10, 10,
       20, 11,
@@ -171,18 +219,19 @@ class TelemetrySpec extends Specification with Logging {
     )
 
     "interpolate cross to east" in {
-      val sonda = telemetry.sondaForRelativeTime(750).get
-      sonda.bearing.current must beCloseTo(4.0715656127530515 within 6.significantFigures)
+      val sonda = telemetry.sondaForRelativeTime(1_750).get
+      sonda.bearing.current.get must beCloseTo(4.0715656127530515 within 6.significantFigures)
     }
 
     "interpolate cross to west" in {
-      val sonda = telemetry.sondaForRelativeTime(3_750).get
-      sonda.bearing.current must beCloseTo(355.92843438724697 within 6.significantFigures)
+      val sonda = telemetry.sondaForRelativeTime(4_750).get
+      sonda.bearing.current.get must beCloseTo(355.92843438724697 within 6.significantFigures)
     }
   }
 
   "longitude crosses 180" should {
     val telemetry = TelemetryTestUtil.buildTelemetry(
+      0, 170,
       10, 170,
       10, -170,
       10, -170,
@@ -190,12 +239,12 @@ class TelemetrySpec extends Specification with Logging {
     )
 
     "interpolate cross to east" in {
-      val sonda = telemetry.sondaForRelativeTime(750).get
+      val sonda = telemetry.sondaForRelativeTime(1_750).get
       sonda.location.getLongitude must beCloseTo(-175.0 within 6.significantFigures)
     }
 
     "interpolate cross to west" in {
-      val sonda = telemetry.sondaForRelativeTime(2_750).get
+      val sonda = telemetry.sondaForRelativeTime(3_750).get
       sonda.location.getLongitude must beCloseTo(175.0 within 6.significantFigures)
     }
   }

@@ -97,7 +97,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
         (entry.name, dashboard)
     }.toMap
 
-    private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(181, MinMax.max(230)))
+    private lazy val motorBikeSample = Sonda.sample().copy(speed = InputValue(Some(181), MinMax.max(230)))
     private lazy val regularSample = Sonda.sample()
 
     override def paint(g: Graphics): Unit = {

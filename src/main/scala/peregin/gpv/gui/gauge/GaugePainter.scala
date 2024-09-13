@@ -10,7 +10,7 @@ import java.util.function.Consumer
 trait GaugePainter {
 
   lazy val gaugeFont = new Font("Verdana", Font.PLAIN, 12)
-  private var currentInput: Option[InputValue] = None
+  private var currentInput: InputValue = InputValue.empty
   private var debugging = false
   private var displayUnits: String = ""
 
@@ -40,8 +40,8 @@ trait GaugePainter {
   // each implementation should provide the default values used for testing or to show a sample in the gauges' list
   def defaultInput: InputValue
 
-  def input: InputValue = currentInput.getOrElse(defaultInput)
-  def input_= (v: InputValue): Unit = currentInput = Some(v)
+  def input: InputValue = currentInput
+  def input_= (v: InputValue): Unit = currentInput = v
 
   def debug: Boolean = debugging
   def debug_= (v: Boolean): Unit = debugging = v
@@ -60,10 +60,10 @@ trait GaugePainter {
   def drawShadowed(g: Graphics2D, devHeight: Int, consumer: Consumer[Graphics2D]): Unit = {
     // For 480, we want 2 pixels, for standard 1080, we want 3 pixels
     g.setColor(new Color(0, 0, 0, 128))
-    g.setStroke(new BasicStroke(shadowWidth(g, devHeight)))
+    g.setStroke(new BasicStroke(shadowWidth(g, devHeight).toFloat))
     consumer.accept(g)
     g.setColor(Color.yellow)
-    g.setStroke(new BasicStroke(lineWidth(g, devHeight)))
+    g.setStroke(new BasicStroke(lineWidth(g, devHeight).toFloat))
     consumer.accept(g)
   }
 
