@@ -27,7 +27,7 @@ object YamlResourceDashboardLoader {
     var dashboard: Dashboard = null
     val input = clazz.getResourceAsStream(file)
     if (input == null) {
-      throw new FileNotFoundException(clazz + " " + file)
+      throw new FileNotFoundException(clazz.getName + " " + file)
     }
     try {
       dashboard = loadDashboard(input)

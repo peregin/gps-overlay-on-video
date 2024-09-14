@@ -48,7 +48,7 @@ class CadenceGauge extends GaugePainter {
       val pointerAngle = -135
       val pointerLength = -input.current.get * extent / input.boundary.tenths
       arc = new Arc2D.Double(px, py, pdia, pdia, pointerAngle, pointerLength, Arc2D.OPEN)
-      g.setStroke(new BasicStroke(math.max(2, strokeWidth / 4), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
+      g.setStroke(new BasicStroke(math.max(2, strokeWidth / 4).toFloat, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f))
       g.draw(arc)
     }
 
