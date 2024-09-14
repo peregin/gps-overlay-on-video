@@ -10,11 +10,10 @@ import org.jdesktop.swingx._
 import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
-import peregin.gpv.model.{Telemetry, VideoCaption}
+import peregin.gpv.model.Telemetry
 import peregin.gpv.util.{Io, Logging, Timed}
 import peregin.gpv.video._
 
-import java.time.ZonedDateTime
 import scala.swing._
 import scala.swing.event.{SelectionChanged, ValueChanged}
 
@@ -136,18 +135,26 @@ object GpsOverlayApp extends SimpleSwingApplication
         Swing.onEDT {
           Goodies.showPopupOnFailure(frame) {
             message("Loading...")
-            setup = Setup.loadFile(path)
-            debug(s"setup $setup")
-            message("Analyzing telemetry...")
-            val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
-            val tm = telemetry.getOrElse(Telemetry.empty())
-            tm.setCaptions(setup.captions)
-            message("Updating...")
-            templatePanel.refresh(setup)
-            telemetryPanel.refresh(setup, tm)
-            transparencySlider.percentage = setup.transparency
-            videoPanel.refresh(setup)
-            message(s"Project $path has been loaded")
+            try {
+              setup = Setup.loadFile(path)
+              debug(s"setup $setup")
+              message("Analyzing telemetry...")
+              val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
+              val tm = telemetry.getOrElse(Telemetry.empty())
+              tm.setCaptions(setup.captions)
+              message("Updating...")
+              templatePanel.refresh(setup)
+              telemetryPanel.refresh(setup, tm)
+              transparencySlider.percentage = setup.transparency
+              videoPanel.refresh(setup)
+              message(s"Project $path has been loaded")
+            }
+            catch {
+              case ex: Throwable => {
+                log.error("Error opening project: file={}", path, ex)
+                throw ex;
+              }
+            }
           }
         }
       }

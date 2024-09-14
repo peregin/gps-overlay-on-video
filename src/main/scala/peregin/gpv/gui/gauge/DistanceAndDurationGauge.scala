@@ -33,7 +33,7 @@ class DistanceAndDurationGauge extends ChartPainter {
   override def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
     super.paint(g, devHeight, w, h)
 
-    if (startTime == null || currentTime == null || currentDistance == null) {
+    if (startTime == null || currentTime == null) {
       return;
     }
     // draw current time

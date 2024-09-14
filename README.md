@@ -50,13 +50,14 @@ Example of videos generated with the tool, links to youtube:
 [![Gurten Classic 2015](http://img.youtube.com/vi/tVCgP3Xh250/1.jpg)](https://www.youtube.com/watch?v=tVCgP3Xh250)
 &nbsp;[![Zugerberg Classic 2014](http://img.youtube.com/vi/N74yLpdebJ8/1.jpg)](http://www.youtube.com/watch?v=N74yLpdebJ8)
 &nbsp;[![Uetliberg Loop 2014](http://img.youtube.com/vi/0giJlMyX59I/1.jpg)](http://www.youtube.com/watch?v=0giJlMyX59I)
+&nbsp;[![Whistler Gran Fondo Forte 2024](https://i.ytimg.com/vi/sU0WEkYdJ3s/default.jpg)](https://youtu.be/sU0WEkYdJ3s)
 
 Screenshot of the tool:
 
 ![latest screenshot](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/evolution/latest.jpg "latest screenshot")
 
 ## How to run it
-The released packages are published regularly [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/). 
+The released packages are published regularly [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/).  On windows, you need to append `.cmd` extension. 
 The easiest way to run the application having just `java` installed:
 ```shell script
 run.sh
@@ -104,7 +105,7 @@ Telemetry data sample collected with a Garmin device (Edge 820):
 ## Credits
 The application is using libraries and images created by other people or organizations:
 * [JXMapViewer](http://wiki.openstreetmap.org/wiki/JXMapViewer) to show the map and the track
-* [xuggle library](http://www.xuggle.com/) to decode, encode and manipulate video files
+* [JavaCv](https://github.com/bytedeco/javacv) to decode, encode and manipulate video files
 * [iconeden](http://www.iconeden.com/icon/category/free) for the beautiful icon packs they offer
 * [digital true type fonts](http://www.styleseven.com/) for the gauges with seven segment display
 
