@@ -24,7 +24,7 @@ val batikVersion = "1.18" // svg manipulation
 val xmlVersion = "2.3.0"
 val jodaVersion = "2.13.0"
 val swingVersion = "3.0.0"
-val javacvVersion = "1.5.10"
+val javacvVersion = "1.5.11"
 val geotoolsVersion = "32.0"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
