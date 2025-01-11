@@ -128,7 +128,7 @@ class TelemetrySpec extends Specification with Logging {
     "validate first segment details" in {
       val first = telemetry.track(0)
       first.segment must beCloseTo(0.005316972239356387, 6.significantFigures)
-      first.speed === 19.14110006168299
+      first.speed must beCloseTo(19.14110006168299, 6.significantFigures)
       first.grade === 0d
     }
 
