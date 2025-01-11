@@ -10,14 +10,14 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 Compile / mainClass := Some(entryPoint)
 
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
 val jacksonVersion = "2.18.2"
 val json4sVersion = "4.0.7"
-val akkaVersion = "2.8.6"
+val akkaVersion = "2.8.8"
 val specs2Version = "4.20.9"
 val logbackVersion = "1.5.16"
 val batikVersion = "1.18" // svg manipulation
