@@ -25,6 +25,7 @@ val xmlVersion = "2.3.0"
 val jodaVersion = "2.13.1"
 val swingVersion = "3.0.0"
 val javacvVersion = "1.5.11"
+val ffmpegPlatformGplVersion = "7.1-1.5.11"
 val geotoolsVersion = "32.2"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
@@ -134,6 +135,7 @@ libraryDependencies += "com.jgoodies" % "jgoodies-common" % "1.8.1"
 libraryDependencies += "com.miglayout" % "miglayout" % "3.7.4"
 libraryDependencies += "org.bytedeco" % "javacv" % javacvVersion
 libraryDependencies += "org.bytedeco" % "javacv-platform" % javacvVersion
+libraryDependencies += "org.bytedeco" % "ffmpeg-platform-gpl" % ffmpegPlatformGplVersion
 libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion

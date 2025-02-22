@@ -176,7 +176,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
   private def createWriterFromReader(filename: String, grabber: FFmpegFrameGrabber): FFmpegFrameRecorder = {
     val recorder = new FFmpegFrameRecorder(filename, grabber.getImageWidth, grabber.getImageHeight, grabber.getAudioChannels)
     recorder.setFormat("mp4")
-    recorder.setOption("threads", "4")
+    recorder.setOption("threads", "auto")
     recorder.setOption("c", "copy")
     recorder.setFrameRate(grabber.getFrameRate)
 
@@ -191,22 +191,25 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
       else {
         recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264)
       }
+      if (recorder.getVideoCodec == avcodec.AV_CODEC_ID_H264) {
+        recorder.setVideoCodecName("libx264")
+      }
       recorder.setVideoBitrate((grabber.getVideoBitrate * qualityScale.getOrElse(1.0) * setup.bitrateRatio.getOrElse(10000) / 10000.0).toInt)
       recorder.setVideoOption("tune", "film")
-      recorder.setVideoOption("threads", "4")
-      recorder.setVideoOption("frame-threads", "4")
-      recorder.setVideoOption("threadslice", "4")
-      recorder.setVideoOption("slicethread", "4")
-      recorder.setVideoOption("thread_slice", "4")
-      recorder.setVideoOption("slice_thread", "4")
-      //recorder.setVideoOption("preset", "ultrafast")
-
+//      recorder.setVideoOption("threads", "4")
+//      recorder.setVideoOption("frame-threads", "4")
+//      recorder.setVideoOption("threadslice", "4")
+//      recorder.setVideoOption("slicethread", "4")
+//      recorder.setVideoOption("thread_slice", "4")
+//      recorder.setVideoOption("slice_thread", "4")
+//      recorder.setVideoOption("preset", "ultrafast")
     }
     if (grabber.hasAudio) {
       recorder.setAudioChannels(grabber.getAudioChannels)
       recorder.setAudioMetadata(grabber.getAudioMetadata)
       recorder.setAudioCodec(grabber.getAudioCodec)
       recorder.setAudioBitrate(grabber.getAudioBitrate)
+      recorder.setAudioOption("c", "copy")
     }
 
     recorder.start()
@@ -224,6 +227,7 @@ class ConverterDialog(setup: Setup, telemetry: Telemetry, template: TemplateEntr
     var imageType = -1
     var stopped: Boolean = false;
     while ({ stopped = stopIndicator(); !stopped } && { frame = grabber.grab; frame != null }) {
+      recorder.setTimestamp(frame.timestamp)
       if (frame.`type` eq Frame.Type.VIDEO) {
         if (imageType != Java2DFrameConverter.getBufferedImageType(frame)) {
           imageType = Java2DFrameConverter.getBufferedImageType(frame)
