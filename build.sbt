@@ -15,7 +15,7 @@ scalaVersion := "2.13.16"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val jacksonVersion = "2.18.2"
+val jacksonVersion = "2.18.3"
 val json4sVersion = "4.0.7"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.20.9"
@@ -138,9 +138,9 @@ libraryDependencies += "org.bytedeco" % "javacv-platform" % javacvVersion
 libraryDependencies += "org.bytedeco" % "ffmpeg-platform-gpl" % ffmpegPlatformGplVersion
 libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion
 libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
 libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
-libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.18.2"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion
 libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
