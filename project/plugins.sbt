@@ -25,3 +25,6 @@ addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
 
 // github publishing
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
+
+// generate bill of materials
+addSbtPlugin("com.github.sbt" %% "sbt-sbom" % "0.4.0")
