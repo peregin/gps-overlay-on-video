@@ -146,7 +146,7 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
 libraryDependencies += "org.joda" % "joda-convert" % "3.0.1"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
-libraryDependencies += "com.google.guava" % "guava" % "33.4.7-jre"
+libraryDependencies += "com.google.guava" % "guava" % "33.4.8-jre"
 libraryDependencies += "org.geotools" % "gt-referencing" % geotoolsVersion exclude("javax.media", "jai_core")
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
