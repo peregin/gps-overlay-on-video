@@ -15,14 +15,14 @@ scalaVersion := "2.13.16"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val jacksonVersion = "2.18.3"
+val jacksonVersion = "2.19.0"
 val json4sVersion = "4.0.7"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.21.0"
 val logbackVersion = "1.5.18"
 val batikVersion = "1.18" // svg manipulation
 val xmlVersion = "2.3.0"
-val jodaVersion = "2.13.1"
+val jodaVersion = "2.14.0"
 val swingVersion = "3.0.0"
 val javacvVersion = "1.5.11"
 val ffmpegPlatformGplVersion = "7.1-1.5.11"
