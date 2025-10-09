@@ -16,7 +16,8 @@ jobs:
   build:
     executor: ci-executor
     steps:
-      - checkout
+      - checkout:
+          method: blobless
       - run: .circleci/cachekey.sh checksums.txt
       - restore_cache:
           key: *cache_key
