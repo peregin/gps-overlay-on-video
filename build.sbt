@@ -15,7 +15,7 @@ scalaVersion := "2.13.17"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val jacksonVersion = "2.19.1"
+val jacksonVersion = "2.20.0"
 val json4sVersion = "4.1.0"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.23.0"
@@ -155,4 +155,3 @@ libraryDependencies += "org.specs2" %% "specs2-scalacheck" % specs2Version % "te
 libraryDependencies += "org.specs2" %% "specs2-mock" % specs2Version % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit"  % akkaVersion % "test"
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"
-
