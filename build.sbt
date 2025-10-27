@@ -82,6 +82,7 @@ lazy val root = (project in file(".")).
     buildInfoPackage := "info",
     ghreleaseRepoOrg := "peregin",
     ghreleaseRepoName := "gps-overlay-on-video",
+    ghreleaseGithubToken := sys.env.get("GITHUB_TOKEN"),
     ghreleaseNotes := (v => s"Release $v"),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
@@ -92,7 +93,7 @@ lazy val root = (project in file(".")).
       commitReleaseVersion,
       tagRelease,
       ReleaseStep(releaseStepTask(assembly)),  // package artifacts
-      pushChanges, // needed fot the GH plugin to use the latest tag
+      pushChanges, // needed for the GH plugin to use the latest tag
       ReleaseStep(releaseStepInputTask(githubRelease)),
       setNextVersion,
       commitNextVersion,
