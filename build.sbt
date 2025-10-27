@@ -10,7 +10,7 @@ val entryPoint = "peregin.gpv.GpsOverlayApp"
 
 Compile / mainClass := Some(entryPoint)
 
-scalaVersion := "2.13.16"
+scalaVersion := "2.13.17"
 
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
