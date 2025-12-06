@@ -30,7 +30,7 @@ There are other options to run the application see [How to run it](#how-to-run-i
 
 ## Prerequisite
 > [!TIP]
-> When running make sure to use 64-bit java JDK/JRE at least version 17+ (no video binaries included for 32-bit).
+> When running make sure to use 64-bit java **JDK/JRE** at least version **17+** (no video binaries included for 32-bit).
 
 ## Overview
 
