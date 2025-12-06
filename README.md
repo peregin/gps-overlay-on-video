@@ -21,7 +21,6 @@ _The Ultimate Cycling Software_
   - [Gauge Ideas](#gauge-ideas)
 
 ## Download
-
 Download the latest executable jar file (gps-overlay-on-video.jar) from [here](https://github.com/peregin/gps-overlay-on-video/releases/latest/).
 It requires to have a `java` installation to run the application as follows:
 ```shell script
@@ -29,6 +28,7 @@ java --add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED -jar gps-overla
 ```
 There are other options to run the application see [How to run it](#how-to-run-it) section.
 
+## Prerequisite
 > [!TIP]
 > When running make sure to use 64-bit java JDK/JRE at least version 17+ (no video binaries included for 32-bit).
 
