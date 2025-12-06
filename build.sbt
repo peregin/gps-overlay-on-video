@@ -15,18 +15,18 @@ scalaVersion := "2.13.18"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val jacksonVersion = "2.20.0"
+val jacksonVersion = "2.20.1"
 val json4sVersion = "4.1.0"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.23.0"
-val logbackVersion = "1.5.20"
+val logbackVersion = "1.5.21"
 val batikVersion = "1.19" // svg manipulation
 val xmlVersion = "2.4.0"
 val jodaVersion = "2.14.0"
 val swingVersion = "3.0.0"
 val javacvVersion = "1.5.12"
-val ffmpegPlatformGplVersion = "7.1-1.5.11"
-val geotoolsVersion = "33.1"
+val ffmpegPlatformGplVersion = "7.1.1-1.5.12"
+val geotoolsVersion = "34.1"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
