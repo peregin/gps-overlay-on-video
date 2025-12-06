@@ -21,3 +21,4 @@ build/
 *.swp
 RemoteSystemsTempFiles/
 hs_err_*.log
+/.java-version
