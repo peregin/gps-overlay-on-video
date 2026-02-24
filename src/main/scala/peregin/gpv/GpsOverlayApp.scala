@@ -11,7 +11,7 @@ import peregin.gpv.gui.TemplatePanel.TemplateEntry
 import peregin.gpv.gui._
 import peregin.gpv.gui.dashboard.{CyclingDashboard, DashboardPainter}
 import peregin.gpv.model.Telemetry
-import peregin.gpv.util.{Io, Logging, Timed}
+import peregin.gpv.util.{Io, Logging, Timed, VideoGpxAlignment}
 import peregin.gpv.video._
 
 import scala.swing._
@@ -40,7 +40,7 @@ object GpsOverlayApp extends SimpleSwingApplication
   transparencySlider.percentage = 80
   private val unitChooser = new ComboBox(Seq("Metric", "Marine","Standard"))
   private val templatePanel = new TemplatePanel(GpsOverlayApp.this)
-  val frame = new MainFrame {
+  val frame: MainFrame = new MainFrame {
     contents = new MigPanel("ins 5, fill", "[fill]", "[][fill]") {
       val toolbar = new JToolBar
       toolbar.add(new ImageButton("images/new.png", "New", newProject()))
@@ -105,6 +105,15 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def message(s: String): Unit = statusLabel.setText(s)
 
+  /** When both video and GPX are loaded, compute and apply alignment shift (from metadata or duration). */
+  private def applyAutoAlignment(telemetry: Telemetry): Unit = {
+    if (setup.videoPath.isEmpty || telemetry.track.isEmpty) return
+    VideoGpxAlignment.computeSuggestedShift(setup.videoPath.get, telemetry).foreach { shift =>
+      setup.shift = shift
+      log.info(s"auto-aligned video–GPX shift = ${shift}ms")
+    }
+  }
+
   def titled(title: String, c: Component): Component = {
     val panel = new JXTitledPanel(title, c.peer)
     Component.wrap(panel)
@@ -142,6 +151,8 @@ object GpsOverlayApp extends SimpleSwingApplication
               val telemetry = setup.gpsPath.map(p => Telemetry.load(new File(p)))
               val tm = telemetry.getOrElse(Telemetry.empty())
               tm.setCaptions(setup.captions)
+              message("Aligning video and GPS...")
+              applyAutoAlignment(tm)
               message("Updating...")
               templatePanel.refresh(setup)
               telemetryPanel.refresh(setup, tm)
@@ -150,10 +161,9 @@ object GpsOverlayApp extends SimpleSwingApplication
               message(s"Project $path has been loaded")
             }
             catch {
-              case ex: Throwable => {
+              case ex: Throwable =>
                 log.error("Error opening project: file={}", path, ex)
-                throw ex;
-              }
+                throw ex
             }
           }
         }
@@ -198,14 +208,24 @@ object GpsOverlayApp extends SimpleSwingApplication
 
   def openVideoData(file: File): Unit = {
     setup.videoPath = Some(file.getAbsolutePath)
-    videoPanel.refresh(setup)
+    val tm = telemetryPanel.telemetry
+    Goodies.showBusy(frame) {
+      applyAutoAlignment(tm)
+      Swing.onEDT {
+        videoPanel.refresh(setup)
+        telemetryPanel.refresh(setup, tm)
+      }
+    }
   }
 
   def openGpsData(file: File): Unit = {
     setup.gpsPath = Some(file.getAbsolutePath)
     Goodies.showBusy(frame) {
       val telemetry = Telemetry.load(file)
-      Swing.onEDT(telemetryPanel.refresh(setup, telemetry))
+      Swing.onEDT {
+        applyAutoAlignment(telemetry)
+        telemetryPanel.refresh(setup, telemetry)
+      }
     }
   }
 
