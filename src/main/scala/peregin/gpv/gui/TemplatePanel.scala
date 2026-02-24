@@ -59,6 +59,7 @@ class TemplatePanel(listener: Listener) extends MigPanel("ins 2", "[fill]", "[fi
   model.addElement(TemplateEntry("MotorBiking", new MotorBikingDashboard {}))
   model.addElement(TemplateEntry("Sailing", new SailingDashboard {}))
   model.addElement(TemplateEntry("Complex Cycling", YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingComplexDashboard.yaml")))
+  model.addElement(TemplateEntry("Extended Cycling", YamlResourceDashboardLoader.loadCpDashboard(classOf[Dashboard], "CyclingExtended.yaml")))
 
   val templates = new JXList(model)
   templates.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
