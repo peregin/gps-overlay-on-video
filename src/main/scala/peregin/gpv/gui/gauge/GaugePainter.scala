@@ -3,6 +3,7 @@ package peregin.gpv.gui.gauge
 import scala.swing._
 import java.awt.{BasicStroke, Color, Dimension, Font, RenderingHints}
 import peregin.gpv.model.{InputValue, Sonda}
+import peregin.gpv.util.Io
 
 import java.util.function.Consumer
 
@@ -13,12 +14,15 @@ trait GaugePainter {
   private var currentInput: InputValue = InputValue.empty
   private var debugging = false
   private var displayUnits: String = ""
-
-  private var defaultColor = Color.white
+  protected var defaultColor: Color = Color.yellow
 
   def desiredSize = new Dimension(75, 75)
 
   def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int): Unit = {
+    paint(g, devHeight, w, h, Color.yellow)
+  }
+
+  def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int, color: Color): Unit = {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
@@ -31,6 +35,11 @@ trait GaugePainter {
   }
 
   final def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int, sonda: Sonda): Unit = {
+    paint(g, devHeight, w, h, sonda, Color.yellow)
+  }
+
+  final def paint(g: Graphics2D, devHeight: Int, w: Int, h: Int, sonda: Sonda, color: Color): Unit = {
+    defaultColor = color
     sample(sonda)
     paint(g, devHeight, w, h)
   }
