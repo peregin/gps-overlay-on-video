@@ -36,4 +36,7 @@ object UnitConverter {
     if (units == "Standard") "ft" else "m"
   }
 
+  def cadenceUnits(): String = {
+    "rpm"
+  }
 }
