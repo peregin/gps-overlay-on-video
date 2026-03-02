@@ -3,7 +3,7 @@ package peregin.gpv.gui.gauge
 import peregin.gpv.model.{InputValue, MinMax, Sonda}
 import peregin.gpv.util.UnitConverter
 
-class SvgElevationGauge extends SvgGauge {
+class SvgDigitalElevationGauge extends SvgDigitalGauge {
 
   lazy val dummy = InputValue(Some(689), MinMax(0, 1300))
   override def defaultInput = dummy
