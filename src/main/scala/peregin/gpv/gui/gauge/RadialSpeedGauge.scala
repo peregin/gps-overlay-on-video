@@ -91,7 +91,7 @@ class RadialSpeedGauge() extends GaugePainter {
     g.setColor(Color.black)
     var cr = (longTickLength / 2).toInt + 1
     g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
-    g.setColor(Color.yellow)
+    g.setColor(defaultColor)
     cr -= 1
     g.fillOval(cx - cr, cy - cr, 2 * cr, 2 * cr)
 
@@ -104,7 +104,7 @@ class RadialSpeedGauge() extends GaugePainter {
       val py = polarY(cy, pointer, pointerAngle)
       g.setColor(Color.black)
       g.drawLine(cx + 1, cy + 1, px + 1, py + 1)
-      g.setColor(Color.yellow)
+      g.setColor(defaultColor)
       g.drawLine(cx, cy, px, py)
 
       // draw current speed

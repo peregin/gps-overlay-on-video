@@ -3,6 +3,7 @@ package peregin.gpv.gui.dashboard
 import peregin.gpv.gui.gauge.GaugePainter
 import peregin.gpv.model.Sonda
 
+import java.awt.Color
 import java.awt.geom.AffineTransform
 import scala.swing.Graphics2D
 
@@ -17,7 +18,9 @@ class DynamicResourceDashboard(gauges: Seq[GaugeSetup]) extends Dashboard {
       g.translate((gauge.x * imageWidth).toInt, (gauge.y * imageHeight).toInt)
       val width = (if (gauge.width.isDefined) imageWidth * gauge.width.get else imageHeight * gauge.size.get).toInt
       val height = (if (gauge.height.isDefined) imageHeight * gauge.height.get else imageHeight * gauge.size.get).toInt
-      gauge.gauge.paint(g, imageHeight, width, height, sonda)
+      val colorName = gauge.mainColor.getOrElse("yellow") // fallback to original
+      val color = classOf[Color].getField(colorName).get(null).asInstanceOf[Color]
+      gauge.gauge.paint(g, imageHeight, width, height, sonda, color)
       g.setTransform(saved)
     })
   }
