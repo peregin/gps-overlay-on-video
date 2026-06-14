@@ -16,7 +16,7 @@ scalaVersion := "2.13.18"
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
 val jacksonVersion = "2.21.1"
-val json4sVersion = "4.1.0"
+val json4sVersion = "4.1.1"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.23.0"
 val logbackVersion = "1.5.34"
