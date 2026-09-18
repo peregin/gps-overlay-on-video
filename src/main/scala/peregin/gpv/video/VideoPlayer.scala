@@ -21,6 +21,7 @@ trait VideoPlayer {
   def step(): Unit
   def pause(): Unit
   def seek(percentage: Double): Unit
+  def seekBy(deltaMillis: Long): Unit // relative seek, e.g. skip forward/backward by a number of milliseconds
   def close(): Unit
   def duration: Long // retrieves the duration of the video stream in millis
   def playing: Boolean // tells whether the player is on or not
