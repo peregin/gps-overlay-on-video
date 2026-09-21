@@ -1,6 +1,7 @@
 package peregin.gpv
 
 import java.awt.Dimension
+import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URI
@@ -100,6 +101,14 @@ object GpsOverlayApp extends SimpleSwingApplication
   frame.size = new Dimension(1500, 1000)
   Goodies.center(frame)
   frame.maximize()
+
+  // keyboard shortcuts to seek the video: left/right for +/-5s, down/up for +/-1 minute
+  private val ShortSeekMillis = 5 * 1000L
+  private val LongSeekMillis = 60 * 1000L
+  Goodies.mapKeyTo(frame, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "seekBackwardShort")(videoPanel.seekBy(-ShortSeekMillis))
+  Goodies.mapKeyTo(frame, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "seekForwardShort")(videoPanel.seekBy(ShortSeekMillis))
+  Goodies.mapKeyTo(frame, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "seekBackwardLong")(videoPanel.seekBy(-LongSeekMillis))
+  Goodies.mapKeyTo(frame, KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "seekForwardLong")(videoPanel.seekBy(LongSeekMillis))
 
   def top: Frame = frame
 

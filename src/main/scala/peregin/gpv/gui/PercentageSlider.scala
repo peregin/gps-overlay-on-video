@@ -26,6 +26,14 @@ class PercentageSlider extends Component with Orientable with Publisher with Log
 
   override lazy val peer: JSlider = new JSlider(0, 10000, 0) with SuperMixin
 
+  // this slider is driven purely by the mouse (see the listeners below, which derive the percentage
+  // from the pointer's x position). It must not take keyboard focus: JSlider's own default arrow-key
+  // bindings would otherwise intercept the arrow keys (e.g. stealing them from the global video-seek
+  // shortcuts) and, because the change listener below recomputes the percentage from the *last mouse*
+  // position rather than the slider's new value, a key-driven change silently snaps back to wherever
+  // the pointer last was instead of moving at all.
+  peer.setFocusable(false)
+
   def orientation: Orientation.Value = Orientation(peer.getOrientation)
   def orientation_=(o: Orientation.Value): Unit = peer.setOrientation(o.id)
 
@@ -69,8 +77,12 @@ class PercentageSlider extends Component with Orientable with Publisher with Log
 
   peer.addChangeListener((_: javax.swing.event.ChangeEvent) => {
     if (!peer.getValueIsAdjusting && !sliderChangeFromApi) {
-      val xSlideTo = calculatePercentage(lastEventX)
-      publish(new SliderChanged(PercentageSlider.this, xSlideTo))
+      // report the slider's own current value rather than recomputing it from the last recorded mouse
+      // x position: lastEventX is only ever updated by real mouse presses/drags, so any change event
+      // that fires for another reason (a stray/racing programmatic update slipping past the
+      // sliderChangeFromApi guard, for example) would otherwise be reported using a stale, unrelated
+      // position instead of harmlessly reflecting whatever the slider's value already is
+      publish(new SliderChanged(PercentageSlider.this, percentage))
     }
   })
 

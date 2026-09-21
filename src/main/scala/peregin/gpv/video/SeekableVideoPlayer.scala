@@ -27,6 +27,7 @@ class SeekableVideoPlayer(url: String, listener: VideoPlayer.Listener) extends V
   override def step() = playerActor ! StepCommand
   override def pause() = playerActor ! PauseCommand
   override def seek(percentage: Double) = playerActor ! SeekCommand(percentage)
+  override def seekBy(deltaMillis: Long) = playerActor ! SeekByCommand(deltaMillis)
   override def close() = video.close()
   override def duration = video.durationInMillis
   override def playing = {
@@ -52,6 +53,7 @@ object PlayerProtocol {
   case object StepCommand extends ControllerCommand
   case object PauseCommand extends ControllerCommand
   case class SeekCommand(percentage: Double) extends ControllerCommand
+  case class SeekByCommand(deltaMillis: Long) extends ControllerCommand // relative seek, resolved against the actor's current position
 }
 
 object PlayerControllerActor {
@@ -73,13 +75,14 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       case _ => stay() using EndOfStream
     }
 
-    case Event(SeekCommand(percentage), _) => video.seek(percentage) match {
-      case Some(seekFrame) =>
-        log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
-        handleFrame(seekFrame)
-        stay() using seekFrame
-      case _ => stay() using EndOfStream
-    }
+    case Event(SeekCommand(percentage), _) => seekIdle(percentage)
+
+    // resolve the relative offset (in millis) against the CURRENT data of this very message-processing
+    // step (guaranteed up to date, since FSM messages are handled strictly one at a time) and act on it
+    // immediately, in the same step - never via a self-sent SeekCommand, which would queue behind any
+    // other seek requests already sitting in the mailbox (e.g. from fast/held key repeats) and could
+    // then be resolved against a position that is no longer current, causing seeks to jump to stale places
+    case Event(SeekByCommand(deltaMillis), data) => seekIdle(percentageAfterOffset(deltaMillis, data))
 
     case Event(PlayCommand, data) =>
       startSingleTimer("nextread", PlayCommand, 500 millis)
@@ -103,19 +106,11 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
       case _ => goto(Idle) using EndOfStream
     }
 
-    case Event(SeekCommand(percentage), data) =>
-      cancelTimer("nextread")
-      handleSeek(percentage)
+    case Event(SeekCommand(percentage), _) => seekRunning(percentage)
 
-      video.seek(percentage) match {
-        case Some(seekFrame) =>
-          log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage%2.2f}")
-          video.resetDelay()
-          //handleFrame(seekFrame)
-          startSingleTimer("nextread", PlayCommand, 0 millis)
-          stay() using seekFrame
-        case _ => stay() using EndOfStream
-    }
+    // see the comment on the Idle-state SeekByCommand handler above: resolved and applied synchronously,
+    // in this very step, against the data that came with this message
+    case Event(SeekByCommand(deltaMillis), data) => seekRunning(percentageAfterOffset(deltaMillis, data))
 
     case Event(PauseCommand, data) =>
       cancelTimer("nextread")
@@ -146,5 +141,42 @@ class PlayerControllerActor(video: SeekableVideoStream, listener: VideoPlayer.Li
 
   private def handleSeek(percentage: Double): Unit = {
     listener.seekEvent(percentage)
+  }
+
+  private def seekIdle(percentage: Double) = video.seek(percentage) match {
+    case Some(seekFrame) =>
+      log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage}%2.2f")
+      handleFrame(seekFrame)
+      stay() using seekFrame
+    case _ => stay() using EndOfStream
+  }
+
+  private def seekRunning(percentage: Double) = {
+    cancelTimer("nextread")
+    handleSeek(percentage)
+
+    video.seek(percentage) match {
+      case Some(seekFrame) =>
+        log.info(f"nearest frame found, ts=${TimePrinter.printDuration(seekFrame.tsInMillis)}, @=${seekFrame.percentage}%2.2f")
+        video.resetDelay()
+        //handleFrame(seekFrame)
+        startSingleTimer("nextread", PlayCommand, 0 millis)
+        stay() using seekFrame
+      case _ => stay() using EndOfStream
+    }
+  }
+
+  private def currentTsInMillis(data: PacketReply): Long = data match {
+    case FrameIsReady(tsInMillis, _, _, _, _) => tsInMillis
+    case _ => 0L
+  }
+
+  private def percentageAfterOffset(deltaMillis: Long, data: PacketReply): Double = {
+    val duration = video.durationInMillis
+    if (duration <= 0) 0d
+    else {
+      val target = math.max(0L, math.min(currentTsInMillis(data) + deltaMillis, duration))
+      target * 100.0 / duration
+    }
   }
 }

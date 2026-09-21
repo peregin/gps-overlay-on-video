@@ -70,4 +70,14 @@ object Goodies {
       def actionPerformed(e: ActionEvent) = cancelFunc()
     })
   }
+
+  // binds a key stroke to an action for as long as the given window is the focused window,
+  // without stealing the key from whichever component (text field, slider, ...) would otherwise handle it itself
+  def mapKeyTo(window: Window, keyStroke: KeyStroke, actionName: String)(body: => Unit): Unit = {
+    val rootPane = window.peer.getRootPane
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName)
+    rootPane.getActionMap.put(actionName, new javax.swing.AbstractAction() {
+      def actionPerformed(e: ActionEvent) = body
+    })
+  }
 }
