@@ -24,8 +24,8 @@ val batikVersion = "1.19" // svg manipulation
 val xmlVersion = "2.4.0"
 val jodaVersion = "2.14.2"
 val swingVersion = "3.0.0"
-val javacvVersion = "1.5.12"
-val ffmpegPlatformGplVersion = "7.1.1-1.5.12"
+val javacvVersion = "1.5.14"
+val ffmpegPlatformGplVersion = "8.1.2-1.5.14"
 val geotoolsVersion = "34.1"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
