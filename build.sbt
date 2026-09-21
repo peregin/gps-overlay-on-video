@@ -15,17 +15,17 @@ scalaVersion := "2.13.18"
 // suppress warnings for unused settings introduced by plugins (e.g. github)
 Global / excludeLintKeys ++= Set(ghreleaseNotes)
 
-val jacksonVersion = "2.21.1"
+val jacksonVersion = "2.21.6"
 val json4sVersion = "4.1.0"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.23.0"
 val logbackVersion = "1.6.3"
 val batikVersion = "1.19" // svg manipulation
 val xmlVersion = "2.5.0"
-val jodaVersion = "2.14.2"
+val jodaVersion = "2.14.3"
 val swingVersion = "3.0.0"
-val javacvVersion = "1.5.12"
-val ffmpegPlatformGplVersion = "7.1.1-1.5.12"
+val javacvVersion = "1.5.14"
+val ffmpegPlatformGplVersion = "8.1.2-1.5.14"
 val geotoolsVersion = "34.1"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
@@ -147,7 +147,7 @@ libraryDependencies += "ch.qos.logback" % "logback-core" % logbackVersion
 libraryDependencies += "joda-time" % "joda-time" % jodaVersion
 libraryDependencies += "org.joda" % "joda-convert" % "3.0.1"
 libraryDependencies += "org.apache.xmlgraphics" % "batik-transcoder" % batikVersion
-libraryDependencies += "com.google.guava" % "guava" % "33.5.0-jre"
+libraryDependencies += "com.google.guava" % "guava" % "33.7.1-jre"
 libraryDependencies += "org.geotools" % "gt-referencing" % geotoolsVersion exclude("javax.media", "jai_core")
 // deprecated from Java 9, needs to be added when
 libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"

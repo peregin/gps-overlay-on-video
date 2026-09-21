@@ -64,6 +64,10 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
     player.foreach(_.step())
   }
 
+  def seekBy(deltaMillis: Long): Unit = {
+    player.foreach(_.seekBy(deltaMillis))
+  }
+
   def fireLastVideoEventIfNotPlaying(): Unit = {
     if (!player.exists(_.playing)) {
       log.debug("refreshing dashboard painter, because player is not running")
@@ -78,7 +82,13 @@ class VideoPanel(openVideoHandler: File => Unit, listener: VideoPlayer.Listener)
   }
 
   override def seekEvent(percentage: Double): Unit = {
-    slider.percentage = percentage
+    // this callback comes from the player actor thread, not the EDT (unlike videoEvent below, which
+    // already hops onto the EDT before touching Swing state) - mutating the slider directly from here
+    // races with that EDT-side update of the very same component and its "am I updating programmatically"
+    // guard, which can spuriously fire a SliderChanged and trigger an unrelated seek. Always hop to the EDT.
+    Swing.onEDT {
+      slider.percentage = percentage
+    }
   }
 
   override def videoEvent(tsInMillis: Long, percentage: Double, image: BufferedImage, rotation: Double): Unit = {
