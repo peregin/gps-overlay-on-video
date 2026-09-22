@@ -12,7 +12,7 @@ addDependencyTreePlugin
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.7.0")
 
 // generates build information, timestamp
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.2")
 
 // generate fat jar
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.5.0")
