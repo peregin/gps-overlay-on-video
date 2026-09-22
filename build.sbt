@@ -26,7 +26,7 @@ val jodaVersion = "2.14.3"
 val swingVersion = "3.0.0"
 val javacvVersion = "1.5.14"
 val ffmpegPlatformGplVersion = "8.1.2-1.5.14"
-val geotoolsVersion = "34.1"
+val geotoolsVersion = "34.5"
 
 scalacOptions ++= List("-feature", "-deprecation", "-language:implicitConversions", "-language:reflectiveCalls")
 val macDockNameOpt = "-Xdock:name=\"GPS Overlay\""
