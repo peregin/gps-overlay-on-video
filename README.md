@@ -65,6 +65,12 @@ run.sh
 ```
 The script will download the latest version published on github and will run it.
 
+## Releasing
+
+Install `sbt` and [GitHub CLI](https://cli.github.com/), then authenticate with `gh auth login` or set `GITHUB_TOKEN`. Run `./release.sh` from a clean checkout. The script requires the numeric version in `version.sbt` to be newer than every tag on the remote before sbt-release builds, tags, and pushes it. It then creates a GitHub release with `target/release/gps-overlay-on-video.jar` attached.
+
+If GitHub release creation fails after sbt-release has pushed the tag, retry the `gh release create` command for that tag and JAR; do not rerun `./release.sh` for the same version.
+
 ## How to use it
 * Thank you [Bigjuergo](https://github.com/Bigjuergo) for creating the [how to use 4min tutorial](https://www.youtube.com/watch?v=yOvT8IoDUPA) 
 
@@ -137,4 +143,3 @@ The charts are showing all the data (for example an elevation chart) and the cur
 The very early drafts on the paper, how it started:
 
 ![gauge ideas](https://raw.github.com/peregin/gps-overlay-on-video/master/doc/gauge-ideas.jpg "gauge ideas")
-

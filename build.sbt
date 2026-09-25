@@ -12,9 +12,6 @@ Compile / mainClass := Some(entryPoint)
 
 scalaVersion := "2.13.18"
 
-// suppress warnings for unused settings introduced by plugins (e.g. github)
-Global / excludeLintKeys ++= Set(ghreleaseNotes)
-
 val jacksonVersion = "2.21.6"
 val json4sVersion = "4.1.0"
 val akkaVersion = "2.8.8"
@@ -52,6 +49,7 @@ resolvers ++= Seq(
 
 assembly / mainClass := Some(entryPoint)
 assembly / assemblyJarName := "gps-overlay-on-video.jar"
+assembly / assemblyOutputPath := baseDirectory.value / "target" / "release" / "gps-overlay-on-video.jar"
 assembly / assemblyOption := (assembly / assemblyOption).value
   .withPrependShellScript(prependShellScript = Some(defaultUniversalScript(javaOpts = moreJavaOptions, shebang = false)))
 assembly / assemblyMergeStrategy := {
@@ -80,10 +78,6 @@ lazy val root = (project in file(".")).
       new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date())
     }),
     buildInfoPackage := "info",
-    ghreleaseRepoOrg := "peregin",
-    ghreleaseRepoName := "gps-overlay-on-video",
-    ghreleaseGithubToken := sys.env.get("GITHUB_TOKEN"),
-    ghreleaseNotes := (v => s"Release $v"),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -93,8 +87,7 @@ lazy val root = (project in file(".")).
       commitReleaseVersion,
       tagRelease,
       ReleaseStep(releaseStepTask(assembly)),  // package artifacts
-      pushChanges, // needed for the GH plugin to use the latest tag
-      ReleaseStep(releaseStepInputTask(githubRelease)),
+      pushChanges,
       setNextVersion,
       commitNextVersion,
       pushChanges // push the next version
