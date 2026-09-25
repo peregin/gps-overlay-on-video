@@ -41,7 +41,7 @@ val moreJavaOptions = Seq(
 javaOptions ++= moreJavaOptions
 javacOptions ++= Seq("-source", "17", "-target", "17")
 
-transitiveClassifiers in Global := Seq(Artifact.SourceClassifier)
+Global / transitiveClassifiers := Seq(Artifact.SourceClassifier)
 resolvers ++= Seq(
   "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/",
   "GeoTools Repository" at "https://repo.osgeo.org/repository/release/",
@@ -62,7 +62,6 @@ assembly / assemblyMergeStrategy := {
   case PathList("junit", _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
-(assembly / test) := {}
 Compile / assembly / artifact := {
   val art = (Compile / assembly / artifact).value
   art.withClassifier(Some("assembly"))
