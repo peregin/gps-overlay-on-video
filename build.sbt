@@ -13,7 +13,7 @@ Compile / mainClass := Some(entryPoint)
 scalaVersion := "2.13.18"
 
 val jacksonVersion = "2.21.6"
-val json4sVersion = "4.1.0"
+val json4sVersion = "4.1.1"
 val akkaVersion = "2.8.8"
 val specs2Version = "4.23.0"
 val logbackVersion = "1.6.4"
