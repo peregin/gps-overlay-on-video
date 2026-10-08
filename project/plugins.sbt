@@ -9,7 +9,7 @@ libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
 addDependencyTreePlugin
 
 // check latest updates form maven
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.7.0")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.7.1")
 
 // generates build information, timestamp
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.2")
